@@ -56,6 +56,7 @@ class StrokeService final : public IStrokeService
     Configurations::precision currentAngularVelocity = 0;
     Configurations::precision currentAngularAcceleration = 0;
     Configurations::precision currentTorque = 0;
+    Configurations::precision torqueBeforeFlank = 0;
     vector<float> driveHandleForces;
 
     vector<WeightedAverageSeries> angularVelocityMatrix;

@@ -142,7 +142,11 @@ void StrokeService::driveStart()
     driveStartAngularDisplacement = rowingTotalAngularDisplacement;
 
     driveHandleForces.clear();
-    driveHandleForces.push_back(static_cast<float>(currentTorque) / machineSettings.sprocketRadius);
+
+    if (torqueBeforeFlank > (Configurations::precision)0)
+    {
+        driveHandleForces.push_back(static_cast<float>(torqueBeforeFlank) / machineSettings.sprocketRadius);
+    }
 
     if (strokePhaseDetectionSettings.strokeDetectionType != StrokeDetectionType::Slope)
     {
@@ -166,7 +170,7 @@ void StrokeService::driveUpdate()
         return;
     }
 
-    driveHandleForces.push_back(static_cast<float>(currentTorque) / machineSettings.sprocketRadius);
+    driveHandleForces.push_back(static_cast<float>(torqueBeforeFlank) / machineSettings.sprocketRadius);
     if (strokePhaseDetectionSettings.strokeDetectionType != StrokeDetectionType::Slope)
     {
         deltaTimesSlopes.push(static_cast<Configurations::precision>(rowingTotalTime), deltaTimes.coefficientA());
@@ -267,6 +271,7 @@ void StrokeService::processData(const RowingDataModels::FlywheelData data)
     currentAngularVelocity = angularVelocityMatrix[0].average();
     currentAngularAcceleration = angularAccelerationMatrix[0].average();
 
+    torqueBeforeFlank = currentTorque;
     currentTorque = machineSettings.flywheelInertia * currentAngularAcceleration + dragCoefficient * pow(currentAngularVelocity, 2);
 
     // If rotation delta exceeds the max debounce time and we are in Recovery Phase, the rower must have stopped. Setting cyclePhase to "Stopped"
