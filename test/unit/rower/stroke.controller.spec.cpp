@@ -88,8 +88,12 @@ TEST_CASE("StrokeController", "[rower]")
             When(Method(mockFlywheelService, hasDataChanged)).Return(true);
             When(Method(mockFlywheelService, getData)).Return({
                 .rawImpulseCount = 1,
+                .deltaTime = 0,
+                .totalTime = 0,
+                .totalAngularDisplacement = 0,
+                .cleanImpulseTime = 0,
+                .rawImpulseTime = 0,
             });
-
             Fake(Method(mockStrokeService, processData));
             When(Method(mockStrokeService, getData)).Return({});
 

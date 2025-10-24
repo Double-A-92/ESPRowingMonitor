@@ -19,15 +19,15 @@ namespace RowerProfile
         // Drag factor filter settings
         static constexpr float goodnessOfFitThreshold = GOODNESS_OF_FIT_THRESHOLD;
         static constexpr unsigned int maxDragFactorRecoveryPeriod = MAX_DRAG_FACTOR_RECOVERY_PERIOD * 1'000;
-        static constexpr float lowerDragFactorThreshold = LOWER_DRAG_FACTOR_THRESHOLD / 1e6F;
-        static constexpr float upperDragFactorThreshold = UPPER_DRAG_FACTOR_THRESHOLD / 1e6F;
+        static constexpr float lowerDragFactorThreshold = static_cast<float>(LOWER_DRAG_FACTOR_THRESHOLD) / 1e6F;
+        static constexpr float upperDragFactorThreshold = static_cast<float>(UPPER_DRAG_FACTOR_THRESHOLD) / 1e6F;
         static constexpr unsigned char dragCoefficientsArrayLength = DRAG_COEFFICIENTS_ARRAY_LENGTH;
 
         // Stroke phase detection filter settings
         static constexpr StrokeDetectionType strokeDetectionType = STROKE_DETECTION;
         static constexpr float minimumPoweredTorque = MINIMUM_POWERED_TORQUE;
         static constexpr float minimumDragTorque = MINIMUM_DRAG_TORQUE;
-        static constexpr float minimumRecoverySlopeMargin = MINIMUM_RECOVERY_SLOPE_MARGIN / 1e6F;
+        static constexpr float minimumRecoverySlopeMargin = static_cast<float>(MINIMUM_RECOVERY_SLOPE_MARGIN) / 1e6F;
         static constexpr float minimumRecoverySlope = MINIMUM_RECOVERY_SLOPE;
         static constexpr unsigned int minimumRecoveryTime = MINIMUM_RECOVERY_TIME * 1'000;
         static constexpr unsigned int minimumDriveTime = MINIMUM_DRIVE_TIME * 1'000;

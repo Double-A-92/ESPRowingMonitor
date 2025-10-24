@@ -17,7 +17,7 @@ ControlPointCallbacks::ControlPointCallbacks(ISettingsBleService &_settingsBleSe
 {
 }
 
-void ControlPointCallbacks::onWrite(NimBLECharacteristic *const pCharacteristic, NimBLEConnInfo &connInfo)
+void ControlPointCallbacks::onWrite(NimBLECharacteristic *const pCharacteristic, [[maybe_unused]] NimBLEConnInfo &connInfo)
 {
     NimBLEAttValue message = pCharacteristic->getValue();
 

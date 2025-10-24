@@ -13,7 +13,7 @@ using std::array;
 
 BaseMetricsBleService::BaseMetricsBleService(ISettingsBleService &_settingsBleService, IEEPROMService &_eepromService) : controlPointCallbacks(_settingsBleService, _eepromService)
 {
-    broadcastTask = [](void *parameters)
+    broadcastTask = [](void *)
     {
         ASSERT_SETUP_FAILED(__CLASS_NAME__);
     };

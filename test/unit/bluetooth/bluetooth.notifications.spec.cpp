@@ -193,10 +193,15 @@ TEST_CASE("BluetoothController", "[callbacks]")
             {
                 const BleMetricsModel::BleMetricsData expectedBleData{
                     .revTime = expectedData.lastRevTime,
+                    .previousRevTime = 0,
                     .distance = expectedData.distance,
+                    .previousDistance = 0,
                     .strokeTime = expectedData.lastStrokeTime,
+                    .previousStrokeTime = 0,
                     .strokeCount = expectedData.strokeCount,
+                    .previousStrokeCount = 0,
                     .avgStrokePower = expectedData.avgStrokePower,
+                    .dragCoefficient = expectedData.dragCoefficient,
                 };
                 When(Method(mockBaseMetricsBleService, getClientIds)).Return({0});
 

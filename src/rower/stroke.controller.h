@@ -34,6 +34,7 @@ class StrokeController final : public IStrokeController
         0ULL,
         0UL,
         0UL,
+        0UL,
     };
 
 public:

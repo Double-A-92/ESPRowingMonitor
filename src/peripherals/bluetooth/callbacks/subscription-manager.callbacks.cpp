@@ -10,7 +10,7 @@ SubscriptionManagerCallbacks::SubscriptionManagerCallbacks()
     clientIds.reserve(Configurations::maxConnectionCount);
 }
 
-void SubscriptionManagerCallbacks::onSubscribe(NimBLECharacteristic *const pCharacteristic, NimBLEConnInfo &connInfo, unsigned short subValue)
+void SubscriptionManagerCallbacks::onSubscribe([[maybe_unused]] NimBLECharacteristic *const pCharacteristic, NimBLEConnInfo &connInfo, unsigned short subValue)
 {
     if (subValue > 0)
     {

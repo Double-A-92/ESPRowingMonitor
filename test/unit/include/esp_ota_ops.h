@@ -15,6 +15,9 @@ typedef struct
 
 class MockOtaOps
 {
+protected:
+    ~MockOtaOps() = default;
+
 public:
     virtual esp_partition_t *esp_ota_get_next_update_partition(const esp_partition_t *start_from) = 0;
     virtual esp_partition_t *esp_ota_get_running_partition() = 0;

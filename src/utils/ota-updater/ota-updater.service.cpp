@@ -46,20 +46,17 @@ void OtaUpdaterService::onData(const NimBLEAttValue &data, const unsigned short 
     case std::to_underlying(OtaRequestOpCodes::Begin):
     {
         setMtu(newMtu);
-        span<const unsigned char>::iterator iterator(data.data());
-        handleBegin(span<const unsigned char>(iterator + 1, data.size() - 1));
+        handleBegin(span<const unsigned char>(data.data(), data.size()).subspan(1));
     }
     break;
     case std::to_underlying(OtaRequestOpCodes::Package):
     {
-        span<const unsigned char>::iterator iterator(data.data());
-        handlePackage(span<const unsigned char>(iterator + 1, data.size() - 1));
+        handlePackage(span<const unsigned char>(data.data(), data.size()).subspan(1));
     }
     break;
     case std::to_underlying(OtaRequestOpCodes::End):
     {
-        span<const unsigned char>::iterator iterator(data.data());
-        handleEnd(span<const unsigned char>(iterator + 1, data.size() - 1));
+        handleEnd(span<const unsigned char>(data.data(), data.size()).subspan(1));
     }
     break;
     case std::to_underlying(OtaRequestOpCodes::Abort):

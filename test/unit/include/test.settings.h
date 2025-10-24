@@ -5,6 +5,7 @@
 
 // NOLINTBEGIN(cppcoreguidelines-macro-usage,cppcoreguidelines-macro-to-enum)
 
+// NOLINTNEXTLINE(clang-diagnostic-macro-redefined)
 #define BOARD_PROFILE "profiles/test-test.board-profile.h"
 
 #define ENABLE_RUNTIME_SETTINGS true

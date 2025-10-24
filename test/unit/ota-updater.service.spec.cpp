@@ -355,10 +355,10 @@ TEST_CASE("OtaUpdaterService", "[ota]")
 
                 SECTION("should write to the buffer until its full")
                 {
-                    std::vector<unsigned char> packageData(expectedBufferSize - 1);
-                    std::ranges::fill(begin(packageData), end(packageData), 1);
+                    std::vector<unsigned char> packageDataSmall(expectedBufferSize - 1);
+                    std::ranges::fill(begin(packageDataSmall), end(packageDataSmall), 1);
                     NimBLEAttValue noFlushPackageRequest{std::to_underlying(OtaRequestOpCodes::Package)};
-                    noFlushPackageRequest.insert(packageData);
+                    noFlushPackageRequest.insert(packageDataSmall);
 
                     otaService.onData(noFlushPackageRequest, mtu);
 
@@ -367,12 +367,6 @@ TEST_CASE("OtaUpdaterService", "[ota]")
 
                 SECTION("should flush the buffer to the update partition when its full")
                 {
-                    const auto mtu = 256U;
-                    const auto bufferCapacity = 40U;
-                    const auto expectedBufferSize = (mtu - blePackageHeaderSize - sizeof(OtaRequestOpCodes)) * bufferCapacity;
-
-                    std::vector<unsigned char> packageData(expectedBufferSize);
-                    std::fill(begin(packageData), end(packageData), 1);
                     NimBLEAttValue noFlushPackageRequest{std::to_underlying(OtaRequestOpCodes::Package)};
                     noFlushPackageRequest.insert(packageData);
 

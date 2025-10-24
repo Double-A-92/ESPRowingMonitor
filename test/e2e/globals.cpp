@@ -1,6 +1,6 @@
-#include "./globals.h"
-
 #include "fakeit.hpp"
+
+#include "./globals.h"
 
 #include "../../src/utils/EEPROM/EEPROM.service.interface.h"
 

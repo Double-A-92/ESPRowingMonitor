@@ -1,4 +1,6 @@
 // NOLINTBEGIN
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 #pragma once
 
 #include "esp_err.h"
@@ -51,4 +53,5 @@ inline const char *esp_err_to_name(esp_err_t code)
         return "ESP_ERR_UNKNOWN";
     }
 }
+#pragma GCC diagnostic pop
 // NOLINTEND

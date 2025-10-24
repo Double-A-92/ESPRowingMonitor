@@ -1,3 +1,4 @@
+// NOLINTBEGIN(cppcoreguidelines-pro-type-member-init)
 #pragma once
 
 #include <vector>
@@ -29,3 +30,4 @@ namespace RowingDataModels
         std::vector<float> driveHandleForces;
     };
 }
+// NOLINTEND(cppcoreguidelines-pro-type-member-init)

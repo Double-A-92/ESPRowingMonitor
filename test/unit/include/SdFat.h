@@ -35,6 +35,9 @@ class File32;
 
 class MockFile32
 {
+protected:
+    ~MockFile32() = default;
+
 public:
     virtual bool isOpen() const = 0;
     virtual bool openNext(File32 dirFile, oflag_t oflag) const = 0;
@@ -86,6 +89,9 @@ public:
 
 class MockSdFat32
 {
+protected:
+    ~MockSdFat32() = default;
+
 public:
     virtual bool begin(SdSpiConfig spiConfig) = 0;
     virtual File32 open(const char *path, unsigned char mode) = 0;

@@ -5,8 +5,8 @@
 
 TEST_CASE("Theil Sen Linear Regression", "[regression]")
 {
-    const auto testMaxSize = 7U;
-    TSLinearSeries tsReg(testMaxSize);
+    const auto tsLinearTestMaxSize = 7U;
+    TSLinearSeries tsReg(tsLinearTestMaxSize);
 
     for (const auto &testCase : testCases)
     {
@@ -26,7 +26,7 @@ TEST_CASE("Theil Sen Linear Regression", "[regression]")
 
     SECTION("should calculate coefficientB correctly")
     {
-        TSLinearSeries tsRegCoeffB(testMaxSize);
+        TSLinearSeries tsRegCoeffB(tsLinearTestMaxSize);
 
         for (const auto &testCase : testCases)
         {

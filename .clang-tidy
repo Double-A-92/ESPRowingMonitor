@@ -3,13 +3,21 @@ Checks: >
   cppcoreguidelines-*,
   -cppcoreguidelines-avoid-non-const-global-variables,
   -cppcoreguidelines-avoid-magic-numbers,
+  -cppcoreguidelines-avoid-const-or-ref-data-members,
   google-explicit-constructor,
   bugprone-*,
   -bugprone-easily-swappable-parameters,
-  clang-analyzer-*,
+  -bugprone-narrowing-conversions,
   readability-*,
-  -clang-diagnostic-pragma-once-outside-header,
-  -cppcoreguidelines-avoid-const-or-ref-data-members
+  -readability-math-missing-parentheses,
+  -readability-use-concise-preprocessor-directives,
+  performance-*,
+  modernize-*,
+  -modernize-macro-to-enum,
+  -modernize-use-trailing-return-type,
+  -modernize-use-std-print,
+  clang-analyzer-*,
+  -clang-diagnostic-pragma-once-outside-header
 CheckOptions:
   - key: readability-identifier-length.IgnoredVariableNames
     value: "^(c|i|j|w|k|t|u|v|_|x|y|z|a|b|aa|bb|ip|os)$"
@@ -23,4 +31,8 @@ CheckOptions:
     value: true
   - key: cppcoreguidelines-pro-type-member-init.IgnoreArrays
     value: true
+ExtraArgs:
+  - -Wno-missing-template-arg-list-after-template-kw
+  - -O3
+  - -std=c++26
 HeaderFilterRegex: '.*(src|test).*/.*(.cpp|.h)$'

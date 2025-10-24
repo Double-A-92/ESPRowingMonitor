@@ -1,4 +1,4 @@
-// NOLINTBEGIN(readability-magic-numbers)
+// NOLINTBEGIN(readability-magic-numbers,readability-function-cognitive-complexity,cppcoreguidelines-avoid-do-while)
 #include <numeric>
 #include <vector>
 
@@ -211,4 +211,4 @@ TEST_CASE("FlywheelService", "[rower]")
         }
     }
 }
-// NOLINTEND(readability-magic-numbers)
+// NOLINTEND(readability-magic-numbers,readability-function-cognitive-complexity,cppcoreguidelines-avoid-do-while)

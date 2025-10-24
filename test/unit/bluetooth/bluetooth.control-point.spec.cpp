@@ -532,7 +532,7 @@ TEST_CASE("ControlPointCallbacks onWrite method should", "[callbacks]")
 
             SECTION("save new machine settings to EEPROM")
             {
-                Verify(Method(mockEEPROMService, setMachineSettings).Matching([&expectedFlywheelInertia, &expectedMagicNumber, &expectedImpulsesPerRevolution, &expectedSprocketRadius](const RowerProfile::MachineSettings newSettings)
+                Verify(Method(mockEEPROMService, setMachineSettings).Matching([&expectedFlywheelInertia, &expectedMagicNumber, &expectedSprocketRadius](const RowerProfile::MachineSettings newSettings)
                                                                               {
                         REQUIRE(newSettings.flywheelInertia == expectedFlywheelInertia);
                         REQUIRE(newSettings.concept2MagicNumber == expectedMagicNumber);

@@ -1,4 +1,7 @@
 // NOLINTBEGIN(readability-magic-numbers)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wshadow"
+
 #include <array>
 #include <ranges>
 #include <span>
@@ -398,4 +401,5 @@ TEST_CASE("ExtendedMetricBleService broadcast", "[ble-service]")
         }
     }
 }
+#pragma GCC diagnostic pop
 // NOLINTEND(readability-magic-numbers)

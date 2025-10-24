@@ -20,24 +20,26 @@ TEST_CASE("StrokeService")
 {
     const auto angularDisplacementPerImpulse = (2 * PI) / 3;
 
+    ifstream deltaTimesStream("test/unit/rower/test-data/stroke.service.spec.deltaTimes.txt");
+    REQUIRE(deltaTimesStream.good());
+
+    vector<unsigned long> deltaTimes;
+    const auto arraySize = 1'764;
+    deltaTimes.reserve(arraySize);
+
+    unsigned long deltaTimeTemp = 0;
+    while (deltaTimesStream >> deltaTimeTemp)
+    {
+        deltaTimes.push_back(deltaTimeTemp);
+    }
+
+    REQUIRE(!deltaTimes.empty());
+
 #if ENABLE_RUNTIME_SETTINGS
     SECTION("setup method should")
     {
         SECTION("change stroke phase detection related settings")
         {
-            ifstream deltaTimesStream("test/unit/rower/test-data/stroke.service.spec.deltaTimes.txt");
-            REQUIRE(deltaTimesStream.good());
-
-            vector<unsigned long> deltaTimes;
-            const auto arraySize = 1'764;
-            deltaTimes.reserve(arraySize);
-
-            unsigned long deltaTime = 0;
-            while (deltaTimesStream >> deltaTime)
-            {
-                deltaTimes.push_back(deltaTime);
-            }
-
             auto rawImpulseCount = 0UL;
             auto totalTime = 0UL;
             Configurations::precision totalAngularDisplacement = 0.0;
@@ -84,19 +86,6 @@ TEST_CASE("StrokeService")
 
         SECTION("change sensor signal related settings")
         {
-            ifstream deltaTimesStream("test/unit/rower/test-data/stroke.service.spec.deltaTimes.txt");
-            REQUIRE(deltaTimesStream.good());
-
-            vector<unsigned long> deltaTimes;
-            const auto arraySize = 1'764;
-            deltaTimes.reserve(arraySize);
-
-            unsigned long deltaTime = 0;
-            while (deltaTimesStream >> deltaTime)
-            {
-                deltaTimes.push_back(deltaTime);
-            }
-
             auto rawImpulseCount = 0UL;
             auto totalTime = 0UL;
             Configurations::precision totalAngularDisplacement = 0.0;
@@ -137,19 +126,6 @@ TEST_CASE("StrokeService")
 
         SECTION("change drag factor related settings")
         {
-            ifstream deltaTimesStream("test/unit/rower/test-data/stroke.service.spec.deltaTimes.txt");
-            REQUIRE(deltaTimesStream.good());
-
-            vector<unsigned long> deltaTimes;
-            const auto arraySize = 1'764;
-            deltaTimes.reserve(arraySize);
-
-            unsigned long deltaTime = 0;
-            while (deltaTimesStream >> deltaTime)
-            {
-                deltaTimes.push_back(deltaTime);
-            }
-
             auto rawImpulseCount = 0UL;
             auto totalTime = 0UL;
             Configurations::precision totalAngularDisplacement = 0.0;
@@ -192,19 +168,6 @@ TEST_CASE("StrokeService")
 
         SECTION("change machine related settings")
         {
-            ifstream deltaTimesStream("test/unit/rower/test-data/stroke.service.spec.deltaTimes.txt");
-            REQUIRE(deltaTimesStream.good());
-
-            vector<unsigned long> deltaTimes;
-            const auto arraySize = 1'764;
-            deltaTimes.reserve(arraySize);
-
-            unsigned long deltaTime = 0;
-            while (deltaTimesStream >> deltaTime)
-            {
-                deltaTimes.push_back(deltaTime);
-            }
-
             auto rawImpulseCount = 0UL;
             auto totalTime = 0UL;
             Configurations::precision totalAngularDisplacement = 0.0;
@@ -261,9 +224,6 @@ TEST_CASE("StrokeService")
         CHECK(RowerProfile::Defaults::minimumRecoveryTime == 300'000);
     }
 
-    ifstream deltaTimesStream("test/unit/rower/test-data/stroke.service.spec.deltaTimes.txt");
-    REQUIRE(deltaTimesStream.good());
-
     ifstream slopeStream("test/unit/rower/test-data/stroke.service.spec.slope.txt");
     REQUIRE(slopeStream.good());
 
@@ -276,9 +236,6 @@ TEST_CASE("StrokeService")
     ifstream dragFactorStream("test/unit/rower/test-data/stroke.service.spec.dragFactor.txt");
     REQUIRE(dragFactorStream.good());
 
-    vector<unsigned long> deltaTimes;
-    const auto arraySize = 1'764;
-    deltaTimes.reserve(arraySize);
     vector<double> slopes;
     slopes.reserve(arraySize - 1);
     vector<double> torques;
@@ -287,12 +244,6 @@ TEST_CASE("StrokeService")
     forceCurves.reserve(10);
     vector<double> dragFactors;
     dragFactors.reserve(10);
-
-    unsigned long deltaTime = 0;
-    while (deltaTimesStream >> deltaTime)
-    {
-        deltaTimes.push_back(deltaTime);
-    }
 
     auto slope = 0.0;
     while (slopeStream >> slope)
@@ -332,7 +283,6 @@ TEST_CASE("StrokeService")
         forceCurves.push_back(res);
     }
 
-    REQUIRE(!deltaTimes.empty());
     REQUIRE(!slopes.empty());
     REQUIRE(!torques.empty());
     REQUIRE(!forceCurves.empty());

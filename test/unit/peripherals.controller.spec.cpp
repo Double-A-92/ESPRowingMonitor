@@ -272,8 +272,6 @@ TEST_CASE("PeripheralController", "[peripheral]")
 
             SECTION("skip adding new deltaTime when")
             {
-                PeripheralsController peripheralsController(mockBluetoothController.get(), mockSdCardService.get(), mockEEPROMService.get());
-
                 SECTION("logging to sd-card is disabled")
                 {
                     When(Method(mockSdCardService, isLogFileOpen)).AlwaysReturn(true);
@@ -308,8 +306,6 @@ TEST_CASE("PeripheralController", "[peripheral]")
 
         SECTION("to the bluetooth data")
         {
-            PeripheralsController peripheralsController(mockBluetoothController.get(), mockSdCardService.get(), mockEEPROMService.get());
-
             SECTION("skip adding new deltaTime when logging to bluetooth is disabled")
             {
                 When(Method(mockEEPROMService, getLogToBluetooth)).AlwaysReturn(false);

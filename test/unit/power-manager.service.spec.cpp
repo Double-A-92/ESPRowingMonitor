@@ -118,16 +118,12 @@ TEST_CASE("PowerManagerService", "[utils]")
 
         SECTION("return the correct battery percentage")
         {
-            const auto analogVoltage = static_cast<unsigned int>(round((Configurations::batteryVoltageMax - 0.2) * 1000));
-
             mockArduino.Reset();
             When(Method(mockArduino, analogReadMilliVolts)).AlwaysReturn(analogVoltage);
             Fake(Method(mockArduino, delay));
             const auto expectedBatteryLevel = lround((analogVoltage / 1'000.0 - Configurations::batteryVoltageMin) / (Configurations::batteryVoltageMax - Configurations::batteryVoltageMin) * 100);
 
-            const auto batteryLevel = powerManager.measureBattery();
-
-            REQUIRE(batteryLevel == expectedBatteryLevel);
+            REQUIRE(powerManager.measureBattery() == expectedBatteryLevel);
         }
     }
 }

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.22)
+cmake_minimum_required(VERSION 3.28)
 
 # Set project name and version
 project(
@@ -11,6 +11,9 @@ project(
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Debug)
 endif()
+
+# search for clang-tidy
+find_program(CLANG_TIDY_EXE NAMES clang-tidy clang-tidy-21 clang-tidy-20 clang-tidy-19 clang-tidy-18 REQUIRED)
 
 Include(FetchContent)
 
@@ -252,30 +255,43 @@ add_custom_command(
     COMMAND touch ${CMAKE_CURRENT_BINARY_DIR}/$(ROWER_PROFILE).environment
 )
 
-# Create unit test target
-add_executable(unit-test ${SOURCES_UNIT_TEST})
-
-target_include_directories(unit-test PRIVATE ${INCLUDES_UNIT_TEST})
-target_compile_options(unit-test PRIVATE ${COMPILER_FLAGS})
-target_compile_definitions(unit-test PRIVATE UNIT_TEST)
-target_link_libraries(
-    unit-test PRIVATE 
-    Catch2::Catch2WithMain
-    FakeIt::FakeIt-catch
-)
-set_target_properties(
-    unit-test
-    PROPERTIES
-        OUTPUT_NAME "test"
+# Helper function to create unit test targets
+function(add_unit_test_target target_name output_name enable_clang_tidy)
+    add_executable(${target_name} ${SOURCES_UNIT_TEST})
+    
+    target_include_directories(${target_name} PRIVATE ${INCLUDES_UNIT_TEST})
+    target_compile_options(${target_name} PRIVATE ${COMPILER_FLAGS})
+    target_compile_options(${target_name} PRIVATE -Wextra -Wpedantic -pedantic -Wnon-virtual-dtor -Wcast-align -Wunused -Wshadow -Woverloaded-virtual -Wnull-dereference -Wformat=2)
+    target_compile_definitions(${target_name} PRIVATE UNIT_TEST)
+    target_link_libraries(
+        ${target_name} PRIVATE 
+        Catch2::Catch2WithMain
+        FakeIt::FakeIt-catch
+    )
+    
+    set_target_properties(${target_name} PROPERTIES
+        OUTPUT_NAME "${output_name}"
         SUFFIX ".out"
-)
+    )
+    
+    if(enable_clang_tidy)
+        set_target_properties(${target_name} PROPERTIES
+            CXX_CLANG_TIDY "${CLANG_TIDY_EXE};--extra-arg=-stdlib=libc++"
+        )
+    endif()
+    
+    # Create run target
+    add_custom_target(run-${target_name}
+        COMMAND ${target_name}
+        DEPENDS ${target_name}
+        WORKING_DIRECTORY ../.
+        COMMENT "Running ${output_name}"
+    )
+endfunction()
 
-add_custom_target(run-unit-test
-    COMMAND unit-test
-    DEPENDS unit-test
-    WORKING_DIRECTORY ../.
-    COMMENT "Running unit tests"
-)
+# Create unit test targets
+add_unit_test_target(unit-test "test" False)
+add_unit_test_target(unit-test-lint "test-lint" True)
 
 # Create code coverage target
 add_executable(test-coverage EXCLUDE_FROM_ALL ${SOURCES_UNIT_TEST})

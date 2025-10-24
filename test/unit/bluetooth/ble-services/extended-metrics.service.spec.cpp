@@ -81,12 +81,12 @@ TEST_CASE("ExtendedMetricBleService", "[ble-service]")
 
         SECTION("setup extended metrics characteristic with correct parameters")
         {
-            Mock<NimBLECharacteristic> mockExtendedMetricsCharacteristic;
+            Mock<NimBLECharacteristic> mockExtendedMetricsCharacteristicWithCorrectParams;
 
             const unsigned int expectedMeasurementProperty = NIMBLE_PROPERTY::NOTIFY;
 
-            When(OverloadedMethod(mockExtendedMetricService, createCharacteristic, NimBLECharacteristic * (const std::string, const unsigned int)).Using(CommonBleFlags::extendedMetricsUuid, Any())).AlwaysReturn(&mockExtendedMetricsCharacteristic.get());
-            Fake(Method(mockExtendedMetricsCharacteristic, setCallbacks));
+            When(OverloadedMethod(mockExtendedMetricService, createCharacteristic, NimBLECharacteristic * (const std::string, const unsigned int)).Using(CommonBleFlags::extendedMetricsUuid, Any())).AlwaysReturn(&mockExtendedMetricsCharacteristicWithCorrectParams.get());
+            Fake(Method(mockExtendedMetricsCharacteristicWithCorrectParams, setCallbacks));
 
             extendedMetricBleService.setup(&mockNimBLEServer.get());
 
@@ -94,7 +94,7 @@ TEST_CASE("ExtendedMetricBleService", "[ble-service]")
                 OverloadedMethod(mockExtendedMetricService, createCharacteristic, NimBLECharacteristic * (const std::string, const unsigned int))
                     .Using(CommonBleFlags::extendedMetricsUuid, expectedMeasurementProperty))
                 .Once();
-            Verify(Method(mockExtendedMetricsCharacteristic, setCallbacks)).Once();
+            Verify(Method(mockExtendedMetricsCharacteristicWithCorrectParams, setCallbacks)).Once();
         }
     }
 

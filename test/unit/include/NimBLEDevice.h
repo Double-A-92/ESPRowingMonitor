@@ -1,4 +1,6 @@
 // NOLINTBEGIN
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 #pragma once
 
 #include <span>
@@ -87,7 +89,7 @@ public:
         return &_data.back() + 1;
     }
 
-    const unsigned char operator[](size_t index) const
+    unsigned char operator[](size_t index) const
     {
         return _data[index];
     }
@@ -129,6 +131,9 @@ public:
 
 class NimBLEConnInfo
 {
+protected:
+    ~NimBLEConnInfo() = default;
+
 public:
     virtual uint16_t getConnHandle() = 0;
 };
@@ -139,6 +144,9 @@ class NimBLECharacteristic;
 
 class NimBLEServerCallbacks
 {
+protected:
+    ~NimBLEServerCallbacks() = default;
+
 public:
     virtual void onConnect(NimBLEServer *pServer, NimBLEConnInfo &connInfo) {};
     virtual void onDisconnect(NimBLEServer *pServer, NimBLEConnInfo &connInfo, int reason) {};
@@ -146,6 +154,9 @@ public:
 
 class NimBLECharacteristicCallbacks
 {
+protected:
+    ~NimBLECharacteristicCallbacks() = default;
+
 public:
     virtual void onWrite(NimBLECharacteristic *pCharacteristic, NimBLEConnInfo &connInfo) {};
     virtual void onSubscribe(NimBLECharacteristic *pCharacteristic, NimBLEConnInfo &connInfo, unsigned short subValue) {};
@@ -153,6 +164,9 @@ public:
 
 class NimBLEServer
 {
+protected:
+    ~NimBLEServer() = default;
+
 public:
     NimBLEServerCallbacks *callbacks;
 
@@ -176,6 +190,9 @@ extern fakeit::Mock<NimBLEServer> mockNimBLEServer;
 
 class NimBLECharacteristic
 {
+protected:
+    ~NimBLECharacteristic() = default;
+
 public:
     NimBLECharacteristicCallbacks *callbacks;
 
@@ -213,6 +230,9 @@ extern fakeit::Mock<NimBLECharacteristic> mockNimBLECharacteristic;
 
 class NimBLEService
 {
+protected:
+    ~NimBLEService() = default;
+
 public:
     virtual NimBLECharacteristic *createCharacteristic(const unsigned short uuid, unsigned int properties) = 0;
     virtual NimBLECharacteristic *createCharacteristic(const std::string uuid, unsigned int properties) = 0;
@@ -223,6 +243,9 @@ extern fakeit::Mock<NimBLEService> mockNimBLEService;
 
 class NimBLEAdvertising
 {
+protected:
+    ~NimBLEAdvertising() = default;
+
 public:
     virtual bool start() = 0;
     virtual bool stop() = 0;
@@ -267,4 +290,5 @@ public:
         mockNimBLEServer.get().setSecurityAuth(bonding, middleProtection, secureConnection);
     };
 };
+#pragma GCC diagnostic pop
 // NOLINTEND

@@ -1,3 +1,4 @@
+// NOLINTBEGIN(cppcoreguidelines-use-enum-class)
 #pragma once
 
 typedef enum gpio_num_t
@@ -43,7 +44,7 @@ typedef enum gpio_num_t
     GPIO_NUM_38 = 38,
     GPIO_NUM_39 = 39,
     GPIO_NUM_47 = 47,
-    GPIO_NUM_MAX,
+    GPIO_NUM_MAX = 48,
 } gpio_num_t;
 
 typedef enum
@@ -64,3 +65,4 @@ typedef enum
 } esp_sleep_source_t;
 
 typedef esp_sleep_source_t esp_sleep_wakeup_cause_t;
+// NOLINTEND(cppcoreguidelines-use-enum-class)

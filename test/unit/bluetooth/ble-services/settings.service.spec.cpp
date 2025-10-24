@@ -31,7 +31,7 @@ TEST_CASE("SettingsBleService", "[ble-service]")
     const auto logLevel = ArduinoLogLevel::LogLevelVerbose;
     const auto logFileOpen = true;
 
-    const unsigned char settings =
+    const unsigned char settingsTestData =
         ((Configurations::enableBluetoothDeltaTimeLogging ? static_cast<unsigned char>(logToBluetooth) + 1 : 0) << 0U) |
         ((Configurations::supportSdCardLogging && logFileOpen ? static_cast<unsigned char>(logToSdCard) + 1 : 0) << 2U) |
         (static_cast<unsigned char>(logLevel) << 4U) |
@@ -49,7 +49,7 @@ TEST_CASE("SettingsBleService", "[ble-service]")
     const auto dragFactorUpperThreshold = static_cast<unsigned short>(roundf(RowerProfile::Defaults::upperDragFactorThreshold * ISettingsBleService::dragFactorThresholdScale));
 
     const std::array<unsigned char, ISettingsBleService::settingsPayloadSize> expectedInitialSettings = {
-        settings,
+        settingsTestData,
         static_cast<unsigned char>(flywheelInertia),
         static_cast<unsigned char>(flywheelInertia >> 8),
         static_cast<unsigned char>(flywheelInertia >> 16),
@@ -216,41 +216,41 @@ TEST_CASE("SettingsBleService", "[ble-service]")
 
             SECTION("and split MachineSettings correctly into bytes")
             {
-                float flywheelInertia = 0.0F;
-                float concept2MagicNumber = 0.0F;
-                float sprocketRadius = 0.0F;
-                unsigned char impulsesPerRevolution = 0;
+                float flywheelInertiaZero = 0.0F;
+                float concept2MagicNumberZero = 0.0F;
+                float sprocketRadiusZero = 0.0F;
+                unsigned char impulsesPerRevolutionZero = 0;
 
-                When(OverloadedMethod(mockSettingsCharacteristic, setValue, void(const std::array<unsigned char, ISettingsBleService::settingsPayloadSize>))).Do([&flywheelInertia, &concept2MagicNumber, &sprocketRadius, &impulsesPerRevolution](const std::array<unsigned char, ISettingsBleService::settingsPayloadSize> &settings)
+                When(OverloadedMethod(mockSettingsCharacteristic, setValue, void(const std::array<unsigned char, ISettingsBleService::settingsPayloadSize>))).Do([&flywheelInertiaZero, &concept2MagicNumberZero, &sprocketRadiusZero, &impulsesPerRevolutionZero](const std::array<unsigned char, ISettingsBleService::settingsPayloadSize> &settings)
                                                                                                                                                                  {
-                    std::memcpy(&flywheelInertia, &settings[1], ISettingsBleService::flywheelInertiaPayloadSize);
-                    concept2MagicNumber = static_cast<float>(settings[5]) / ISettingsBleService::magicNumberScale;
-                    impulsesPerRevolution = settings[6];
-                    sprocketRadius = static_cast<float>(settings[7] | settings[8] << 8) /ISettingsBleService::sprocketRadiusScale / mToCm; });
+                    std::memcpy(&flywheelInertiaZero, &settings[1], ISettingsBleService::flywheelInertiaPayloadSize);
+                    concept2MagicNumberZero = static_cast<float>(settings[5]) / ISettingsBleService::magicNumberScale;
+                    impulsesPerRevolutionZero = settings[6];
+                    sprocketRadiusZero = static_cast<float>(settings[7] | settings[8] << 8) /ISettingsBleService::sprocketRadiusScale / mToCm; });
 
                 settingsBleService.broadcastSettings();
 
-                REQUIRE(flywheelInertia == RowerProfile::Defaults::flywheelInertia);
-                REQUIRE(concept2MagicNumber == RowerProfile::Defaults::concept2MagicNumber);
-                REQUIRE(impulsesPerRevolution == RowerProfile::Defaults::impulsesPerRevolution);
-                REQUIRE(sprocketRadius == RowerProfile::Defaults::sprocketRadius);
+                REQUIRE(flywheelInertiaZero == RowerProfile::Defaults::flywheelInertia);
+                REQUIRE(concept2MagicNumberZero == RowerProfile::Defaults::concept2MagicNumber);
+                REQUIRE(impulsesPerRevolutionZero == RowerProfile::Defaults::impulsesPerRevolution);
+                REQUIRE(sprocketRadiusZero == RowerProfile::Defaults::sprocketRadius);
             }
 
             SECTION("and split SensorSignalSettings correctly into bytes")
             {
                 unsigned short debounceTimeMin = 0;
-                unsigned int rowingStoppedThresholdPeriod = 0;
+                unsigned int rowingStoppedThresholdPeriodZero = 0;
 
                 When(OverloadedMethod(mockSettingsCharacteristic, setValue, void(const std::array<unsigned char, ISettingsBleService::settingsPayloadSize>)))
-                    .Do([&debounceTimeMin, &rowingStoppedThresholdPeriod](const std::array<unsigned char, ISettingsBleService::settingsPayloadSize> &settings)
+                    .Do([&debounceTimeMin, &rowingStoppedThresholdPeriodZero](const std::array<unsigned char, ISettingsBleService::settingsPayloadSize> &settings)
                         {
                         debounceTimeMin = settings[9] * ISettingsBleService::debounceTimeScale;
-                        rowingStoppedThresholdPeriod = settings[10] * ISettingsBleService::rowingStoppedThresholdScale; });
+                        rowingStoppedThresholdPeriodZero = settings[10] * ISettingsBleService::rowingStoppedThresholdScale; });
 
                 settingsBleService.broadcastSettings();
 
                 REQUIRE(debounceTimeMin == RowerProfile::Defaults::rotationDebounceTimeMin);
-                REQUIRE(rowingStoppedThresholdPeriod == RowerProfile::Defaults::rowingStoppedThresholdPeriod);
+                REQUIRE(rowingStoppedThresholdPeriodZero == RowerProfile::Defaults::rowingStoppedThresholdPeriod);
             }
 
             SECTION("and split DragFactorSettings correctly into bytes")
@@ -415,10 +415,10 @@ TEST_CASE("SettingsBleService", "[ble-service]")
             {
                 StrokeDetectionType strokeDetectionType = StrokeDetectionType::Torque;
                 unsigned char impulseDataArrayLength = 0;
-                float minimumPoweredTorque = 0.0F;
-                float minimumDragTorque = 0.0F;
-                float minimumRecoverySlopeMargin = 0.0F;
-                float minimumRecoverySlope = 0.0F;
+                float minimumPoweredTorqueZero = 0.0F;
+                float minimumDragTorqueZero = 0.0F;
+                float minimumRecoverySlopeMarginZero = 0.0F;
+                float minimumRecoverySlopeZero = 0.0F;
                 unsigned int minimumRecoveryTime = 0;
                 unsigned int minimumDriveTime = 0;
                 unsigned char driveHandleForcesMaxCapacity = 0;
@@ -428,10 +428,10 @@ TEST_CASE("SettingsBleService", "[ble-service]")
                         {
                             strokeDetectionType = static_cast<StrokeDetectionType>(settings[0] & 0x03);
                             impulseDataArrayLength = (settings[0] >> 2) & 0x1F;
-                            minimumPoweredTorque = static_cast<float>(static_cast<short>(settings[1] | settings[2] << 8)) / ISettingsBleService::poweredTorqueScale;
-                            minimumDragTorque = static_cast<float>(static_cast<short>(settings[3] | settings[4] << 8)) / ISettingsBleService::dragTorqueScale;
-                            minimumRecoverySlopeMargin = std::bit_cast<float>(static_cast<unsigned int>(settings[5] | settings[6] << 8 | settings[7] << 16 | settings[8] << 24)) / ISettingsBleService::recoverySlopeMarginPayloadScale;
-                            minimumRecoverySlope = static_cast<float>(static_cast<short>(settings[9] | settings[10] << 8)) / ISettingsBleService::recoverySlopeScale;
+                            minimumPoweredTorqueZero = static_cast<float>(static_cast<short>(settings[1] | settings[2] << 8)) / ISettingsBleService::poweredTorqueScale;
+                            minimumDragTorqueZero = static_cast<float>(static_cast<short>(settings[3] | settings[4] << 8)) / ISettingsBleService::dragTorqueScale;
+                            minimumRecoverySlopeMarginZero = std::bit_cast<float>(static_cast<unsigned int>(settings[5] | settings[6] << 8 | settings[7] << 16 | settings[8] << 24)) / ISettingsBleService::recoverySlopeMarginPayloadScale;
+                            minimumRecoverySlopeZero = static_cast<float>(static_cast<short>(settings[9] | settings[10] << 8)) / ISettingsBleService::recoverySlopeScale;
                             const auto strokeTimes = static_cast<unsigned int>(settings[11] | settings[12] << 8 | settings[13] << 16);
                             minimumRecoveryTime = strokeTimes & 0xFFF;
                             minimumDriveTime = strokeTimes >> 12;
@@ -441,10 +441,10 @@ TEST_CASE("SettingsBleService", "[ble-service]")
 
                 REQUIRE(strokeDetectionType == RowerProfile::Defaults::strokeDetectionType);
                 REQUIRE(impulseDataArrayLength == RowerProfile::Defaults::impulseDataArrayLength);
-                REQUIRE(minimumPoweredTorque == RowerProfile::Defaults::minimumPoweredTorque);
-                REQUIRE(minimumDragTorque == RowerProfile::Defaults::minimumDragTorque);
-                REQUIRE(minimumRecoverySlopeMargin == RowerProfile::Defaults::minimumRecoverySlopeMargin);
-                REQUIRE(minimumRecoverySlope == RowerProfile::Defaults::minimumRecoverySlope);
+                REQUIRE(minimumPoweredTorqueZero == RowerProfile::Defaults::minimumPoweredTorque);
+                REQUIRE(minimumDragTorqueZero == RowerProfile::Defaults::minimumDragTorque);
+                REQUIRE(minimumRecoverySlopeMarginZero == RowerProfile::Defaults::minimumRecoverySlopeMargin);
+                REQUIRE(minimumRecoverySlopeZero == RowerProfile::Defaults::minimumRecoverySlope);
                 REQUIRE(minimumRecoveryTime == RowerProfile::Defaults::minimumRecoveryTime / ISettingsBleService::minimumStrokeTimesScale);
                 REQUIRE(minimumDriveTime == RowerProfile::Defaults::minimumDriveTime / ISettingsBleService::minimumStrokeTimesScale);
                 REQUIRE(driveHandleForcesMaxCapacity == RowerProfile::Defaults::driveHandleForcesMaxCapacity);

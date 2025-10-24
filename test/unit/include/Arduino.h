@@ -1,4 +1,6 @@
 // NOLINTBEGIN
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 #pragma once
 
 #include <string>
@@ -39,6 +41,9 @@ public:
 
 class MockArduino
 {
+protected:
+    ~MockArduino() = default;
+
 public:
     virtual void abort(int errorCode) = 0;
     virtual unsigned long analogReadMilliVolts(unsigned char pin) = 0;
@@ -159,11 +164,14 @@ inline void esp_restart() {}
 
 class HardwareSerial : public Print
 {
+protected:
+    ~HardwareSerial() = default;
+
 public:
     virtual inline void begin(unsigned long baud, unsigned int config = 134217756, char rxPin = -1, char txPin = -1, bool invert = false, unsigned long timeout_ms = 20'000UL, unsigned char rxfifo_full_thrhd = 112) {}
     virtual inline void end(bool fullyTerminate = true) {}
     virtual inline void updateBaudRate(unsigned long baud) {}
-    virtual inline const int available() { return 0; }
+    virtual inline int available() { return 0; }
     virtual inline int availableForWrite() { return 0; }
     inline void printf(const std::string __fmt, ...) {};
     virtual inline void flush() {}
@@ -175,4 +183,5 @@ public:
 extern fakeit::Mock<HardwareSerial> mockSerial;
 extern HardwareSerial &Serial;
 
+#pragma GCC diagnostic pop
 // NOLINTEND

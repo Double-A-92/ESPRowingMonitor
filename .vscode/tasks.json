@@ -115,6 +115,30 @@
 		},
 		{
 			"type": "cppbuild",
+			"label": "test with clang-tidy",
+			"command": "cmake",
+			"args": [
+				"--build",
+				"build",
+				"--target",
+				"run-unit-test-lint",
+				"--parallel",
+				"4"
+			],
+			"options": {
+				"cwd": "${cwd}"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": {
+				"kind": "test",
+				"isDefault": false
+			},
+			"detail": "compiler: make"
+		},
+		{
+			"type": "cppbuild",
 			"label": "configure project",
 			"command": "cmake",
 			"args": [

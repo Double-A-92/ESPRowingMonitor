@@ -10,7 +10,7 @@ using std::vector;
 class TSQuadraticSeries
 {
     unsigned char maxSeriesLength;
-    unsigned short maxSeriesAInnerLength = ((maxSeriesLength - 2) * (maxSeriesLength - 1)) / 2;
+    unsigned short maxSeriesAInnerLength = ((maxSeriesLength - 2U) * (maxSeriesLength - 1U)) / 2U;
     unsigned short maxSeriesALength;
     unsigned short maxAllocationCapacity;
 
@@ -26,7 +26,7 @@ class TSQuadraticSeries
 
     static constexpr unsigned short calculateMaxSeriesALength(const unsigned short seriesLength, const unsigned short seriesAInnerLength)
     {
-        unsigned char baseValue = seriesAInnerLength;
+        unsigned short baseValue = seriesAInnerLength;
         unsigned short sum = baseValue;
         for (unsigned char i = 0; i < seriesLength - 3; ++i)
         {
