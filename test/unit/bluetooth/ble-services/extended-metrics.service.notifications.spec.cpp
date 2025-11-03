@@ -47,10 +47,10 @@ TEST_CASE("ExtendedMetricBleService broadcast", "[ble-service]")
         const Configurations::precision dragCoefficient = 110 / 1e6;
         const Configurations::precision avgStrokePower = 301.123455;
 
-        const unsigned short expectedRecoveryDuration = lroundl(recoveryDuration / secInMicroSec * 4'096);
-        const unsigned short expectedDriveDuration = lroundl(driveDuration / secInMicroSec * 4'096);
-        const auto expectedAvgStrokePower = static_cast<short>(lround(avgStrokePower));
-        const auto expectedDragFactor = static_cast<unsigned char>(lround(dragCoefficient * 1e6));
+        const unsigned short expectedRecoveryDuration = std::lroundl(recoveryDuration / secInMicroSec * 4'096);
+        const unsigned short expectedDriveDuration = std::lroundl(driveDuration / secInMicroSec * 4'096);
+        const auto expectedAvgStrokePower = static_cast<short>(std::lround(avgStrokePower));
+        const auto expectedDragFactor = static_cast<unsigned char>(std::lround(dragCoefficient * 1e6));
         const auto expectedStackSize = 2'368U;
 
         Fake(OverloadedMethod(mockExtendedMetricsCharacteristic, setValue, void(const std::array<unsigned char, 7U>)));

@@ -22,7 +22,7 @@ esp_err_t esp_read_mac(uint8_t *mac, esp_mac_type_t type)
 {
     const unsigned char macAddressLength = 6U;
     std::array<unsigned char, macAddressLength> base_mac_addr{0x01, 0x11, 0x10, 0x09, 0x08, 0x07};
-    memcpy(mac, base_mac_addr.data(), macAddressLength);
+    std::memcpy(mac, base_mac_addr.data(), macAddressLength);
 
     return ESP_OK;
 }

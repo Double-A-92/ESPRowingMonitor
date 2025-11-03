@@ -99,10 +99,10 @@ unsigned char PowerManagerService::measureBattery() const
 
     if constexpr (isOdd(batteryLevels.size()))
     {
-        return lround(batteryLevels[mid]);
+        return std::lround(batteryLevels[mid]);
     }
 
-    return lround((batteryLevels[mid] + *std::ranges::max_element(cbegin(batteryLevels), std::next(cbegin(batteryLevels), mid))) / 2);
+    return std::lround((batteryLevels[mid] + *std::ranges::max_element(cbegin(batteryLevels), std::next(cbegin(batteryLevels), mid))) / 2);
 }
 
 unsigned char PowerManagerService::setupBatteryMeasurement() const
@@ -118,7 +118,7 @@ unsigned char PowerManagerService::setupBatteryMeasurement() const
         delay(100);
     }
 
-    return lround((float)sum / (float)i);
+    return std::lround((float)sum / (float)i);
 }
 
 void PowerManagerService::printWakeupReason()

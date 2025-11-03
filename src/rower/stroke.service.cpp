@@ -136,7 +136,7 @@ void StrokeService::calculateDragCoefficient()
 
 void StrokeService::calculateAvgStrokePower()
 {
-    avgStrokePower = lastValidDragCoefficient * pow((recoveryTotalAngularDisplacement + driveTotalAngularDisplacement) / ((driveDuration + recoveryDuration) / 1e6), 3);
+    avgStrokePower = lastValidDragCoefficient * std::pow((recoveryTotalAngularDisplacement + driveTotalAngularDisplacement) / ((driveDuration + recoveryDuration) / 1e6), 3);
 }
 
 void StrokeService::driveStart()
@@ -222,7 +222,7 @@ void StrokeService::recoveryEnd()
     recoveryDeltaTimes.reset();
     calculateAvgStrokePower();
 
-    distancePerAngularDisplacement = pow((lastValidDragCoefficient * 1e6) / machineSettings.concept2MagicNumber, 1 / 3.0);
+    distancePerAngularDisplacement = std::pow((lastValidDragCoefficient * 1e6) / machineSettings.concept2MagicNumber, 1 / 3.0);
     distance = recoveryStartDistance + distancePerAngularDisplacement * (distance == 0 ? rowingTotalAngularDisplacement : recoveryTotalAngularDisplacement);
     if (distance > 0)
     {
@@ -276,7 +276,7 @@ void StrokeService::processData(const RowingDataModels::FlywheelData data)
     currentAngularAcceleration = angularAccelerationMatrix[0].average();
 
     torqueBeforeFlank = currentTorque;
-    currentTorque = machineSettings.flywheelInertia * currentAngularAcceleration + dragCoefficient * pow(currentAngularVelocity, 2);
+    currentTorque = machineSettings.flywheelInertia * currentAngularAcceleration + dragCoefficient * std::pow(currentAngularVelocity, 2);
 
     // If rotation delta exceeds the max debounce time and we are in Recovery Phase, the rower must have stopped. Setting cyclePhase to "Stopped"
     if (cyclePhase == CyclePhase::Recovery && rowingTotalTime - recoveryStartTime > rowingStoppedThresholdPeriod)

@@ -80,10 +80,10 @@ void ExtendedMetricBleService::ExtendedMetricsParams::task(void *parameters)
         const auto *const params = static_cast<const ExtendedMetricBleService::ExtendedMetricsParams *>(parameters);
 
         const auto secInMicroSec = 1e6;
-        const auto avgStrokePower = static_cast<short>(lround(params->avgStrokePower));
-        const auto recoveryDuration = static_cast<unsigned short>(lround(params->recoveryDuration / secInMicroSec * 4'096));
-        const auto driveDuration = static_cast<unsigned short>(lround(params->driveDuration / secInMicroSec * 4'096));
-        const auto dragFactor = static_cast<unsigned char>(lround(params->dragCoefficient * 1e6));
+        const auto avgStrokePower = static_cast<short>(std::lround(params->avgStrokePower));
+        const auto recoveryDuration = static_cast<unsigned short>(std::lround(params->recoveryDuration / secInMicroSec * 4'096));
+        const auto driveDuration = static_cast<unsigned short>(std::lround(params->driveDuration / secInMicroSec * 4'096));
+        const auto dragFactor = static_cast<unsigned char>(std::lround(params->dragCoefficient * 1e6));
 
         const auto length = 7U;
         std::array<unsigned char, length> temp = {

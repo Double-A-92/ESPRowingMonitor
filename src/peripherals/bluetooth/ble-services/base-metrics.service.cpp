@@ -74,9 +74,9 @@ void BaseMetricsBleService::cscTask(void *parameters)
         const auto *const params = static_cast<const BaseMetricsBleService::BaseMetricsParams *>(parameters);
 
         const auto secInMicroSec = 1e6L;
-        const auto revTime = static_cast<unsigned short>(lroundl((params->data.revTime / secInMicroSec) * 1'024) % USHRT_MAX);
-        const auto revCount = static_cast<unsigned int>(lround(params->data.distance));
-        const auto strokeTime = static_cast<unsigned short>(lroundl((params->data.strokeTime / secInMicroSec) * 1'024) % USHRT_MAX);
+        const auto revTime = static_cast<unsigned short>(std::lroundl((params->data.revTime / secInMicroSec) * 1'024) % USHRT_MAX);
+        const auto revCount = static_cast<unsigned int>(std::lround(params->data.distance));
+        const auto strokeTime = static_cast<unsigned short>(std::lroundl((params->data.strokeTime / secInMicroSec) * 1'024) % USHRT_MAX);
 
         const auto length = 11U;
         array<unsigned char, length> temp = {
@@ -107,10 +107,10 @@ void BaseMetricsBleService::pscTask(void *parameters)
         const auto *const params = static_cast<const BaseMetricsBleService::BaseMetricsParams *>(parameters);
 
         const auto secInMicroSec = 1e6L;
-        const auto revTime = static_cast<unsigned short>(lroundl((params->data.revTime / secInMicroSec) * 2'048) % USHRT_MAX);
-        const auto revCount = static_cast<unsigned int>(lround(params->data.distance));
-        const auto strokeTime = static_cast<unsigned short>(lroundl((params->data.strokeTime / secInMicroSec) * 1'024) % USHRT_MAX);
-        const auto avgStrokePower = static_cast<short>(lround(params->data.avgStrokePower));
+        const auto revTime = static_cast<unsigned short>(std::lroundl((params->data.revTime / secInMicroSec) * 2'048) % USHRT_MAX);
+        const auto revCount = static_cast<unsigned int>(std::lround(params->data.distance));
+        const auto strokeTime = static_cast<unsigned short>(std::lroundl((params->data.strokeTime / secInMicroSec) * 1'024) % USHRT_MAX);
+        const auto avgStrokePower = static_cast<short>(std::lround(params->data.avgStrokePower));
 
         const auto length = 14U;
         array<unsigned char, length> temp = {
@@ -145,17 +145,16 @@ void BaseMetricsBleService::ftmsTask(void *parameters)
         const auto *const params = static_cast<const BaseMetricsBleService::BaseMetricsParams *>(parameters);
 
         const auto secInMicroSec = 1e6L;
-        const auto dragFactor = static_cast<unsigned char>(lround(params->data.dragCoefficient * 1e6));
+        const auto dragFactor = static_cast<unsigned char>(std::lround(params->data.dragCoefficient * 1e6));
 
         const auto strokeTimeDelta = ((params->data.strokeTime - params->data.previousStrokeTime) / secInMicroSec / 60U);
-        const auto strokeRate = static_cast<unsigned char>(strokeTimeDelta > 0 ? lroundl((params->data.strokeCount - params->data.previousStrokeCount) / strokeTimeDelta) : 0);
+        const auto strokeRate = static_cast<unsigned char>(strokeTimeDelta > 0 ? std::lroundl((params->data.strokeCount - params->data.previousStrokeCount) / strokeTimeDelta) : 0);
 
         const auto revTimeDelta = ((params->data.revTime - params->data.previousRevTime) / secInMicroSec);
         const auto distanceDelta = ((params->data.distance - params->data.previousDistance) / 100U);
-        const auto pace500m = static_cast<unsigned short>(distanceDelta > 0 ? lroundl(500U * (revTimeDelta / distanceDelta)) : 0);
-
-        const auto distance = static_cast<unsigned int>(lround(params->data.distance / 100U));
-        const auto avgStrokePower = static_cast<short>(lround(params->data.avgStrokePower));
+        const auto pace500m = static_cast<unsigned short>(distanceDelta > 0 ? std::lroundl(500U * (revTimeDelta / distanceDelta)) : 0);
+        const auto distance = static_cast<unsigned int>(std::lround(params->data.distance / 100U));
+        const auto avgStrokePower = static_cast<short>(std::lround(params->data.avgStrokePower));
 
         const auto length = 14U;
         array<unsigned char, length> temp = {

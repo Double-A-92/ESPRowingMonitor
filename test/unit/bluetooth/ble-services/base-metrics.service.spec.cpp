@@ -385,10 +385,10 @@ TEST_CASE("BaseMetricsBleService", "[ble-service]")
 
         SECTION("notify PSC with the correct binary data")
         {
-            const auto expectedRevTime = static_cast<unsigned short>(lroundl((metrics.revTime / secInMicroSec) * 2'048) % USHRT_MAX);
-            const auto expectedDistance = static_cast<unsigned int>(lround(metrics.distance));
-            const auto expectedStrokeTime = static_cast<unsigned short>(lroundl((metrics.strokeTime / secInMicroSec) * 1'024) % USHRT_MAX);
-            const auto expectedAvgStrokePower = static_cast<short>(lround(metrics.avgStrokePower));
+            const auto expectedRevTime = static_cast<unsigned short>(std::lroundl((metrics.revTime / secInMicroSec) * 2'048) % USHRT_MAX);
+            const auto expectedDistance = static_cast<unsigned int>(std::lround(metrics.distance));
+            const auto expectedStrokeTime = static_cast<unsigned short>(std::lroundl((metrics.strokeTime / secInMicroSec) * 1'024) % USHRT_MAX);
+            const auto expectedAvgStrokePower = static_cast<short>(std::lround(metrics.avgStrokePower));
 
             const auto length = 14U;
             std::array<unsigned char, length> expectedData = {
@@ -421,9 +421,9 @@ TEST_CASE("BaseMetricsBleService", "[ble-service]")
 
         SECTION("notify CSC with the correct binary data")
         {
-            const auto expectedRevTime = static_cast<unsigned short>(lroundl((metrics.revTime / secInMicroSec) * 1'024) % USHRT_MAX);
-            const auto expectedDistance = static_cast<unsigned int>(lround(metrics.distance));
-            const auto expectedStrokeTime = static_cast<unsigned short>(lroundl((metrics.strokeTime / secInMicroSec) * 1'024) % USHRT_MAX);
+            const auto expectedRevTime = static_cast<unsigned short>(std::lroundl((metrics.revTime / secInMicroSec) * 1'024) % USHRT_MAX);
+            const auto expectedDistance = static_cast<unsigned int>(std::lround(metrics.distance));
+            const auto expectedStrokeTime = static_cast<unsigned short>(std::lroundl((metrics.strokeTime / secInMicroSec) * 1'024) % USHRT_MAX);
 
             const auto length = 11U;
             std::array<unsigned char, length> expectedData = {
@@ -455,11 +455,11 @@ TEST_CASE("BaseMetricsBleService", "[ble-service]")
         {
             SECTION("when stroke rate is below UCHAR_MAX")
             {
-                const auto distance = static_cast<unsigned int>(lround(metrics.distance / 100U));
-                const auto avgStrokePower = static_cast<short>(lround(metrics.avgStrokePower));
-                const auto dragFactor = static_cast<unsigned char>(lround(metrics.dragCoefficient * 1e6));
-                const unsigned char strokeRate = static_cast<unsigned char>(lroundl((metrics.strokeCount - metrics.previousStrokeCount) / ((metrics.strokeTime - metrics.previousStrokeTime) / secInMicroSec / 60U)));
-                const auto pace500m = static_cast<unsigned short>(lroundl(500U / (((metrics.distance - metrics.previousDistance) / 100U) / ((metrics.revTime - metrics.previousRevTime) / secInMicroSec))));
+                const auto distance = static_cast<unsigned int>(std::lround(metrics.distance / 100U));
+                const auto avgStrokePower = static_cast<short>(std::lround(metrics.avgStrokePower));
+                const auto dragFactor = static_cast<unsigned char>(std::lround(metrics.dragCoefficient * 1e6));
+                const auto strokeRate = static_cast<unsigned char>(std::lroundl((metrics.strokeCount - metrics.previousStrokeCount) / ((metrics.strokeTime - metrics.previousStrokeTime) / secInMicroSec / 60U)));
+                const auto pace500m = static_cast<unsigned short>(std::lroundl(500U / (((metrics.distance - metrics.previousDistance) / 100U) / ((metrics.revTime - metrics.previousRevTime) / secInMicroSec))));
 
                 const auto length = 14U;
                 std::array<unsigned char, length> expectedData = {
@@ -507,10 +507,10 @@ TEST_CASE("BaseMetricsBleService", "[ble-service]")
                     .dragCoefficient = 110 / 1e6,
                 };
 
-                const auto distance = static_cast<unsigned int>(lround(metricsMaxStroke.distance / 100U));
-                const auto avgStrokePower = static_cast<short>(lround(metricsMaxStroke.avgStrokePower));
-                const auto dragFactor = static_cast<unsigned char>(lround(metricsMaxStroke.dragCoefficient * 1e6));
-                const auto pace500m = static_cast<unsigned short>(lroundl(500U / (((metricsMaxStroke.distance - metricsMaxStroke.previousDistance) / 100U) / ((metricsMaxStroke.revTime - metricsMaxStroke.previousRevTime) / secInMicroSec))));
+                const auto distance = static_cast<unsigned int>(std::lround(metricsMaxStroke.distance / 100U));
+                const auto avgStrokePower = static_cast<short>(std::lround(metricsMaxStroke.avgStrokePower));
+                const auto dragFactor = static_cast<unsigned char>(std::lround(metricsMaxStroke.dragCoefficient * 1e6));
+                const auto pace500m = static_cast<unsigned short>(std::lroundl(500U / (((metricsMaxStroke.distance - metricsMaxStroke.previousDistance) / 100U) / ((metricsMaxStroke.revTime - metricsMaxStroke.previousRevTime) / secInMicroSec))));
 
                 const auto length = 14U;
                 std::array<unsigned char, length> expectedData = {

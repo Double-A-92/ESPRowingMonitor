@@ -55,7 +55,7 @@ unsigned long long StrokeController::getLastRevTime() const
 
 unsigned int StrokeController::getRevCount() const
 {
-    return lround(rowerState.distance);
+    return std::lround(rowerState.distance);
 }
 
 unsigned long long StrokeController::getLastStrokeTime() const
@@ -95,7 +95,7 @@ Configurations::precision StrokeController::getRecoveryDuration() const
 
 short StrokeController::getAvgStrokePower() const
 {
-    return static_cast<short>(round(rowerState.avgStrokePower));
+    return static_cast<short>(std::round(rowerState.avgStrokePower));
 }
 
 Configurations::precision StrokeController::getDistance() const
@@ -105,7 +105,7 @@ Configurations::precision StrokeController::getDistance() const
 
 unsigned char StrokeController::getDragFactor() const
 {
-    return lround(rowerState.dragCoefficient * 1e6);
+    return std::lround(rowerState.dragCoefficient * 1e6);
 }
 
 unsigned int StrokeController::getPreviousRevCount() const
@@ -125,7 +125,7 @@ unsigned long StrokeController::getPreviousRawImpulseCount() const
 
 void StrokeController::setPreviousRevCount()
 {
-    previousRevCount = lround(rowerState.distance);
+    previousRevCount = std::lround(rowerState.distance);
 }
 
 void StrokeController::setPreviousStrokeCount()
