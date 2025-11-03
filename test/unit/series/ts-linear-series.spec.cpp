@@ -1,3 +1,4 @@
+// NOLINTBEGIN(readability-function-cognitive-complexity,cppcoreguidelines-avoid-do-while)
 #include "catch2/catch_test_macros.hpp"
 
 #include "../../../src/utils/series/ts-linear-series.h"
@@ -41,3 +42,4 @@ TEST_CASE("Theil Sen Linear Regression", "[regression]")
         REQUIRE(tsReg.median() == 0);
     }
 }
+// NOLINTEND(readability-function-cognitive-complexity,cppcoreguidelines-avoid-do-while)

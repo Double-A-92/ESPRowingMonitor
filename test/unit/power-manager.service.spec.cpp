@@ -1,3 +1,6 @@
+// NOLINTBEGIN(readability-function-cognitive-complexity, cppcoreguidelines-avoid-do-while, clang-analyzer-cplusplus.NewDeleteLeaks, clang-analyzer-cplusplus.NewDelete)
+#include <cmath>
+
 #include "catch2/catch_test_macros.hpp"
 #include "fakeit.hpp"
 
@@ -127,3 +130,4 @@ TEST_CASE("PowerManagerService", "[utils]")
         }
     }
 }
+// NOLINTEND(readability-function-cognitive-complexity, cppcoreguidelines-avoid-do-while, clang-analyzer-cplusplus.NewDeleteLeaks, clang-analyzer-cplusplus.NewDelete)

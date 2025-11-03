@@ -1,4 +1,4 @@
-// NOLINTBEGIN(readability-magic-numbers)
+// NOLINTBEGIN(readability-magic-numbers, readability-function-cognitive-complexity, cppcoreguidelines-avoid-do-while, clang-analyzer-cplusplus.NewDeleteLeaks, clang-analyzer-cplusplus.NewDelete)
 #include "catch2/catch_test_macros.hpp"
 #include "fakeit.hpp"
 
@@ -208,4 +208,4 @@ TEST_CASE("SdCardService", "[peripheral]")
         Verify(Method(mockSdFat32, end)).Once();
     }
 }
-// NOLINTEND(readability-magic-numbers)
+// NOLINTEND(readability-magic-numbers, readability-function-cognitive-complexity, cppcoreguidelines-avoid-do-while, clang-analyzer-cplusplus.NewDeleteLeaks, clang-analyzer-cplusplus.NewDelete)

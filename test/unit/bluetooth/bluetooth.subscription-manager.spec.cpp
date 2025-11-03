@@ -1,4 +1,4 @@
-// NOLINTBEGIN(readability-magic-numbers)
+// NOLINTBEGIN(readability-magic-numbers, cppcoreguidelines-avoid-do-while)
 #include "catch2/catch_test_macros.hpp"
 #include "fakeit.hpp"
 
@@ -33,4 +33,4 @@ TEST_CASE("SubscriptionManagerCallbacks onSubscribed method", "[callbacks]")
         REQUIRE(chunkedNotifyMetricCallback.getClientIds().empty());
     }
 }
-// NOLINTEND(readability-magic-numbers)
+// NOLINTEND(readability-magic-numbers, cppcoreguidelines-avoid-do-while)

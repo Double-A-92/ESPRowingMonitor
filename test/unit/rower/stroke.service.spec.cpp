@@ -1,4 +1,4 @@
-// NOLINTBEGIN(readability-magic-numbers)
+// NOLINTBEGIN(readability-magic-numbers,readability-function-cognitive-complexity,cppcoreguidelines-avoid-do-while)
 #include <fstream>
 #include <vector>
 
@@ -334,4 +334,4 @@ TEST_CASE("StrokeService")
         }
     }
 }
-// NOLINTEND(readability-magic-numbers)
+// NOLINTEND(readability-magic-numbers,readability-function-cognitive-complexity,cppcoreguidelines-avoid-do-while)

@@ -1,3 +1,4 @@
+// NOLINTBEGIN(cppcoreguidelines-avoid-do-while)
 #include "catch2/catch_test_macros.hpp"
 #include "catch2/matchers/catch_matchers_floating_point.hpp"
 
@@ -25,3 +26,4 @@ TEST_CASE("Ordinary Least Square Linear Regression", "[regression]")
         CHECK_THAT(olsReg.goodnessOfFit(), Catch::Matchers::WithinRel(goodnessOfFitExpected, 0.00001));
     }
 }
+// NOLINTEND(cppcoreguidelines-avoid-do-while)

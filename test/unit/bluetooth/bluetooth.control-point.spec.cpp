@@ -1,4 +1,4 @@
-// NOLINTBEGIN(readability-magic-numbers, readability-function-cognitive-complexity)
+// NOLINTBEGIN(readability-magic-numbers, readability-function-cognitive-complexity, cppcoreguidelines-avoid-do-while, modernize-type-traits)
 #include <array>
 #include <bit>
 #include <utility>
@@ -1005,4 +1005,4 @@ TEST_CASE("ControlPointCallbacks onWrite method should", "[callbacks]")
 #endif
     }
 }
-// NOLINTEND(readability-magic-numbers, readability-function-cognitive-complexity)
+// NOLINTEND(readability-magic-numbers, readability-function-cognitive-complexity, cppcoreguidelines-avoid-do-while, modernize-type-traits)

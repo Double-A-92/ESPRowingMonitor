@@ -1,4 +1,4 @@
-// NOLINTBEGIN(readability-magic-numbers)
+// NOLINTBEGIN(readability-magic-numbers, readability-function-cognitive-complexity, cppcoreguidelines-avoid-do-while, modernize-type-traits)
 #include <ranges>
 #include <span>
 #include <utility>
@@ -585,4 +585,4 @@ TEST_CASE("OtaUpdaterService", "[ota]")
         }
     }
 }
-// NOLINTEND(readability-magic-numbers)
+// NOLINTEND(readability-magic-numbers, readability-function-cognitive-complexity, cppcoreguidelines-avoid-do-while, modernize-type-traits)

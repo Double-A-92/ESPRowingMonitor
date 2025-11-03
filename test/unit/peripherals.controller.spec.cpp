@@ -1,4 +1,4 @@
-// NOLINTBEGIN(readability-magic-numbers)
+// NOLINTBEGIN(readability-magic-numbers, readability-function-cognitive-complexity, cppcoreguidelines-avoid-do-while)
 #include "catch2/catch_test_macros.hpp"
 #include "catch2/matchers/catch_matchers_container_properties.hpp"
 #include "catch2/matchers/catch_matchers_range_equals.hpp"
@@ -381,4 +381,4 @@ TEST_CASE("PeripheralController", "[peripheral]")
         }
     }
 }
-// NOLINTEND(readability-magic-numbers)
+// NOLINTEND(readability-magic-numbers, readability-function-cognitive-complexity, cppcoreguidelines-avoid-do-while)

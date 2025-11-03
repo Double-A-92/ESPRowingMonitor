@@ -1,4 +1,4 @@
-// NOLINTBEGIN(readability-magic-numbers)
+// NOLINTBEGIN(readability-magic-numbers,cppcoreguidelines-avoid-do-while,readability-function-cognitive-complexity)
 #include <utility>
 
 #include "catch2/catch_test_macros.hpp"
@@ -457,4 +457,4 @@ TEST_CASE("BluetoothController", "[peripheral]")
         }
     }
 }
-// NOLINTEND(readability-magic-numbers)
+// NOLINTEND(readability-magic-numbers,cppcoreguidelines-avoid-do-while,readability-function-cognitive-complexity)

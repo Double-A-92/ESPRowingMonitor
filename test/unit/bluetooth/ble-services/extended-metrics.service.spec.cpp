@@ -1,4 +1,4 @@
-// NOLINTBEGIN(readability-magic-numbers)
+// NOLINTBEGIN(readability-magic-numbers, cppcoreguidelines-avoid-do-while,readability-function-cognitive-complexity, modernize-type-traits)
 #include <string>
 #include <vector>
 
@@ -214,4 +214,4 @@ TEST_CASE("ExtendedMetricBleService", "[ble-service]")
         }
     }
 }
-// NOLINTEND(readability-magic-numbers)
+// NOLINTEND(readability-magic-numbers, cppcoreguidelines-avoid-do-while,readability-function-cognitive-complexity, modernize-type-traits)

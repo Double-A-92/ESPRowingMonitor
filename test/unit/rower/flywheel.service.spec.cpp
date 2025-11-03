@@ -1,4 +1,4 @@
-// NOLINTBEGIN(readability-magic-numbers,readability-function-cognitive-complexity,cppcoreguidelines-avoid-do-while)
+// NOLINTBEGIN(readability-magic-numbers,readability-function-cognitive-complexity,cppcoreguidelines-avoid-do-while, clang-analyzer-cplusplus.NewDelete, clang-analyzer-cplusplus.NewDeleteLeaks)
 #include <numeric>
 #include <vector>
 
@@ -211,4 +211,4 @@ TEST_CASE("FlywheelService", "[rower]")
         }
     }
 }
-// NOLINTEND(readability-magic-numbers,readability-function-cognitive-complexity,cppcoreguidelines-avoid-do-while)
+// NOLINTEND(readability-magic-numbers,readability-function-cognitive-complexity,cppcoreguidelines-avoid-do-while, clang-analyzer-cplusplus.NewDelete, clang-analyzer-cplusplus.NewDeleteLeaks)

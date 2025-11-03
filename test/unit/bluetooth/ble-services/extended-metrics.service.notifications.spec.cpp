@@ -1,4 +1,4 @@
-// NOLINTBEGIN(readability-magic-numbers)
+// NOLINTBEGIN(readability-magic-numbers, readability-function-cognitive-complexity, cppcoreguidelines-avoid-do-while, modernize-type-traits)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wshadow"
 
@@ -402,4 +402,4 @@ TEST_CASE("ExtendedMetricBleService broadcast", "[ble-service]")
     }
 }
 #pragma GCC diagnostic pop
-// NOLINTEND(readability-magic-numbers)
+// NOLINTEND(readability-magic-numbers, readability-function-cognitive-complexity, cppcoreguidelines-avoid-do-while, modernize-type-traits)
