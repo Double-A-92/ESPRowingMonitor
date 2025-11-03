@@ -31,7 +31,7 @@ void ExtendedMetricBleService::broadcastHandleForces(const vector<float> &handle
         coreStackSize + variableStackSize / 3,
         &handleForcesParams,
         1,
-        NULL,
+        nullptr,
         0);
 }
 
@@ -49,7 +49,7 @@ void ExtendedMetricBleService::broadcastDeltaTimes(const vector<unsigned long> &
         coreStackSize + deltaTimesParams.deltaTimes.size() * sizeof(unsigned long) / 3,
         &deltaTimesParams,
         1,
-        NULL,
+        nullptr,
         0);
 }
 
@@ -70,7 +70,7 @@ void ExtendedMetricBleService::broadcastExtendedMetrics(const Configurations::pr
         coreStackSize,
         &extendedMetricsParams,
         1,
-        NULL,
+        nullptr,
         0);
 }
 

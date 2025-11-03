@@ -105,7 +105,7 @@ void SdCardService::saveDeltaTime(const vector<unsigned long> &deltaTimes)
         stackCoreSize,
         &sdCardTaskParameters,
         1,
-        NULL,
+        nullptr,
         0);
 }
 

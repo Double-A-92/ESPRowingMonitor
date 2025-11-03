@@ -57,7 +57,7 @@ void BaseMetricsBleService::broadcastBaseMetrics(const BleMetricsModel::BleMetri
         coreStackSize,
         &parameters,
         1,
-        NULL,
+        nullptr,
         0);
 }
 
@@ -98,7 +98,7 @@ void BaseMetricsBleService::cscTask(void *parameters)
         params->characteristic->setValue(temp);
         params->characteristic->notify();
     }
-    vTaskDelete(NULL);
+    vTaskDelete(nullptr);
 }
 
 void BaseMetricsBleService::pscTask(void *parameters)
@@ -136,7 +136,7 @@ void BaseMetricsBleService::pscTask(void *parameters)
         params->characteristic->setValue(temp);
         params->characteristic->notify();
     }
-    vTaskDelete(NULL);
+    vTaskDelete(nullptr);
 }
 
 void BaseMetricsBleService::ftmsTask(void *parameters)
@@ -184,7 +184,7 @@ void BaseMetricsBleService::ftmsTask(void *parameters)
         params->characteristic->setValue(temp);
         params->characteristic->notify();
     }
-    vTaskDelete(NULL);
+    vTaskDelete(nullptr);
 }
 
 NimBLEService *BaseMetricsBleService::setupCscServices(NimBLEServer *const server)
