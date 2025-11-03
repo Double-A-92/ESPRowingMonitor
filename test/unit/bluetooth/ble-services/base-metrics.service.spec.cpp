@@ -1,5 +1,6 @@
 // NOLINTBEGIN(readability-magic-numbers)
 #include <array>
+#include <ranges>
 
 #include "catch2/catch_test_macros.hpp"
 #include "catch2/matchers/catch_matchers_vector.hpp"
@@ -338,8 +339,8 @@ TEST_CASE("BaseMetricsBleService", "[ble-service]")
         baseMetricsBleService.setup(&mockNimBLEServer.get(), BleServiceFlag::CscService);
 
         const std::vector<unsigned char> expectedClientIds{0, 1};
-        std::for_each(cbegin(expectedClientIds), cend(expectedClientIds), [&mockBaseMetricsCharacteristic](unsigned char clientId)
-                      { mockBaseMetricsCharacteristic.get().subscribe(clientId, 1); });
+        std::ranges::for_each(cbegin(expectedClientIds), cend(expectedClientIds), [&mockBaseMetricsCharacteristic](unsigned char clientId)
+                              { mockBaseMetricsCharacteristic.get().subscribe(clientId, 1); });
 
         const auto clientIds = baseMetricsBleService.getClientIds();
 

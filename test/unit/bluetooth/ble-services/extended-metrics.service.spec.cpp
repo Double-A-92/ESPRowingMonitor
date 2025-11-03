@@ -110,8 +110,8 @@ TEST_CASE("ExtendedMetricBleService", "[ble-service]")
         extendedMetricBleService.setup(&mockNimBLEServer.get());
 
         const std::vector<unsigned char> expectedClientIds{0, 1};
-        std::for_each(cbegin(expectedClientIds), cend(expectedClientIds), [&mockCharacteristic](unsigned char clientId)
-                      { mockCharacteristic.get().subscribe(clientId, 1); });
+        std::ranges::for_each(cbegin(expectedClientIds), cend(expectedClientIds), [&mockCharacteristic](unsigned char clientId)
+                              { mockCharacteristic.get().subscribe(clientId, 1); });
 
         const auto clientIds = extendedMetricBleService.getExtendedMetricsClientIds();
 
@@ -130,8 +130,8 @@ TEST_CASE("ExtendedMetricBleService", "[ble-service]")
         extendedMetricBleService.setup(&mockNimBLEServer.get());
 
         const std::vector<unsigned char> expectedClientIds{0, 1};
-        std::for_each(cbegin(expectedClientIds), cend(expectedClientIds), [&mockCharacteristic](unsigned char clientId)
-                      { mockCharacteristic.get().subscribe(clientId, 1); });
+        std::ranges::for_each(cbegin(expectedClientIds), cend(expectedClientIds), [&mockCharacteristic](unsigned char clientId)
+                              { mockCharacteristic.get().subscribe(clientId, 1); });
 
         const auto clientIds = extendedMetricBleService.getHandleForcesClientIds();
 
@@ -150,8 +150,8 @@ TEST_CASE("ExtendedMetricBleService", "[ble-service]")
         extendedMetricBleService.setup(&mockNimBLEServer.get());
 
         const std::vector<unsigned char> expectedClientIds{0, 1};
-        std::for_each(cbegin(expectedClientIds), cend(expectedClientIds), [&mockCharacteristic](unsigned char clientId)
-                      { mockCharacteristic.get().subscribe(clientId, 1); });
+        std::ranges::for_each(cbegin(expectedClientIds), cend(expectedClientIds), [&mockCharacteristic](unsigned char clientId)
+                              { mockCharacteristic.get().subscribe(clientId, 1); });
 
         const auto clientIds = extendedMetricBleService.getDeltaTimesClientIds();
 

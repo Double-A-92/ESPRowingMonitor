@@ -1,5 +1,6 @@
 #include <array>
 #include <span>
+#include <string>
 #include <utility>
 
 #include "ArduinoLog.h"
@@ -193,13 +194,14 @@ void OtaUpdaterService::handleEnd(const span<const unsigned char> &payload)
     }
 
     const std::string hexChars = "0123456789abcdef";
-    std::string md5Hex;
 
-    for (size_t i = 0; i < ESP_ROM_MD5_DIGEST_LEN; ++i)
+    std::string md5Hex;
+    md5Hex.reserve(ESP_ROM_MD5_DIGEST_LEN * 2);
+
+    for (unsigned char byte : payload)
     {
-        auto byte = payload[i];
-        md5Hex.push_back(hexChars[byte >> 4]);
-        md5Hex.push_back(hexChars[byte & 0x0F]);
+        md5Hex += hexChars[byte >> 4];
+        md5Hex += hexChars[byte & 0x0F];
     }
 
     Log.verboseln("OTA setting MD5 hash to %s", md5Hex.c_str());

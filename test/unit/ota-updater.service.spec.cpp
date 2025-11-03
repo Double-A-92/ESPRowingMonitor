@@ -1,4 +1,5 @@
 // NOLINTBEGIN(readability-magic-numbers)
+#include <ranges>
 #include <span>
 #include <utility>
 #include <vector>
@@ -344,7 +345,7 @@ TEST_CASE("OtaUpdaterService", "[ota]")
                 const auto expectedBufferSize = (mtu - blePackageHeaderSize - sizeof(OtaRequestOpCodes)) * bufferCapacity;
 
                 std::vector<unsigned char> packageData(expectedBufferSize);
-                std::fill(begin(packageData), end(packageData), 1);
+                std::ranges::fill(begin(packageData), end(packageData), 1);
                 NimBLEAttValue flushPackageRequest{std::to_underlying(OtaRequestOpCodes::Package)};
                 flushPackageRequest.insert(packageData);
                 std::vector<unsigned char> resultResponse;
@@ -355,7 +356,7 @@ TEST_CASE("OtaUpdaterService", "[ota]")
                 SECTION("should write to the buffer until its full")
                 {
                     std::vector<unsigned char> packageData(expectedBufferSize - 1);
-                    std::fill(begin(packageData), end(packageData), 1);
+                    std::ranges::fill(begin(packageData), end(packageData), 1);
                     NimBLEAttValue noFlushPackageRequest{std::to_underlying(OtaRequestOpCodes::Package)};
                     noFlushPackageRequest.insert(packageData);
 
@@ -463,7 +464,7 @@ TEST_CASE("OtaUpdaterService", "[ota]")
             const auto expectedResult = std::to_underlying(OtaResponseOpCodes::IncorrectFormat);
             std::vector<unsigned char> resultResponse;
             std::vector<unsigned char> md5Hash(ESP_ROM_MD5_DIGEST_LEN + 1);
-            std::fill(begin(md5Hash), end(md5Hash), 1);
+            std::ranges::fill(begin(md5Hash), end(md5Hash), 1);
             NimBLEAttValue tooLongEndRequest{std::to_underlying(OtaRequestOpCodes::End)};
             tooLongEndRequest.insert(md5Hash);
 

@@ -2,6 +2,8 @@
 #include <array>
 #include <cmath>
 #include <numeric>
+#include <ranges>
+#include <string>
 
 #include "Arduino.h"
 #include "ArduinoLog.h"
@@ -9,6 +11,8 @@
 #include "globals.h"
 
 #include "./stroke.service.h"
+
+using namespace std::string_literals;
 
 using RowingDataModels::RowingMetrics;
 
@@ -360,20 +364,18 @@ void StrokeService::logNewStrokeData() const
 {
     Log.infoln("deltaTime: %d", strokeCount);
 
-    string response;
-
-    response.append("[");
-
-    for (const auto &handleForce : driveHandleForces)
+    if (driveHandleForces.empty())
     {
-        response.append(std::to_string(handleForce) + ",");
+        Log.infoln("handleForces: []");
+
+        return;
     }
 
-    if (!driveHandleForces.empty())
-    {
-        response.pop_back();
-    }
-    response.append("]}");
+    auto formatted = driveHandleForces | std::views::transform([](float force)
+                                                               { return std::to_string(force); }) |
+                     std::views::join_with(","s) | std::ranges::to<std::string>();
+
+    string response = "[" + formatted + "]";
 
     Log.infoln("handleForces: %s", response.c_str());
 }

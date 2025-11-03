@@ -1,3 +1,4 @@
+#include <algorithm>
 
 #include "NimBLEDevice.h"
 
@@ -18,15 +19,11 @@ void SubscriptionManagerCallbacks::onSubscribe(NimBLECharacteristic *const pChar
         return;
     }
 
+    const auto [first, last] = std::ranges::remove_if(clientIds, [&](unsigned char connectionId)
+                                                      { return connectionId == connInfo.getConnHandle(); });
     clientIds.erase(
-        std::remove_if(
-            begin(clientIds),
-            end(clientIds),
-            [&](unsigned char connectionId)
-            {
-                return connectionId == connInfo.getConnHandle();
-            }),
-        cend(clientIds));
+        first,
+        last);
 }
 
 const vector<unsigned char> &SubscriptionManagerCallbacks::getClientIds() const

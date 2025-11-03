@@ -77,14 +77,13 @@ Configurations::precision TSLinearSeries::median() const
     const auto flattenedSize = flattened.size();
     const unsigned int mid = flattenedSize / 2;
 
-    std::nth_element(begin(flattened), begin(flattened) + mid, end(flattened));
+    std::ranges::nth_element(flattened, begin(flattened) + mid);
 
     if ((flattenedSize & 1) != 0)
     {
         return flattened[mid];
     }
-
-    return (flattened[mid] + *std::max_element(cbegin(flattened), cbegin(flattened) + mid)) / 2;
+    return (flattened[mid] + *std::ranges::max_element(cbegin(flattened), cbegin(flattened) + mid)) / 2;
 }
 
 void TSLinearSeries::push(const Configurations::precision pointX, const Configurations::precision pointY)

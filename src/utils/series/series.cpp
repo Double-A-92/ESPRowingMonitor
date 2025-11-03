@@ -39,14 +39,14 @@ Configurations::precision Series::median() const
     const auto seriesArraySize = seriesArray.size();
     const unsigned int mid = seriesArraySize / 2;
     vector<Configurations::precision> sortedArray(seriesArray);
-    std::nth_element(begin(sortedArray), begin(sortedArray) + mid, end(sortedArray));
+    std::ranges::nth_element(begin(sortedArray), begin(sortedArray) + mid, end(sortedArray));
 
     if ((seriesArraySize & 1) != 0)
     {
         return sortedArray[mid];
     }
 
-    return (sortedArray[mid] + *std::max_element(begin(sortedArray), begin(sortedArray) + mid)) / 2;
+    return (sortedArray[mid] + *std::ranges::max_element(begin(sortedArray), begin(sortedArray) + mid)) / 2;
 }
 
 void Series::push(const Configurations::precision value)
