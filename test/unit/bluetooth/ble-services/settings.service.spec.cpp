@@ -122,7 +122,7 @@ TEST_CASE("SettingsBleService", "[ble-service]")
     SECTION("setup method should")
     {
         const unsigned int expectedSettingsProperty = NIMBLE_PROPERTY::NOTIFY | NIMBLE_PROPERTY::READ;
-        const unsigned int expectedControlPointProperty = NIMBLE_PROPERTY::INDICATE | NIMBLE_PROPERTY::WRITE;
+        const unsigned int expectedControlPointProperty = WRITE_NR | NIMBLE_PROPERTY::INDICATE;
 
         SECTION("initialize settings BLE service with correct UUID")
         {

@@ -16,7 +16,7 @@ NimBLEService *OtaBleService::setup(NimBLEServer *const server)
     auto *otaBleService = server->createService(CommonBleFlags::otaServiceUuid);
     txCharacteristic = otaBleService->createCharacteristic(CommonBleFlags::otaTxUuid, NIMBLE_PROPERTY::NOTIFY | NIMBLE_PROPERTY::READ);
 
-    otaBleService->createCharacteristic(CommonBleFlags::otaRxUuid, NIMBLE_PROPERTY::WRITE)->setCallbacks(&callbacks);
+    otaBleService->createCharacteristic(CommonBleFlags::otaRxUuid, NIMBLE_PROPERTY::WRITE_NR | NIMBLE_PROPERTY::WRITE)->setCallbacks(&callbacks);
 
     return otaBleService;
 }

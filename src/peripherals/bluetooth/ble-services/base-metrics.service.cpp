@@ -203,7 +203,7 @@ NimBLEService *BaseMetricsBleService::setupCscServices(NimBLEServer *const serve
         ->createCharacteristic(CommonBleFlags::sensorLocationUuid, NIMBLE_PROPERTY::READ)
         ->setValue(CommonBleFlags::sensorLocationFlag);
 
-    cscService->createCharacteristic(CSCSensorBleFlags::cscControlPointUuid, NIMBLE_PROPERTY::WRITE | NIMBLE_PROPERTY::INDICATE)->setCallbacks(&controlPointCallbacks);
+    cscService->createCharacteristic(CSCSensorBleFlags::cscControlPointUuid, NIMBLE_PROPERTY::WRITE_NR | NIMBLE_PROPERTY::WRITE | NIMBLE_PROPERTY::INDICATE)->setCallbacks(&controlPointCallbacks);
 
     return cscService;
 }
@@ -223,7 +223,7 @@ NimBLEService *BaseMetricsBleService::setupPscServices(NimBLEServer *const serve
         ->createCharacteristic(CommonBleFlags::sensorLocationUuid, NIMBLE_PROPERTY::READ)
         ->setValue(CommonBleFlags::sensorLocationFlag);
 
-    pscService->createCharacteristic(PSCSensorBleFlags::pscControlPointUuid, NIMBLE_PROPERTY::WRITE | NIMBLE_PROPERTY::INDICATE)->setCallbacks(&controlPointCallbacks);
+    pscService->createCharacteristic(PSCSensorBleFlags::pscControlPointUuid, NIMBLE_PROPERTY::WRITE_NR | NIMBLE_PROPERTY::WRITE | NIMBLE_PROPERTY::INDICATE)->setCallbacks(&controlPointCallbacks);
 
     return pscService;
 }
@@ -236,7 +236,7 @@ NimBLEService *BaseMetricsBleService::setupFtmsServices(NimBLEServer *const serv
     parameters.characteristic = ftmsService->createCharacteristic(FTMSSensorBleFlags::rowerDataUuid, NIMBLE_PROPERTY::NOTIFY);
     parameters.characteristic->setCallbacks(&connectionManager);
 
-    ftmsService->createCharacteristic(FTMSSensorBleFlags::ftmsControlPointUuid, NIMBLE_PROPERTY::WRITE | NIMBLE_PROPERTY::INDICATE)->setCallbacks(&controlPointCallbacks);
+    ftmsService->createCharacteristic(FTMSSensorBleFlags::ftmsControlPointUuid, NIMBLE_PROPERTY::WRITE_NR | NIMBLE_PROPERTY::WRITE | NIMBLE_PROPERTY::INDICATE)->setCallbacks(&controlPointCallbacks);
 
     ftmsService
         ->createCharacteristic(FTMSSensorBleFlags::ftmsFeaturesUuid, NIMBLE_PROPERTY::READ)

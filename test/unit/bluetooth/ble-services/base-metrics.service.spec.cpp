@@ -107,7 +107,7 @@ TEST_CASE("BaseMetricsBleService", "[ble-service]")
 
             SECTION("setup CPS control point characteristic with correct parameters")
             {
-                const unsigned int expectedControlPointProperty = NIMBLE_PROPERTY::WRITE | NIMBLE_PROPERTY::INDICATE;
+                const unsigned int expectedControlPointProperty = NIMBLE_PROPERTY::WRITE_NR | NIMBLE_PROPERTY::WRITE | NIMBLE_PROPERTY::INDICATE;
 
                 When(Method(mockControlPointCharacteristic, setCallbacks)).Do([&mockControlPointCharacteristic](NimBLECharacteristicCallbacks *callbacks)
                                                                               { mockControlPointCharacteristic.get().callbacks = callbacks; });
@@ -201,7 +201,7 @@ TEST_CASE("BaseMetricsBleService", "[ble-service]")
 
             SECTION("setup CSC control point characteristic with correct parameters")
             {
-                const unsigned int expectedControlPointProperty = NIMBLE_PROPERTY::WRITE | NIMBLE_PROPERTY::INDICATE;
+                const unsigned int expectedControlPointProperty = NIMBLE_PROPERTY::WRITE_NR | NIMBLE_PROPERTY::WRITE | NIMBLE_PROPERTY::INDICATE;
 
                 When(Method(mockControlPointCharacteristic, setCallbacks)).Do([&mockControlPointCharacteristic](NimBLECharacteristicCallbacks *callbacks)
                                                                               { mockControlPointCharacteristic.get().callbacks = callbacks; });
@@ -291,7 +291,7 @@ TEST_CASE("BaseMetricsBleService", "[ble-service]")
 
             SECTION("setup FTMS control point characteristic with correct parameters")
             {
-                const unsigned int expectedControlPointProperty = NIMBLE_PROPERTY::WRITE | NIMBLE_PROPERTY::INDICATE;
+                const unsigned int expectedControlPointProperty = NIMBLE_PROPERTY::WRITE_NR | NIMBLE_PROPERTY::WRITE | NIMBLE_PROPERTY::INDICATE;
 
                 When(Method(mockControlPointCharacteristic, setCallbacks)).Do([&mockControlPointCharacteristic](NimBLECharacteristicCallbacks *callbacks)
                                                                               { mockControlPointCharacteristic.get().callbacks = callbacks; });

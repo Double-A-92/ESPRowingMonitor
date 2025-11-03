@@ -23,7 +23,7 @@ NimBLEService *SettingsBleService::setup(NimBLEServer *const server)
     settingsCharacteristic->setValue(getSettings());
     strokeSettingsCharacteristic->setValue(getStrokeDetectionSettings());
 
-    settingsService->createCharacteristic(CommonBleFlags::settingsControlPointUuid, NIMBLE_PROPERTY::WRITE | NIMBLE_PROPERTY::INDICATE)->setCallbacks(&callbacks);
+    settingsService->createCharacteristic(CommonBleFlags::settingsControlPointUuid, WRITE_NR | NIMBLE_PROPERTY::INDICATE)->setCallbacks(&callbacks);
 
     return settingsService;
 }

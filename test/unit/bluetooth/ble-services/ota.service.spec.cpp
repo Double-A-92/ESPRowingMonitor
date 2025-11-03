@@ -38,7 +38,7 @@ TEST_CASE("OtaBleService", "[ble-service]")
     SECTION("setup method should")
     {
         const unsigned int expectedPropertyTx = NIMBLE_PROPERTY::NOTIFY | NIMBLE_PROPERTY::READ;
-        const unsigned int expectedPropertyRx = NIMBLE_PROPERTY::WRITE;
+        const unsigned int expectedPropertyRx = NIMBLE_PROPERTY::WRITE_NR | NIMBLE_PROPERTY::WRITE;
 
         SECTION("create over-the-air update service")
         {

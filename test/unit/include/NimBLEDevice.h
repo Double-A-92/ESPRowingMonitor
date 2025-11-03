@@ -54,6 +54,7 @@ struct ble_gap_conn_desc
 typedef enum
 {
     READ = 0x0002,
+    WRITE_NR = 0x0004,
     WRITE = 0x0008,
     NOTIFY = 0x0010,
     INDICATE = 0x0020,
