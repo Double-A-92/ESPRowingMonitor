@@ -15,7 +15,7 @@ using std::string;
 class Configurations
 {
 public:
-    typedef PRECISION precision;
+    using precision = PRECISION;
 
     static constexpr unsigned char maxConnectionCount = 2;
 

@@ -2,7 +2,7 @@
 #include "fakeit.hpp"
 
 static constexpr unsigned char labelLength = 17;
-typedef struct
+struct esp_partition_t
 {
     unsigned char flash_chip;            /*!< SPI flash chip on which the partition resides */
     unsigned char type;                  /*!< partition type (app/data) */
@@ -11,7 +11,7 @@ typedef struct
     uint32_t size;                       /*!< size of the partition, in bytes */
     std::array<char, labelLength> label; /*!< partition label, zero-terminated ASCII string */
     bool encrypted;                      /*!< flag is set to true if partition is encrypted */
-} esp_partition_t;
+};
 
 class MockOtaOps
 {

@@ -11,7 +11,7 @@
 
 #include "./test.settings.h"
 
-typedef void (*printfunction)(Print *, int);
+using printfunction = void (*)(Print *, int);
 
 enum class ArduinoLogLevel : unsigned char
 {

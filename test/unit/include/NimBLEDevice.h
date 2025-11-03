@@ -12,7 +12,7 @@
 /**
  * @brief Bluetooth TX power level(index), it's just a index corresponding to power(dbm).
  */
-typedef enum
+enum esp_power_level_t : unsigned char
 {
     ESP_PWR_LVL_N12 = 0,               /*!< Corresponding to -12dbm */
     ESP_PWR_LVL_N9 = 1,                /*!< Corresponding to  -9dbm */
@@ -30,9 +30,9 @@ typedef enum
     ESP_PWR_LVL_P1 = ESP_PWR_LVL_P3,   /*!< Backward compatibility! Setting to  +1dbm will actually result to  +3dbm */
     ESP_PWR_LVL_P4 = ESP_PWR_LVL_P6,   /*!< Backward compatibility! Setting to  +4dbm will actually result to  +6dbm */
     ESP_PWR_LVL_P7 = ESP_PWR_LVL_P9,   /*!< Backward compatibility! Setting to  +7dbm will actually result to  +9dbm */
-} esp_power_level_t;
+};
 
-typedef enum
+enum esp_ble_power_type_t : unsigned char
 {
     ESP_BLE_PWR_TYPE_CONN_HDL0 = 0, /*!< For connection handle 0 */
     ESP_BLE_PWR_TYPE_CONN_HDL1 = 1, /*!< For connection handle 1 */
@@ -47,21 +47,21 @@ typedef enum
     ESP_BLE_PWR_TYPE_SCAN = 10,     /*!< For scan */
     ESP_BLE_PWR_TYPE_DEFAULT = 11,  /*!< For default, if not set other, it will use default value */
     ESP_BLE_PWR_TYPE_NUM = 12,      /*!< TYPE numbers */
-} esp_ble_power_type_t;
+};
 
 struct ble_gap_conn_desc
 {
     unsigned short conn_handle;
 };
 
-typedef enum
+enum NIMBLE_PROPERTY : unsigned short
 {
     READ = 0x0002,
     WRITE_NR = 0x0004,
     WRITE = 0x0008,
     NOTIFY = 0x0010,
     INDICATE = 0x0020,
-} NIMBLE_PROPERTY;
+};
 
 class NimBLEAttValue
 {

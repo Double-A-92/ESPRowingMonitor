@@ -27,13 +27,13 @@ struct CRGB
     CRGB() = default;
     constexpr CRGB(unsigned int colorcode) noexcept : r((colorcode >> 16) & 0xFF), g((colorcode >> 8) & 0xFF), b((colorcode >> 0) & 0xFF) {}
 
-    typedef enum
+    enum HTMLColorCode : unsigned int
     {
         Black = 0x000000,
         Blue = 0x0000FF,
         Green = 0x008000,
         Red = 0xFF0000
-    } HTMLColorCode;
+    };
 
     unsigned char r;     ///< Red channel value
     unsigned char red;   ///< @copydoc r

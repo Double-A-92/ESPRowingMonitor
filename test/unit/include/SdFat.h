@@ -5,8 +5,8 @@
 
 #include "fakeit.hpp"
 
-typedef unsigned char SdCsPin_t;
-typedef int oflag_t;
+using SdCsPin_t = unsigned char;
+using oflag_t = int;
 
 #define O_RDONLY 0 /* +1 == FREAD */
 #define O_WRONLY 1 /* +1 == FWRITE */

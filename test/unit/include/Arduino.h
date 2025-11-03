@@ -9,11 +9,11 @@
 
 #include "./Esp32-typedefs.h"
 
-typedef int BaseType_t;
-typedef unsigned int UBaseType_t;
-typedef void (*TaskFunction_t)(void *);
-typedef void *TaskHandle_t;
-typedef void (*voidFuncPtr)(void);
+using BaseType_t = int;
+using UBaseType_t = unsigned int;
+using TaskFunction_t = void (*)(void *);
+using TaskHandle_t = void *;
+using voidFuncPtr = void (*)(void);
 
 struct hw_timer_t;
 
