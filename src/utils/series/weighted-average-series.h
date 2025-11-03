@@ -16,9 +16,9 @@ public:
         const unsigned short _initialCapacity = Configurations::defaultAllocationCapacity,
         const unsigned short _maxAllocationCapacity = 1'000) : weightSeries(_maxSeriesLength, _initialCapacity, _maxAllocationCapacity), weightedSeries(_maxSeriesLength, _initialCapacity, _maxAllocationCapacity) {}
 
-    size_t size() const;
-    size_t capacity() const;
-    Configurations::precision average() const;
+    [[nodiscard]] size_t size() const;
+    [[nodiscard]] size_t capacity() const;
+    [[nodiscard]] Configurations::precision average() const;
 
     void push(Configurations::precision value, Configurations::precision weight);
     void reset();

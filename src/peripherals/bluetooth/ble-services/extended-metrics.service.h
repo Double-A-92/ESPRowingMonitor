@@ -52,11 +52,11 @@ public:
 
     NimBLEService *setup(NimBLEServer *server) override;
 
-    const vector<unsigned char> &getHandleForcesClientIds() const override;
-    const vector<unsigned char> &getDeltaTimesClientIds() const override;
-    const vector<unsigned char> &getExtendedMetricsClientIds() const override;
+    [[nodiscard]] const vector<unsigned char> &getHandleForcesClientIds() const override;
+    [[nodiscard]] const vector<unsigned char> &getDeltaTimesClientIds() const override;
+    [[nodiscard]] const vector<unsigned char> &getExtendedMetricsClientIds() const override;
 
-    unsigned short calculateMtu(const std::vector<unsigned char> &clientIds) const override;
+    [[nodiscard]] unsigned short calculateMtu(const std::vector<unsigned char> &clientIds) const override;
 
     void broadcastHandleForces(const std::vector<float> &handleForces) override;
     void broadcastDeltaTimes(const std::vector<unsigned long> &deltaTimes) override;

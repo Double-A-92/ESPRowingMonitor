@@ -14,5 +14,5 @@ public:
     void onConnect(NimBLEServer *pServer, NimBLEConnInfo &connInfo) override;
     void onDisconnect(NimBLEServer *pServer, NimBLEConnInfo &connInfo, int reason) override;
 
-    unsigned char getConnectionCount() const override;
+    [[nodiscard]] unsigned char getConnectionCount() const override;
 };

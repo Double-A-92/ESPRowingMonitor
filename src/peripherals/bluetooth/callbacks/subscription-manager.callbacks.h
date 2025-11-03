@@ -16,5 +16,5 @@ public:
 
     void onSubscribe(NimBLECharacteristic *pCharacteristic, NimBLEConnInfo &connInfo, unsigned short subValue) override;
 
-    const vector<unsigned char> &getClientIds() const;
+    [[nodiscard]] const vector<unsigned char> &getClientIds() const;
 };

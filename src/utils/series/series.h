@@ -24,11 +24,11 @@ public:
 
     const Configurations::precision &operator[](size_t index) const;
 
-    size_t size() const;
-    size_t capacity() const;
-    Configurations::precision average() const;
-    Configurations::precision median() const;
-    Configurations::precision sum() const;
+    [[nodiscard]] size_t size() const;
+    [[nodiscard]] size_t capacity() const;
+    [[nodiscard]] Configurations::precision average() const;
+    [[nodiscard]] Configurations::precision median() const;
+    [[nodiscard]] Configurations::precision sum() const;
 
     void push(Configurations::precision value);
     void reset();

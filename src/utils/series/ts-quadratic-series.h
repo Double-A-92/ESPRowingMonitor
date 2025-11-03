@@ -21,8 +21,8 @@ class TSQuadraticSeries
     Series seriesX;
     Series seriesY;
 
-    Configurations::precision calculateA(unsigned char pointOne, unsigned char pointTwo, unsigned char pointThree) const;
-    Configurations::precision seriesAMedian() const;
+    [[nodiscard]] Configurations::precision calculateA(unsigned char pointOne, unsigned char pointTwo, unsigned char pointThree) const;
+    [[nodiscard]] Configurations::precision seriesAMedian() const;
 
     static constexpr unsigned short calculateMaxSeriesALength(const unsigned short seriesLength, const unsigned short seriesAInnerLength)
     {
@@ -36,7 +36,7 @@ class TSQuadraticSeries
         return sum;
     }
 
-    Configurations::precision projectX(Configurations::precision pointX) const;
+    [[nodiscard]] Configurations::precision projectX(Configurations::precision pointX) const;
 
 public:
     constexpr explicit TSQuadraticSeries(
@@ -50,8 +50,8 @@ public:
         }
     }
 
-    Configurations::precision firstDerivativeAtPosition(unsigned char position) const;
-    Configurations::precision secondDerivativeAtPosition(unsigned char position) const;
-    Configurations::precision goodnessOfFit() const;
+    [[nodiscard]] Configurations::precision firstDerivativeAtPosition(unsigned char position) const;
+    [[nodiscard]] Configurations::precision secondDerivativeAtPosition(unsigned char position) const;
+    [[nodiscard]] Configurations::precision goodnessOfFit() const;
     void push(Configurations::precision pointX, Configurations::precision pointY);
 };

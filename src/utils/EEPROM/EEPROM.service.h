@@ -90,18 +90,18 @@ public:
     void setDragFactorSettings(RowerProfile::DragFactorSettings newDragFactorSettings) override;
     void setStrokePhaseDetectionSettings(RowerProfile::StrokePhaseDetectionSettings newStrokePhaseDetectionSettings) override;
 
-    BleServiceFlag getBleServiceFlag() const override;
-    ArduinoLogLevel getLogLevel() const override;
-    bool getLogToBluetooth() const override;
-    bool getLogToSdCard() const override;
+    [[nodiscard]] BleServiceFlag getBleServiceFlag() const override;
+    [[nodiscard]] ArduinoLogLevel getLogLevel() const override;
+    [[nodiscard]] bool getLogToBluetooth() const override;
+    [[nodiscard]] bool getLogToSdCard() const override;
 
-    RowerProfile::MachineSettings getMachineSettings() const override;
-    RowerProfile::SensorSignalSettings getSensorSignalSettings() const override;
-    RowerProfile::DragFactorSettings getDragFactorSettings() const override;
-    RowerProfile::StrokePhaseDetectionSettings getStrokePhaseDetectionSettings() const override;
+    [[nodiscard]] RowerProfile::MachineSettings getMachineSettings() const override;
+    [[nodiscard]] RowerProfile::SensorSignalSettings getSensorSignalSettings() const override;
+    [[nodiscard]] RowerProfile::DragFactorSettings getDragFactorSettings() const override;
+    [[nodiscard]] RowerProfile::StrokePhaseDetectionSettings getStrokePhaseDetectionSettings() const override;
 
-    bool validateMachineSettings(const RowerProfile::MachineSettings &newMachineSettings) const override;
-    bool validateSensorSignalSettings(const RowerProfile::SensorSignalSettings &newSensorSignalSettings) const override;
-    bool validateDragFactorSettings(const RowerProfile::DragFactorSettings &newDragFactorSettings) const override;
-    bool validateStrokePhaseDetectionSettings(const RowerProfile::StrokePhaseDetectionSettings &newStrokePhaseDetectionSettings) const override;
+    [[nodiscard]] bool validateMachineSettings(const RowerProfile::MachineSettings &newMachineSettings) const override;
+    [[nodiscard]] bool validateSensorSignalSettings(const RowerProfile::SensorSignalSettings &newSensorSignalSettings) const override;
+    [[nodiscard]] bool validateDragFactorSettings(const RowerProfile::DragFactorSettings &newDragFactorSettings) const override;
+    [[nodiscard]] bool validateStrokePhaseDetectionSettings(const RowerProfile::StrokePhaseDetectionSettings &newStrokePhaseDetectionSettings) const override;
 };

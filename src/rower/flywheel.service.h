@@ -25,7 +25,7 @@ public:
     FlywheelService();
 
     void setup(RowerProfile::MachineSettings newMachineSettings, RowerProfile::SensorSignalSettings newSensorSignalSettings) override;
-    bool hasDataChanged() const override;
+    [[nodiscard]] bool hasDataChanged() const override;
     RowingDataModels::FlywheelData getData() override;
     void processRotation(unsigned long now) override;
 };

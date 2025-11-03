@@ -21,7 +21,7 @@ class TSLinearSeries
     Series seriesY;
     vector<vector<Configurations::precision>> slopes;
 
-    Configurations::precision calculateSlope(unsigned char pointOne, unsigned char pointTwo) const;
+    [[nodiscard]] Configurations::precision calculateSlope(unsigned char pointOne, unsigned char pointTwo) const;
 
 public:
     constexpr explicit TSLinearSeries(
@@ -35,11 +35,11 @@ public:
         }
     }
 
-    Configurations::precision yAtSeriesBegin() const;
-    Configurations::precision median() const;
+    [[nodiscard]] Configurations::precision yAtSeriesBegin() const;
+    [[nodiscard]] Configurations::precision median() const;
     Configurations::precision coefficientA();
     Configurations::precision coefficientB();
-    size_t size() const;
+    [[nodiscard]] size_t size() const;
 
     void push(Configurations::precision pointX, Configurations::precision pointY);
     void reset();

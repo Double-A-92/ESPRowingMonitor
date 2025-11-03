@@ -35,5 +35,5 @@ public:
 
     void setup() override;
     void saveDeltaTime(const vector<unsigned long> &deltaTime) override;
-    bool isLogFileOpen() const override;
+    [[nodiscard]] bool isLogFileOpen() const override;
 };
