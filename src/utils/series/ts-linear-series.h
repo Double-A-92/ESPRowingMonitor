@@ -10,7 +10,7 @@ using std::vector;
 class TSLinearSeries
 {
     unsigned char maxSeriesLength;
-    unsigned short maxSlopeSeriesLength = ((maxSeriesLength - 2) * (maxSeriesLength - 1)) / 2;
+    unsigned short maxSlopeSeriesLength = (maxSeriesLength * (maxSeriesLength - 1)) / 2;
     unsigned short initialCapacity;
     bool shouldRecalculateB = true;
     bool shouldRecalculateA = true;

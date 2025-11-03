@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <numeric>
+#include <ranges>
 #include <vector>
 
 #include "./ts-linear-series.h"
@@ -71,17 +72,14 @@ Configurations::precision TSLinearSeries::median() const
         flattened.reserve(maxSlopeSeriesLength);
     }
 
-    for (const auto &slope : slopes)
-    {
-        flattened.insert(cend(flattened), cbegin(slope), cend(slope));
-    }
+    std::ranges::copy(slopes | std::views::join, std::back_inserter(flattened));
 
     const auto flattenedSize = flattened.size();
     const unsigned int mid = flattenedSize / 2;
 
     std::nth_element(begin(flattened), begin(flattened) + mid, end(flattened));
 
-    if (flattenedSize % 2 != 0)
+    if ((flattenedSize & 1) != 0)
     {
         return flattened[mid];
     }
@@ -120,7 +118,7 @@ void TSLinearSeries::push(const Configurations::precision pointX, const Configur
     }
 
     // Add an empty array at the end to store future results for the most recent points
-    slopes.push_back({});
+    slopes.emplace_back();
     if (maxSeriesLength > 0)
     {
         slopes[slopes.size() - 1].reserve(maxSeriesLength - 2);

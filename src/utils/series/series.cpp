@@ -26,7 +26,7 @@ Configurations::precision Series::average() const
         return 0.0;
     }
 
-    return seriesSum / (Configurations::precision)seriesArray.size();
+    return seriesSum / static_cast<Configurations::precision>(seriesArray.size());
 }
 
 Configurations::precision Series::median() const
@@ -41,7 +41,7 @@ Configurations::precision Series::median() const
     vector<Configurations::precision> sortedArray(seriesArray);
     std::nth_element(begin(sortedArray), begin(sortedArray) + mid, end(sortedArray));
 
-    if (seriesArraySize % 2 != 0)
+    if ((seriesArraySize & 1) != 0)
     {
         return sortedArray[mid];
     }
