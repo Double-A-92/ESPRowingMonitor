@@ -42,7 +42,12 @@ public:
     constexpr explicit TSQuadraticSeries(
         const unsigned char _maxSeriesLength = 0,
         const unsigned short _initialCapacity = Configurations::defaultAllocationCapacity,
-        const unsigned short _maxAllocationCapacity = 1'000) : maxSeriesLength(_maxSeriesLength), maxSeriesALength(calculateMaxSeriesALength(_maxSeriesLength, maxSeriesAInnerLength)), maxAllocationCapacity(_maxAllocationCapacity), seriesX(_maxSeriesLength, _initialCapacity, _maxAllocationCapacity), seriesY(_maxSeriesLength, _initialCapacity, _maxAllocationCapacity)
+        const unsigned short _maxAllocationCapacity = 1'000)
+        : maxSeriesLength(_maxSeriesLength),
+          maxSeriesALength(calculateMaxSeriesALength(_maxSeriesLength, maxSeriesAInnerLength)),
+          maxAllocationCapacity(_maxAllocationCapacity),
+          seriesX(_maxSeriesLength, _initialCapacity, _maxAllocationCapacity),
+          seriesY(_maxSeriesLength, _initialCapacity, _maxAllocationCapacity)
     {
         if (_maxSeriesLength > 0)
         {

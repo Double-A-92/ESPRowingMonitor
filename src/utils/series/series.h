@@ -17,7 +17,9 @@ public:
     constexpr explicit Series(
         const unsigned char _maxSeriesLength = 0,
         const unsigned short initialCapacity = Configurations::defaultAllocationCapacity,
-        const unsigned short _maxAllocationCapacity = 1'000) : maxSeriesLength(_maxSeriesLength), maxAllocationCapacity(_maxAllocationCapacity)
+        const unsigned short _maxAllocationCapacity = 1'000)
+        : maxSeriesLength(_maxSeriesLength),
+          maxAllocationCapacity(_maxAllocationCapacity)
     {
         seriesArray.reserve(_maxSeriesLength > 0 ? _maxSeriesLength : initialCapacity);
     }

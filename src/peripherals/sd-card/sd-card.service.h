@@ -25,7 +25,7 @@ class SdCardService final : public ISdCardService
     void initSdCard();
 
 public:
-    explicit SdCardService();
+    SdCardService();
     ~SdCardService();
 
     SdCardService(const SdCardService &) = delete;

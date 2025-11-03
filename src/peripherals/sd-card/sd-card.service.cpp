@@ -4,7 +4,12 @@
 #include "../../utils/configuration.h"
 #include "./sd-card.service.h"
 
-SdCardService::SdCardService() : sdCardTaskParameters{logFile, {}} {}
+SdCardService::SdCardService() : sdCardTaskParameters{
+                                     .logFile = logFile,
+                                     .deltaTimes = {},
+                                 }
+{
+}
 
 SdCardService::~SdCardService()
 {

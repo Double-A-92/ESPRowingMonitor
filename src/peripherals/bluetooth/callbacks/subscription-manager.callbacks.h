@@ -12,7 +12,7 @@ class SubscriptionManagerCallbacks final : public NimBLECharacteristicCallbacks
     std::vector<unsigned char> clientIds;
 
 public:
-    explicit SubscriptionManagerCallbacks();
+    SubscriptionManagerCallbacks();
 
     void onSubscribe(NimBLECharacteristic *pCharacteristic, NimBLEConnInfo &connInfo, unsigned short subValue) override;
 

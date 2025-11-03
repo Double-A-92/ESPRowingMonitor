@@ -131,7 +131,18 @@ TEST_CASE("BaseMetricsBleService", "[ble-service]")
                 Fake(Method(mockCpsCharacteristic, notify));
                 baseMetricsBleService.setup(&mockNimBLEServer.get(), BleServiceFlag::CpsService);
 
-                baseMetricsBleService.broadcastBaseMetrics({1, 1, 1, 1, 1, 0, 0, 0, 0, 0});
+                baseMetricsBleService.broadcastBaseMetrics({
+                    .revTime = 1ULL,
+                    .previousRevTime = 1ULL,
+                    .distance = 1.0,
+                    .previousDistance = 1.0,
+                    .strokeTime = 1ULL,
+                    .previousStrokeTime = 0ULL,
+                    .strokeCount = 0,
+                    .previousStrokeCount = 0,
+                    .avgStrokePower = 0.0,
+                    .dragCoefficient = 0.0,
+                });
 
                 Verify(OverloadedMethod(mockCpsCharacteristic, setValue, void(const std::array<unsigned char, 14U>))).Once();
             }
@@ -234,7 +245,18 @@ TEST_CASE("BaseMetricsBleService", "[ble-service]")
                 Fake(Method(mockCscCharacteristic, notify));
                 baseMetricsBleService.setup(&mockNimBLEServer.get(), BleServiceFlag::CscService);
 
-                baseMetricsBleService.broadcastBaseMetrics({1, 1, 1, 1, 1, 0, 0, 0, 0, 0});
+                baseMetricsBleService.broadcastBaseMetrics(BleMetricsModel::BleMetricsData{
+                    .revTime = 1ULL,
+                    .previousRevTime = 1ULL,
+                    .distance = 1.0,
+                    .previousDistance = 1.0,
+                    .strokeTime = 1ULL,
+                    .previousStrokeTime = 0ULL,
+                    .strokeCount = 0,
+                    .previousStrokeCount = 0,
+                    .avgStrokePower = 0.0,
+                    .dragCoefficient = 0.0,
+                });
 
                 Verify(OverloadedMethod(mockCscCharacteristic, setValue, void(const std::array<unsigned char, 11U>))).Once();
             }
@@ -322,7 +344,18 @@ TEST_CASE("BaseMetricsBleService", "[ble-service]")
                 Fake(Method(mockFtmsCharacteristic, notify));
                 baseMetricsBleService.setup(&mockNimBLEServer.get(), BleServiceFlag::FtmsService);
 
-                baseMetricsBleService.broadcastBaseMetrics({1, 1, 1, 1, 1, 0, 0, 0, 0, 0});
+                baseMetricsBleService.broadcastBaseMetrics(BleMetricsModel::BleMetricsData{
+                    .revTime = 1ULL,
+                    .previousRevTime = 1ULL,
+                    .distance = 1.0,
+                    .previousDistance = 1.0,
+                    .strokeTime = 1ULL,
+                    .previousStrokeTime = 0ULL,
+                    .strokeCount = 0,
+                    .previousStrokeCount = 0,
+                    .avgStrokePower = 0.0,
+                    .dragCoefficient = 0.0,
+                });
 
                 Verify(OverloadedMethod(mockFtmsCharacteristic, setValue, void(const std::array<unsigned char, 14U>))).Once();
             }

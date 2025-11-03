@@ -121,7 +121,7 @@ TEST_CASE("PowerManagerService", "[utils]")
             mockArduino.Reset();
             When(Method(mockArduino, analogReadMilliVolts)).AlwaysReturn(analogVoltage);
             Fake(Method(mockArduino, delay));
-            const auto expectedBatteryLevel = std::lround((analogVoltage / 1'000.0 - Configurations::batteryVoltageMin) / (Configurations::batteryVoltageMax - Configurations::batteryVoltageMin) * 100);
+            const auto expectedBatteryLevel = static_cast<unsigned char>(std::lround((analogVoltage / 1'000.0 - Configurations::batteryVoltageMin) / (Configurations::batteryVoltageMax - Configurations::batteryVoltageMin) * 100));
 
             REQUIRE(powerManager.measureBattery() == expectedBatteryLevel);
         }

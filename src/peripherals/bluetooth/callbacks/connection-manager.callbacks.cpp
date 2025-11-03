@@ -6,10 +6,6 @@
 #include "../../../utils/configuration.h"
 #include "./connection-manager.callbacks.h"
 
-ConnectionManagerCallbacks::ConnectionManagerCallbacks()
-{
-}
-
 void ConnectionManagerCallbacks::onConnect(NimBLEServer *pServer, NimBLEConnInfo &connInfo)
 {
     connectionCount = pServer->getConnectedCount();

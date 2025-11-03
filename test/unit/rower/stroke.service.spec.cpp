@@ -271,7 +271,7 @@ TEST_CASE("StrokeService")
         string token;
         vector<float> res;
 
-        while ((pos_end = forceCurve.find(",", pos_start)) != string::npos)
+        while ((pos_end = forceCurve.find(',', pos_start)) != string::npos)
         {
             token = forceCurve.substr(pos_start, pos_end - pos_start);
             pos_start = pos_end + 1;

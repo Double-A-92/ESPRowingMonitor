@@ -4,7 +4,10 @@
 
 #include "./stroke.controller.h"
 
-StrokeController::StrokeController(IStrokeService &_strokeService, IFlywheelService &_flywheelService, IEEPROMService &_eepromService) : strokeService(_strokeService), flywheelService(_flywheelService), eepromService(_eepromService)
+StrokeController::StrokeController(IStrokeService &_strokeService, IFlywheelService &_flywheelService, IEEPROMService &_eepromService)
+    : strokeService(_strokeService),
+      flywheelService(_flywheelService),
+      eepromService(_eepromService)
 {
 }
 

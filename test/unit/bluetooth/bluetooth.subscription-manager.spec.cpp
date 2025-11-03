@@ -30,7 +30,7 @@ TEST_CASE("SubscriptionManagerCallbacks onSubscribed method", "[callbacks]")
     {
         chunkedNotifyMetricCallback.onSubscribe(&mockNimBLECharacteristic.get(), mockConnectionInfo.get(), 0);
 
-        REQUIRE(chunkedNotifyMetricCallback.getClientIds().size() == 0);
+        REQUIRE(chunkedNotifyMetricCallback.getClientIds().empty());
     }
 }
 // NOLINTEND(readability-magic-numbers)

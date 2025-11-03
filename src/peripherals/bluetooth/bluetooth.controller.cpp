@@ -11,7 +11,16 @@
 #include "../../utils/configuration.h"
 #include "./bluetooth.controller.h"
 
-BluetoothController::BluetoothController(IEEPROMService &_eepromService, IOtaUpdaterService &_otaService, ISettingsBleService &_settingsBleService, IBatteryBleService &_batteryBleService, IDeviceInfoBleService &_deviceInfoBleService, IOtaBleService &_otaBleService, IBaseMetricsBleService &_baseMetricsBleService, IExtendedMetricBleService &_extendedMetricsBleService, IConnectionManagerCallbacks &_connectionManagerCallbacks) : eepromService(_eepromService), otaService(_otaService), settingsBleService(_settingsBleService), batteryBleService(_batteryBleService), deviceInfoBleService(_deviceInfoBleService), otaBleService(_otaBleService), baseMetricsBleService(_baseMetricsBleService), extendedMetricsBleService(_extendedMetricsBleService), connectionManagerCallbacks(_connectionManagerCallbacks)
+BluetoothController::BluetoothController(IEEPROMService &_eepromService, IOtaUpdaterService &_otaService, ISettingsBleService &_settingsBleService, IBatteryBleService &_batteryBleService, IDeviceInfoBleService &_deviceInfoBleService, IOtaBleService &_otaBleService, IBaseMetricsBleService &_baseMetricsBleService, IExtendedMetricBleService &_extendedMetricsBleService, IConnectionManagerCallbacks &_connectionManagerCallbacks)
+    : eepromService(_eepromService),
+      otaService(_otaService),
+      settingsBleService(_settingsBleService),
+      batteryBleService(_batteryBleService),
+      deviceInfoBleService(_deviceInfoBleService),
+      otaBleService(_otaBleService),
+      baseMetricsBleService(_baseMetricsBleService),
+      extendedMetricsBleService(_extendedMetricsBleService),
+      connectionManagerCallbacks(_connectionManagerCallbacks)
 {
     if constexpr (Configurations::enableBluetoothDeltaTimeLogging)
     {

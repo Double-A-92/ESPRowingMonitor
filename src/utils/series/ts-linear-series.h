@@ -27,7 +27,11 @@ public:
     constexpr explicit TSLinearSeries(
         const unsigned char _maxSeriesLength = 0,
         const unsigned short _initialCapacity = Configurations::defaultAllocationCapacity,
-        const unsigned short _maxAllocationCapacity = 1'000) : maxSeriesLength(_maxSeriesLength), initialCapacity(_initialCapacity), seriesX(_maxSeriesLength, _initialCapacity, _maxAllocationCapacity), seriesY(_maxSeriesLength, _initialCapacity, _maxAllocationCapacity)
+        const unsigned short _maxAllocationCapacity = 1'000)
+        : maxSeriesLength(_maxSeriesLength),
+          initialCapacity(_initialCapacity),
+          seriesX(_maxSeriesLength, _initialCapacity, _maxAllocationCapacity),
+          seriesY(_maxSeriesLength, _initialCapacity, _maxAllocationCapacity)
     {
         if (_maxSeriesLength > 0)
         {

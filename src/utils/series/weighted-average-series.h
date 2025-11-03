@@ -14,7 +14,11 @@ public:
     constexpr explicit WeightedAverageSeries(
         const unsigned char _maxSeriesLength = 0,
         const unsigned short _initialCapacity = Configurations::defaultAllocationCapacity,
-        const unsigned short _maxAllocationCapacity = 1'000) : weightSeries(_maxSeriesLength, _initialCapacity, _maxAllocationCapacity), weightedSeries(_maxSeriesLength, _initialCapacity, _maxAllocationCapacity) {}
+        const unsigned short _maxAllocationCapacity = 1'000)
+        : weightSeries(_maxSeriesLength, _initialCapacity, _maxAllocationCapacity),
+          weightedSeries(_maxSeriesLength, _initialCapacity, _maxAllocationCapacity)
+    {
+    }
 
     [[nodiscard]] size_t size() const;
     [[nodiscard]] size_t capacity() const;

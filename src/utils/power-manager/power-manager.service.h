@@ -9,8 +9,6 @@ class PowerManagerService final : public IPowerManagerService
     static void powerSensorOn();
 
 public:
-    PowerManagerService() = default;
-
     [[nodiscard]] unsigned char setup() const override;
     void goToSleep() const override;
     [[nodiscard]] unsigned char measureBattery() const override;

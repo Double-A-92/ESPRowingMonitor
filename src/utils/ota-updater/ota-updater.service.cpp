@@ -12,10 +12,6 @@
 
 using std::span;
 
-OtaUpdaterService::OtaUpdaterService()
-{
-}
-
 bool OtaUpdaterService::isUpdating() const
 {
     return Update.isRunning();

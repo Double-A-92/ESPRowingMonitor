@@ -304,8 +304,8 @@ TEST_CASE("OtaUpdaterService", "[ota]")
 
                         REQUIRE_THAT(resultResponse, Catch::Matchers::SizeIs(sizeof(unsigned int) * 2 + sizeof(OtaResponseOpCodes)));
 
-                        const auto perPackageSize = (resultResponse[1] | resultResponse[2] << 8 | resultResponse[3] << 16 | resultResponse[4] << 24);
-                        const auto bufferSize = (resultResponse[1 + sizeof(unsigned int)] | resultResponse[2 + sizeof(unsigned int)] << 8 | resultResponse[3 + sizeof(unsigned int)] << 16 | resultResponse[4 + sizeof(unsigned int)] << 24);
+                        const unsigned long perPackageSize = (resultResponse[1] | resultResponse[2] << 8 | resultResponse[3] << 16 | resultResponse[4] << 24);
+                        const unsigned long bufferSize = (resultResponse[1 + sizeof(unsigned int)] | resultResponse[2 + sizeof(unsigned int)] << 8 | resultResponse[3 + sizeof(unsigned int)] << 16 | resultResponse[4 + sizeof(unsigned int)] << 24);
 
                         REQUIRE(resultResponse[0] == std::to_underlying(OtaResponseOpCodes::Ok));
                         REQUIRE(perPackageSize == expectedPerPackageSize);

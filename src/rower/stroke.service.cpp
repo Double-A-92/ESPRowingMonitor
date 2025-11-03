@@ -300,7 +300,7 @@ void StrokeService::processData(const RowingDataModels::FlywheelData data)
         }
 
         rowingImpulseCount++;
-        rowingTotalTime += static_cast<long long>(deltaTimes.yAtSeriesBegin());
+        rowingTotalTime += static_cast<unsigned long long>(deltaTimes.yAtSeriesBegin());
         revTime = rowingTotalTime;
         rowingTotalAngularDisplacement += angularDisplacementPerImpulse;
 
@@ -311,7 +311,7 @@ void StrokeService::processData(const RowingDataModels::FlywheelData data)
     }
 
     rowingImpulseCount++;
-    rowingTotalTime += static_cast<long long>(deltaTimes.yAtSeriesBegin());
+    rowingTotalTime += static_cast<unsigned long long>(deltaTimes.yAtSeriesBegin());
     rowingTotalAngularDisplacement += angularDisplacementPerImpulse;
 
     distance += distancePerAngularDisplacement * (distance == 0 ? rowingTotalAngularDisplacement : angularDisplacementPerImpulse);

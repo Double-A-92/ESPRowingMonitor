@@ -48,8 +48,6 @@ class ExtendedMetricBleService final : public IExtendedMetricBleService
     } deltaTimesParams;
 
 public:
-    ExtendedMetricBleService();
-
     NimBLEService *setup(NimBLEServer *server) override;
 
     [[nodiscard]] const vector<unsigned char> &getHandleForcesClientIds() const override;

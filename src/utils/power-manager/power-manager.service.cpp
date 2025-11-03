@@ -15,10 +15,6 @@
 #include "../configuration.h"
 #include "./power-manager.service.h"
 
-PowerManagerService::PowerManagerService()
-{
-}
-
 unsigned char PowerManagerService::setup() const
 {
     printWakeupReason();

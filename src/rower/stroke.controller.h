@@ -17,24 +17,24 @@ class StrokeController final : public IStrokeController
     unsigned long previousRawImpulseCount = 0U;
 
     RowingDataModels::RowingMetrics rowerState{
-        0.0,
-        0ULL,
-        0ULL,
-        0U,
-        0U,
-        0U,
-        0.0,
-        0.0,
-        std::vector<float>{},
+        .distance = 0.0,
+        .lastRevTime = 0ULL,
+        .lastStrokeTime = 0ULL,
+        .strokeCount = 0U,
+        .driveDuration = 0U,
+        .recoveryDuration = 0U,
+        .avgStrokePower = 0.0,
+        .dragCoefficient = 0.0,
+        .driveHandleForces = std::vector<float>{},
     };
 
     RowingDataModels::FlywheelData flywheelData{
-        0UL,
-        0UL,
-        0ULL,
-        0UL,
-        0UL,
-        0UL,
+        .rawImpulseCount = 0UL,
+        .deltaTime = 0UL,
+        .totalTime = 0ULL,
+        .totalAngularDisplacement = 0UL,
+        .cleanImpulseTime = 0UL,
+        .rawImpulseTime = 0UL,
     };
 
 public:

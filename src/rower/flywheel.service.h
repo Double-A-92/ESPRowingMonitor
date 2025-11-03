@@ -22,8 +22,6 @@ class FlywheelService final : public IFlywheelService
     volatile bool isDataChanged = false;
 
 public:
-    FlywheelService();
-
     void setup(RowerProfile::MachineSettings newMachineSettings, RowerProfile::SensorSignalSettings newSensorSignalSettings) override;
     [[nodiscard]] bool hasDataChanged() const override;
     RowingDataModels::FlywheelData getData() override;
