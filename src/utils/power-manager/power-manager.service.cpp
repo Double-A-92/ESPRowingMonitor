@@ -25,9 +25,16 @@ unsigned char PowerManagerService::setup() const
     {
         powerSensorOn();
     }
+
     if constexpr (Configurations::batteryPinNumber != GPIO_NUM_NC)
     {
-        return setupBatteryMeasurement();
+
+        const auto batteryLevel = setupBatteryMeasurement();
+
+        Log.traceln("Setting up battery measurement on pin %d", Configurations::batteryPinNumber);
+        Log.verboseln("Initial battery level measurement: %d%%", batteryLevel);
+
+        return batteryLevel;
     }
 
     return 0;
