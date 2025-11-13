@@ -3,6 +3,7 @@
 #include <cmath>
 #include <numeric>
 
+#include "driver/gpio.h"
 #include "driver/rtc_io.h"
 
 #include "Arduino.h"
@@ -58,6 +59,8 @@ void PowerManagerService::goToSleep() const
     if constexpr (Configurations::hasSensorOnSwitchPinNumber)
     {
         digitalWrite(Configurations::sensorOnSwitchPinNumber, LOW);
+        gpio_hold_en(Configurations::sensorOnSwitchPinNumber);
+        gpio_deep_sleep_hold_en();
     }
 
     const auto wakeupPin = Configurations::hasWakeupPinNumber ? Configurations::wakeupPinNumber : Configurations::sensorPinNumber;

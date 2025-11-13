@@ -61,6 +61,8 @@ TEST_CASE("PowerManagerService", "[utils]")
         When(Method(mockArduino, digitalRead)).Return(wakeupPinState);
         Fake(Method(mockArduino, pinMode));
         Fake(Method(mockArduino, digitalWrite));
+        Fake(Method(mockArduino, gpio_hold_en));
+        Fake(Method(mockArduino, gpio_deep_sleep_hold_en));
         Fake(Method(mockArduino, esp_sleep_enable_ext0_wakeup));
         Fake(Method(mockArduino, rtc_gpio_pullup_en));
         Fake(Method(mockArduino, esp_deep_sleep_start));

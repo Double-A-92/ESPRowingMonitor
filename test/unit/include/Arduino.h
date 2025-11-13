@@ -48,6 +48,7 @@ public:
     virtual unsigned long millis() = 0;
     virtual int digitalRead(unsigned char pin) = 0;
     virtual void gpio_hold_en(gpio_num_t gpio_num) = 0;
+    virtual void gpio_deep_sleep_hold_en() = 0;
     virtual int rtc_gpio_pullup_en(gpio_num_t gpio_num) = 0;
     virtual unsigned short analogRead(unsigned char pin) = 0;
     virtual void delay(unsigned int delay) = 0;
