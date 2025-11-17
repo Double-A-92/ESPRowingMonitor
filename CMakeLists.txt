@@ -20,13 +20,13 @@ Include(FetchContent)
 FetchContent_Declare(
   Catch2
   GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-  GIT_TAG v3.11.0
+  GIT_TAG v3.12.0
 )
 
 FetchContent_Declare(
   FakeIt
   GIT_REPOSITORY https://github.com/eranpeer/FakeIt.git
-  GIT_TAG 2.4.1
+  GIT_TAG 2.5.0
 )
 
 FetchContent_MakeAvailable(Catch2)
