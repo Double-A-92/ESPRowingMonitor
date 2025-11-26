@@ -45,14 +45,9 @@ set(UNIT_TEST_DIR ${TEST_DIR}/unit)
 set(INCLUDES_UNIT_TEST
     ${UNIT_TEST_DIR}/include/
 )
+set(PROJECT_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
-# Source files for e2e tests and unit tests
-set(SOURCES_UNIT_TEST
-    "${LIB_DIR}/utils/power-manager/power-manager.controller.cpp"
-    "${LIB_DIR}/utils/power-manager/power-manager.service.cpp"
-    "${LIB_DIR}/utils/EEPROM/EEPROM.service.cpp"
-    "${LIB_DIR}/utils/ota-updater/ota-updater.service.cpp"
-
+set(SOURCES_COMMON
     "${LIB_DIR}/utils/series/ols-linear-series.cpp"
     "${LIB_DIR}/utils/series/series.cpp"
     "${LIB_DIR}/utils/series/ts-quadratic-series.cpp"
@@ -62,6 +57,15 @@ set(SOURCES_UNIT_TEST
     "${LIB_DIR}/rower/stroke.service.cpp"
     "${LIB_DIR}/rower/flywheel.service.cpp"
     "${LIB_DIR}/rower/stroke.controller.cpp"
+)
+
+set(SOURCES_UNIT_TEST
+    ${SOURCES_COMMON}
+
+    "${LIB_DIR}/utils/power-manager/power-manager.controller.cpp"
+    "${LIB_DIR}/utils/power-manager/power-manager.service.cpp"
+    "${LIB_DIR}/utils/EEPROM/EEPROM.service.cpp"
+    "${LIB_DIR}/utils/ota-updater/ota-updater.service.cpp"
 
     "${LIB_DIR}/peripherals/peripherals.controller.cpp"
     "${LIB_DIR}/peripherals/sd-card/sd-card.service.cpp"
@@ -124,15 +128,7 @@ set(SOURCES_UNIT_TEST
 )
 
 set(SOURCES_E2E_TEST
-    "${LIB_DIR}/utils/series/ols-linear-series.cpp"
-    "${LIB_DIR}/utils/series/series.cpp"
-    "${LIB_DIR}/utils/series/ts-quadratic-series.cpp"
-    "${LIB_DIR}/utils/series/weighted-average-series.cpp"
-    "${LIB_DIR}/utils/series/ts-linear-series.cpp"
-
-    "${LIB_DIR}/rower/stroke.service.cpp"
-    "${LIB_DIR}/rower/flywheel.service.cpp"
-    "${LIB_DIR}/rower/stroke.controller.cpp"
+    ${SOURCES_COMMON}
 
     "${E2E_TEST_DIR}/main.cpp"
     "${E2E_TEST_DIR}/test.array.cpp"
@@ -140,42 +136,20 @@ set(SOURCES_E2E_TEST
     "${E2E_TEST_DIR}/globals.cpp"
 )
 
-file(
-    GENERATE
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/get-rower-profile
-    CONTENT
-"#!/bin/bash
-set -o errexit
-set -o nounset
-set -o pipefail
+set(SCRIPTS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/tools/cmake/scripts)
 
-targetEnvironment=\"\${1:-}\"
-
-if [ \"\${targetEnvironment}\" = \"custom\" ]; then
-    echo \"custom\"
-    exit 0
-fi
-
-rowerProfile=$(awk -v targetEnvironment=\"\${targetEnvironment}\" '
-    /^\\[env:/ { in_section = 0 }                                       # Reset flag when entering a new section
-    \$0 ~ \"\\\\[env:\" targetEnvironment \"\\\\]\" { in_section = 1 }  # Set flag when the target section is found
-    in_section && /-D ROWER_PROFILE/ {
-        match(\$0, /\\/([^\\/\\.]+)\\./, matches)                       # Extract text between slash and dot
-        print matches[1]
-        exit                                                            # Exit after finding the desired line
-    }
-' \"${CMAKE_CURRENT_SOURCE_DIR}/platformio.ini\")
-
-echo \"\${rowerProfile:-genericAir}\"
-"
+configure_file(
+    ${SCRIPTS_DIR}/get-rower-profile.sh.in
+    ${CMAKE_CURRENT_BINARY_DIR}/get-rower-profile
+    @ONLY
     FILE_PERMISSIONS OWNER_EXECUTE OWNER_READ
 )
 
 # Create e2e target
 add_executable(e2e-test EXCLUDE_FROM_ALL ${SOURCES_E2E_TEST})
 add_custom_target(clean-e2e
-    COMMAND /bin/sh -c \'[ -z $(ROWER_PROFILE) ] && { ${CMAKE_COMMAND} -E cmake_echo_color --red \"ERROR: Rower profile is missing\"$<SEMICOLON> exit 1$<SEMICOLON>} || exit 0'
-    COMMAND ${CMAKE_COMMAND} -E cmake_echo_color --cyan \"Rower profile: $(ROWER_PROFILE)\"
+    COMMAND /bin/sh -c '[ -z $(ROWER_PROFILE) ] && { ${CMAKE_COMMAND} -E cmake_echo_color --red \'"ERROR: Rower profile is missing"\'\; exit 1\;} || exit 0'
+    COMMAND ${CMAKE_COMMAND} -E cmake_echo_color --cyan "Rower profile: $(ROWER_PROFILE)"
     COMMAND "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/e2e-test.dir/clean_e2e" $(ROWER_PROFILE)
 )
 target_link_libraries(
@@ -201,63 +175,40 @@ set_target_properties(
         SUFFIX ".out"
 )
 
-set(TARGET_OBJECTS "$<JOIN:$<TARGET_OBJECTS:e2e-test>,' '>")
-set(TARGET_OUTPUT "$<SHELL_PATH:$<TARGET_FILE:e2e-test>>")
+configure_file(
+    ${SCRIPTS_DIR}/clean-e2e.sh.in
+    ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/e2e-test.dir/clean_e2e.configured
+    @ONLY
+)
 file(
     GENERATE
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/e2e-test.dir/clean_e2e
-    CONTENT
-"#!/bin/bash
-set -o errexit
-set -o nounset
-set -o pipefail
-
-rowerProfile=\"$1\"
-
-if [[ ! -f \"${CMAKE_CURRENT_BINARY_DIR}/\${rowerProfile\}.environment\" ]]; then
-    ${CMAKE_COMMAND} -E cmake_echo_color \"[  0%] New rower profile, cleaning files...\"
-    ${CMAKE_COMMAND} -E rm -f '${TARGET_OUTPUT}' '${TARGET_OBJECTS}' \"${CMAKE_CURRENT_BINARY_DIR}/\"*.environment
-fi
-"
+    INPUT ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/e2e-test.dir/clean_e2e.configured
     TARGET e2e-test
     FILE_PERMISSIONS OWNER_EXECUTE OWNER_READ
 )
 
-file(
-    GENERATE
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/build-e2e
-    CONTENT
-"#!/bin/bash
-set -o errexit
-set -o nounset
-set -o pipefail
-
-targetEnvironment=\"\${1:-unknown}\"
-
-${CMAKE_COMMAND} -E cmake_echo_color --cyan \"Target environment: \${targetEnvironment}\"
-
-rowerProfile=$(\"${CMAKE_CURRENT_BINARY_DIR}/get-rower-profile\" \"\${targetEnvironment}\")
-
-# Set USE_CUSTOM for custom target
-if [ \"\${targetEnvironment}\" = \"custom\" ]; then
-    useCustom=\"true\"
-fi
-
-${CMAKE_COMMAND} --build \"${CMAKE_CURRENT_BINARY_DIR}\" --target e2e-test --parallel $(getconf _NPROCESSORS_ONLN) -- ROWER_PROFILE=\${rowerProfile} USE_CUSTOM_SETTINGS=\${useCustom:-false}"
-    TARGET e2e-test
+configure_file(
+    ${SCRIPTS_DIR}/build-e2e.sh.in
+    ${CMAKE_CURRENT_BINARY_DIR}/build-e2e
+    @ONLY
     FILE_PERMISSIONS OWNER_EXECUTE OWNER_READ
 )
 
 add_custom_command(
     TARGET e2e-test
     POST_BUILD
-    WORKING_DIRECTORY ../.
+    WORKING_DIRECTORY ${PROJECT_ROOT_DIR}
     COMMAND touch ${CMAKE_CURRENT_BINARY_DIR}/$(ROWER_PROFILE).environment
 )
 
 # Helper function to create unit test targets
-function(add_unit_test_target target_name output_name enable_clang_tidy)
-    add_executable(${target_name} ${SOURCES_UNIT_TEST})
+function(add_unit_test_target target_name output_name enable_clang_tidy exclude_from_all)
+    if(exclude_from_all)
+        add_executable(${target_name} EXCLUDE_FROM_ALL ${SOURCES_UNIT_TEST})
+    else()
+        add_executable(${target_name} ${SOURCES_UNIT_TEST})
+    endif()
     
     target_include_directories(${target_name} PRIVATE ${INCLUDES_UNIT_TEST})
     target_compile_options(${target_name} PRIVATE ${COMPILER_FLAGS})
@@ -284,20 +235,20 @@ function(add_unit_test_target target_name output_name enable_clang_tidy)
     add_custom_target(run-${target_name}
         COMMAND ${target_name}
         DEPENDS ${target_name}
-        WORKING_DIRECTORY ../.
+        WORKING_DIRECTORY ${PROJECT_ROOT_DIR}
         COMMENT "Running ${output_name}"
     )
 endfunction()
 
 # Create unit test targets
-add_unit_test_target(unit-test "test" False)
-add_unit_test_target(unit-test-lint "test-lint" True)
+add_unit_test_target(unit-test "test" FALSE FALSE)
+add_unit_test_target(unit-test-lint "test-lint" TRUE TRUE)
 
 # Create code coverage target
 add_executable(test-coverage EXCLUDE_FROM_ALL ${SOURCES_UNIT_TEST})
 
 target_include_directories(test-coverage PRIVATE ${INCLUDES_UNIT_TEST})
-target_compile_options(test-coverage PRIVATE ${COMPILER_FLAGS_UNIT_TEST} --coverage)
+target_compile_options(test-coverage PRIVATE ${COMPILER_FLAGS} --coverage)
 target_compile_definitions(test-coverage PRIVATE UNIT_TEST)
 target_link_libraries(
     test-coverage PRIVATE
@@ -315,64 +266,18 @@ set_target_properties(
 add_custom_command(
     TARGET test-coverage
     POST_BUILD
-    WORKING_DIRECTORY ../.
+    WORKING_DIRECTORY ${PROJECT_ROOT_DIR}
     COMMAND $<TARGET_FILE:test-coverage>
 )
 
-# Create calibration target
-file(GENERATE
-  OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/run-calibration"
-  CONTENT 
-"#!/bin/bash
-
-set -o errexit
-set -o nounset
-set -o pipefail
-
-RED='\\033[31m'
-GREEN='\\033[32m'
-BLUE='\\033[34m'
-UNDERLINE='\\033[4m'
-RESET='\\033[0m'
-
-targetEnvironment=\"\${1:-unknown}\"
-
-\"${CMAKE_CURRENT_BINARY_DIR}/build-e2e\" \"\${targetEnvironment}\"
-
-rowerProfile=\$(\"${CMAKE_CURRENT_BINARY_DIR}/get-rower-profile\" \"\${targetEnvironment}\")
-
-calibrationDir=\"${CMAKE_SOURCE_DIR}/test/calibration/\${rowerProfile}\"
-if [[ ! -d \${calibrationDir} ]]; then
-    echo -e \"\${RED}No calibration for rower profile: \\\"\${rowerProfile}\\\"\${RESET}\"
-    exit 1
-fi
-
-echo -e \"\${BLUE}\${UNDERLINE}Current calibration directory:\${RESET} \${calibrationDir}\"
-
-calibrationOutputDir=\"\${calibrationDir}/output\"
-mkdir -p \"\${calibrationOutputDir}\"
-
-exitCode=0
-for file in \"\${calibrationDir}\"/*test.txt; do
-  echo -e \"file: \$(basename \"\${file}\")\"
-
-  \"$<TARGET_FILE:e2e-test>\" \"\${file}\" > \"\${calibrationOutputDir}/\$(basename \"\${file}\")-output.txt\"
-
-  actualStrokeCount=\$(grep -ic \"power\" \"\${calibrationOutputDir}/\$(basename \"\${file}\")-output.txt\")
-
-  expectedStrokeCount=\$(echo \"\$(basename \"\${file}\")\" | cut -d'-' -f3)
-  if [[ \"\${expectedStrokeCount}\" == \"\${actualStrokeCount}\" ]]; then
-    passed=\"PASSED\"
-    color=\"\${GREEN}\"
-  else
-    passed=\"FAILED\"
-    color=\"\${RED}\"
-    exitCode=1
-  fi
-
-  echo -e \"number of strokes: \${actualStrokeCount} \${color}\${passed}\${RESET}\"
-done
-exit \${exitCode}
-"
-  FILE_PERMISSIONS OWNER_EXECUTE OWNER_READ
+configure_file(
+    ${SCRIPTS_DIR}/run-calibration.sh.in
+    ${CMAKE_CURRENT_BINARY_DIR}/run-calibration.configured
+    @ONLY
+)
+file(
+    GENERATE
+    OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/run-calibration"
+    INPUT ${CMAKE_CURRENT_BINARY_DIR}/run-calibration.configured
+    FILE_PERMISSIONS OWNER_EXECUTE OWNER_READ
 )
