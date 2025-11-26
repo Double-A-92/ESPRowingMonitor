@@ -90,11 +90,11 @@ bool StrokeService::isFlywheelPowered()
     return currentTorque > strokePhaseDetectionSettings.minimumPoweredTorque && deltaTimes.coefficientA() < 0;
 }
 
-void StrokeService::calculateDragCoefficient()
+Configurations::precision StrokeService::calculateRecoveryGoodnessOfFit() const
 {
     if (recoveryDuration > dragFactorSettings.maxDragFactorRecoveryPeriod)
     {
-        return;
+        return 0;
     }
 
     auto minRequiredRecoveryDeltaTimes = (dragCoefficient == 0)
@@ -102,16 +102,14 @@ void StrokeService::calculateDragCoefficient()
                                              : strokePhaseDetectionSettings.impulseDataArrayLength;
     if (recoveryDeltaTimes.size() < minRequiredRecoveryDeltaTimes)
     {
-        return;
+        return 0;
     }
 
-    const auto goodnessOfFit = recoveryDeltaTimes.goodnessOfFit();
+    return recoveryDeltaTimes.goodnessOfFit();
+}
 
-    if (goodnessOfFit < dragFactorSettings.goodnessOfFitThreshold)
-    {
-        return;
-    }
-
+void StrokeService::calculateDragCoefficient(Configurations::precision goodnessOfFit)
+{
     const auto rawNewDragCoefficient = (recoveryDeltaTimes.slope() * machineSettings.flywheelInertia) / angularDisplacementPerImpulse;
 
     if (rawNewDragCoefficient > dragFactorSettings.upperDragFactorThreshold ||
@@ -217,7 +215,12 @@ void StrokeService::recoveryEnd()
 {
     recoveryDuration = rowingTotalTime - recoveryStartTime;
     recoveryTotalAngularDisplacement = rowingTotalAngularDisplacement - recoveryStartAngularDisplacement;
-    calculateDragCoefficient();
+
+    const auto goodnessOfFit = calculateRecoveryGoodnessOfFit();
+    if (goodnessOfFit >= dragFactorSettings.goodnessOfFitThreshold)
+    {
+        calculateDragCoefficient(goodnessOfFit);
+    }
 
     recoveryDeltaTimes.reset();
     calculateAvgStrokePower();

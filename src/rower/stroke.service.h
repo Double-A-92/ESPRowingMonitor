@@ -69,7 +69,8 @@ class StrokeService final : public IStrokeService
 
     bool isFlywheelUnpowered();
     bool isFlywheelPowered();
-    void calculateDragCoefficient();
+    [[nodiscard]] Configurations::precision calculateRecoveryGoodnessOfFit() const;
+    void calculateDragCoefficient(Configurations::precision goodnessOfFit);
     void calculateAvgStrokePower();
 
     void driveStart();
