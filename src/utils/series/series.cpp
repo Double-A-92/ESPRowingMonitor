@@ -9,6 +9,16 @@ const Configurations::precision &Series::operator[](size_t index) const
     return seriesArray[index];
 };
 
+Configurations::precision Series::front() const
+{
+    return seriesArray[0];
+}
+
+Configurations::precision Series::back() const
+{
+    return seriesArray.back();
+}
+
 size_t Series::size() const
 {
     return seriesArray.size();

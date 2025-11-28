@@ -25,7 +25,10 @@ public:
     }
 
     [[nodiscard]] Configurations::precision yAtSeriesBegin() const;
+    [[nodiscard]] Configurations::precision xAtSeriesBegin() const;
+    [[nodiscard]] Configurations::precision xAtSeriesEnd() const;
     [[nodiscard]] Configurations::precision slope() const;
+    [[nodiscard]] Configurations::precision intercept() const;
     [[nodiscard]] Configurations::precision goodnessOfFit() const;
     [[nodiscard]] size_t size() const;
 

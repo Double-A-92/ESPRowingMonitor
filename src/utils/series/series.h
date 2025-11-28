@@ -26,6 +26,8 @@ public:
 
     const Configurations::precision &operator[](size_t index) const;
 
+    [[nodiscard]] Configurations::precision front() const;
+    [[nodiscard]] Configurations::precision back() const;
     [[nodiscard]] size_t size() const;
     [[nodiscard]] size_t capacity() const;
     [[nodiscard]] Configurations::precision average() const;

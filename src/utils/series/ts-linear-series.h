@@ -40,6 +40,8 @@ public:
     }
 
     [[nodiscard]] Configurations::precision yAtSeriesBegin() const;
+    [[nodiscard]] Configurations::precision xAtSeriesEnd() const;
+    [[nodiscard]] Configurations::precision xAtSeriesBegin() const;
     [[nodiscard]] Configurations::precision median() const;
     Configurations::precision coefficientA();
     Configurations::precision coefficientB();

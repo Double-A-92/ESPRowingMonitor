@@ -26,6 +26,16 @@ Configurations::precision TSLinearSeries::yAtSeriesBegin() const
     return seriesY[0];
 }
 
+Configurations::precision TSLinearSeries::xAtSeriesEnd() const
+{
+    return seriesX.back();
+}
+
+Configurations::precision TSLinearSeries::xAtSeriesBegin() const
+{
+    return seriesX.front();
+}
+
 Configurations::precision TSLinearSeries::coefficientA()
 {
     if (shouldRecalculateA)
@@ -39,6 +49,11 @@ Configurations::precision TSLinearSeries::coefficientA()
 
 Configurations::precision TSLinearSeries::coefficientB()
 {
+    if (seriesX.size() < 2)
+    {
+        return 0.0;
+    }
+
     if (shouldRecalculateB)
     {
         a = median();
