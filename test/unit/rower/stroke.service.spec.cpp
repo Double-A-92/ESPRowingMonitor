@@ -118,8 +118,8 @@ TEST_CASE("StrokeService")
             const auto rowingMetrics = strokeService.getData();
 
             REQUIRE(rowingMetrics.strokeCount == 10);
-            REQUIRE(rowingMetrics.lastStrokeTime == 32'573'215);
-            const auto expectedDistance = 9'741.64407532888799324;
+            REQUIRE(rowingMetrics.lastStrokeTime == 32'552'058);
+            const auto expectedDistance = 9'742.02761388022008759;
             REQUIRE_THAT(rowingMetrics.distance, Catch::Matchers::WithinRel(expectedDistance, 0.0000001));
             REQUIRE(rowingMetrics.lastRevTime == 42'586'444);
         }
@@ -161,8 +161,8 @@ TEST_CASE("StrokeService")
             const auto rowingMetrics = strokeService.getData();
 
             REQUIRE(rowingMetrics.strokeCount == 10);
-            REQUIRE(rowingMetrics.lastStrokeTime == 32'573'215);
-            REQUIRE_THAT(rowingMetrics.distance, Catch::Matchers::WithinRel(9'318.94758182254736312, 0.0000001));
+            REQUIRE(rowingMetrics.lastStrokeTime == 32'552'058);
+            REQUIRE_THAT(rowingMetrics.distance, Catch::Matchers::WithinRel(9'320.0087863300304889, 0.0000001));
             REQUIRE(rowingMetrics.lastRevTime == 39'577'207);
         }
 
@@ -204,8 +204,8 @@ TEST_CASE("StrokeService")
             const auto rowingMetrics = strokeService.getData();
 
             REQUIRE(rowingMetrics.strokeCount == 10);
-            REQUIRE(rowingMetrics.lastStrokeTime == 32'573'215);
-            REQUIRE_THAT(rowingMetrics.distance, Catch::Matchers::WithinRel(7'100.63887816623901017, 0.0000001));
+            REQUIRE(rowingMetrics.lastStrokeTime == 32'552'058);
+            REQUIRE_THAT(rowingMetrics.distance, Catch::Matchers::WithinRel(7'101.18982363568466099, 0.0000001));
             REQUIRE(rowingMetrics.lastRevTime == 39'577'207);
         }
     }
@@ -220,8 +220,8 @@ TEST_CASE("StrokeService")
         CHECK(RowerProfile::Defaults::goodnessOfFitThreshold == 0.97F);
         CHECK(RowerProfile::Defaults::rotationDebounceTimeMin == 7'000);
         CHECK(RowerProfile::Defaults::sprocketRadius == 1.5F / 100);
-        CHECK(RowerProfile::Defaults::minimumDriveTime == 300'000);
-        CHECK(RowerProfile::Defaults::minimumRecoveryTime == 300'000);
+        CHECK(RowerProfile::Defaults::minimumDriveTime == 400'000);
+        CHECK(RowerProfile::Defaults::minimumRecoveryTime == 800'000);
     }
 
     ifstream slopeStream("test/unit/rower/test-data/stroke.service.spec.slope.txt");
@@ -317,9 +317,9 @@ TEST_CASE("StrokeService")
                 SECTION("force curves on new stroke (" + std::to_string(rowingMetrics.strokeCount) + ")")
                 {
                     INFO("deltaTime: " << deltaTime << ", stroke number: " << rowingMetrics.strokeCount);
-                    REQUIRE_THAT(rowingMetrics.driveHandleForces, Catch::Matchers::RangeEquals(forceCurves[rowingMetrics.strokeCount - 1], [](float first, float second)
-                                                                                               { return std::abs(first - second) < 0.00001F; }));
-                    REQUIRE_THAT(rowingMetrics.dragCoefficient * 1e6, Catch::Matchers::WithinRel(dragFactors[rowingMetrics.strokeCount - 1], 0.0000001));
+                    CHECK_THAT(rowingMetrics.driveHandleForces, Catch::Matchers::RangeEquals(forceCurves[rowingMetrics.strokeCount - 1], [](float first, float second)
+                                                                                             { return std::abs(first - second) < 0.00001F; }));
+                    CHECK_THAT(rowingMetrics.dragCoefficient * 1e6, Catch::Matchers::WithinRel(dragFactors[rowingMetrics.strokeCount - 1], 0.0000001));
                 }
             }
         }
@@ -327,8 +327,8 @@ TEST_CASE("StrokeService")
         SECTION("total rowing metrics")
         {
             REQUIRE(rowingMetrics.strokeCount == 10);
-            REQUIRE(rowingMetrics.lastStrokeTime == 32'573'215);
-            const auto expectedDistance = 9'290.9570160674;
+            REQUIRE(rowingMetrics.lastStrokeTime == 32'552'058);
+            const auto expectedDistance = 9'291.37406529420513834;
             REQUIRE_THAT(rowingMetrics.distance, Catch::Matchers::WithinRel(expectedDistance, 0.0000001));
             REQUIRE(rowingMetrics.lastRevTime == 39'577'207);
         }
