@@ -28,6 +28,7 @@ There is a lot of information available on the physics and math behind the code 
 _Highlights:_
 
 - Very accurate stroke detection and a wide range of rowing metrics including force curve.
+- Advanced cyclic error filtering for cleaner force curves and improved accuracy.
 - BLE connectivity supporting multiple devices simultaneously.
 - WebGUI for intuitive setup and data visualization.
 - OTA firmware updates for seamless usage and detailed logging for replay.

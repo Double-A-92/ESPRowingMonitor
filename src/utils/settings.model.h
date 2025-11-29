@@ -15,6 +15,7 @@ namespace RowerProfile
         // Sensor signal filter settings
         static constexpr unsigned short rotationDebounceTimeMin = ROTATION_DEBOUNCE_TIME_MIN * 1'000;
         static constexpr unsigned int rowingStoppedThresholdPeriod = ROWING_STOPPED_THRESHOLD_PERIOD * 1'000;
+        static constexpr float cyclicErrorAggressiveness = impulsesPerRevolution < 3 ? 0.0F : CYCLIC_ERROR_AGGRESSIVENESS;
 
         // Drag factor filter settings
         static constexpr float goodnessOfFitThreshold = GOODNESS_OF_FIT_THRESHOLD;
@@ -47,6 +48,7 @@ namespace RowerProfile
     {
         unsigned short rotationDebounceTimeMin = Defaults::rotationDebounceTimeMin;
         unsigned int rowingStoppedThresholdPeriod = Defaults::rowingStoppedThresholdPeriod;
+        float cyclicErrorAggressiveness = Defaults::cyclicErrorAggressiveness;
     };
 
     struct DragFactorSettings

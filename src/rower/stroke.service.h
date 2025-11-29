@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../utils/configuration.h"
+#include "../utils/series/cyclic-error-filter.h"
 #include "../utils/series/ols-linear-series.h"
 #include "../utils/series/ts-linear-series.h"
 #include "../utils/series/ts-quadratic-series.h"
@@ -24,6 +25,7 @@ class StrokeService final : public IStrokeService
     CyclePhase cyclePhase = CyclePhase::Stopped;
     unsigned long long rowingTotalTime = 0ULL;
     unsigned long long rowingImpulseCount = 0UL;
+    unsigned long rawImpulseCount = 0UL;
     Configurations::precision rowingTotalAngularDisplacement = 0;
 
     // Drive related
@@ -66,6 +68,12 @@ class StrokeService final : public IStrokeService
     OLSLinearSeries deltaTimesSlopes = OLSLinearSeries(RowerProfile::Defaults::impulseDataArrayLength, Configurations::defaultAllocationCapacity);
     OLSLinearSeries recoveryDeltaTimes = OLSLinearSeries(0, Configurations::defaultAllocationCapacity, RowerProfile::Defaults::maxDragFactorRecoveryPeriod / RowerProfile::Defaults::rotationDebounceTimeMin / 2);
     TSQuadraticSeries angularDistances = TSQuadraticSeries(RowerProfile::Defaults::impulseDataArrayLength, Configurations::defaultAllocationCapacity);
+    CyclicErrorFilter cyclicFilter = CyclicErrorFilter(
+        RowerProfile::Defaults::impulsesPerRevolution,
+        RowerProfile::Defaults::impulseDataArrayLength,
+        RowerProfile::Defaults::cyclicErrorAggressiveness,
+        Configurations::defaultAllocationCapacity,
+        RowerProfile::Defaults::maxDragFactorRecoveryPeriod / RowerProfile::Defaults::rotationDebounceTimeMin / 2);
 
     bool isFlywheelUnpowered();
     bool isFlywheelPowered();
@@ -92,4 +100,5 @@ public:
 
     RowingDataModels::RowingMetrics getData() override;
     void processData(RowingDataModels::FlywheelData data) override;
+    void processFilterBuffer() override;
 };

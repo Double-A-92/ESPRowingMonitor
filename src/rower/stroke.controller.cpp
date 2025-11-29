@@ -25,6 +25,8 @@ void StrokeController::begin()
 
 void StrokeController::update()
 {
+    strokeService.processFilterBuffer();
+
     if (flywheelService.hasDataChanged())
     {
         const auto lastFlywheelData = flywheelData;

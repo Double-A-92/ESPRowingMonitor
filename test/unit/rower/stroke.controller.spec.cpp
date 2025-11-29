@@ -51,11 +51,13 @@ TEST_CASE("StrokeController", "[rower]")
             Mock<IStrokeService> mockStrokeService;
             Mock<IFlywheelService> mockFlywheelService;
             Mock<IEEPROMService> mockEEPROMService;
+            Fake(Method(mockStrokeService, processFilterBuffer));
             When(Method(mockFlywheelService, hasDataChanged)).Return(false);
 
             StrokeController strokeController(mockStrokeService.get(), mockFlywheelService.get(), mockEEPROMService.get());
             strokeController.update();
 
+            Verify(Method(mockStrokeService, processFilterBuffer)).Once();
             Verify(Method(mockFlywheelService, hasDataChanged)).Once();
             VerifyNoOtherInvocations(mockFlywheelService);
             VerifyNoOtherInvocations(mockStrokeService);
@@ -66,12 +68,14 @@ TEST_CASE("StrokeController", "[rower]")
             Mock<IStrokeService> mockStrokeService;
             Mock<IFlywheelService> mockFlywheelService;
             Mock<IEEPROMService> mockEEPROMService;
+            Fake(Method(mockStrokeService, processFilterBuffer));
             When(Method(mockFlywheelService, hasDataChanged)).Return(true);
             When(Method(mockFlywheelService, getData)).Return({});
 
             StrokeController strokeController(mockStrokeService.get(), mockFlywheelService.get(), mockEEPROMService.get());
             strokeController.update();
 
+            Verify(Method(mockStrokeService, processFilterBuffer)).Once();
             Verify(Method(mockFlywheelService, hasDataChanged)).Once();
             Verify(Method(mockFlywheelService, getData)).Once();
             Verify(Method(mockStrokeService, processData)).Exactly(0);
@@ -85,6 +89,7 @@ TEST_CASE("StrokeController", "[rower]")
             Mock<IStrokeService> mockStrokeService;
             Mock<IFlywheelService> mockFlywheelService;
             Mock<IEEPROMService> mockEEPROMService;
+            Fake(Method(mockStrokeService, processFilterBuffer));
             When(Method(mockFlywheelService, hasDataChanged)).Return(true);
             When(Method(mockFlywheelService, getData)).Return({
                 .rawImpulseCount = 1,
@@ -100,6 +105,7 @@ TEST_CASE("StrokeController", "[rower]")
             StrokeController strokeController(mockStrokeService.get(), mockFlywheelService.get(), mockEEPROMService.get());
             strokeController.update();
 
+            Verify(Method(mockStrokeService, processFilterBuffer)).Once();
             Verify(Method(mockFlywheelService, hasDataChanged)).Once();
 
             SECTION("should get flywheel data")

@@ -1,5 +1,17 @@
 # Features
 
+## Cyclic Error Filtering
+
+As of version 7.0.0, ESP Rowing Monitor includes an advanced cyclic error filtering system that improves the accuracy of metrics by correcting timing variations caused by mechanical imperfections in the flywheel magnet placement.
+
+**Benefits:**
+
+- **Cleaner Force Curves**: The filter produces cleaner handle force curves by correcting impulse timing variations.
+- **Improved Accuracy**: More accurate stroke detection and metric calculations due to cleaner input data.
+- **Reduced Data Requirements**: The cyclic error correction potentially allows using a smaller `IMPULSE_DATA_ARRAY_LENGTH` while maintaining or improving metric accuracy.
+
+The cyclic error filter works by learning the systematic timing errors in the sensor signal and applying corrections to each impulse, effectively removing the periodic noise introduced by uneven magnet spacing or sensor positioning.
+
 ## Bluetooth interface
 
 ESP Rowing Monitor provides several BLE interfaces (Bluetooth profiles) to get the data and metrics it measures.

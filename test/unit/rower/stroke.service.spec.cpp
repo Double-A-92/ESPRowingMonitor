@@ -78,10 +78,10 @@ TEST_CASE("StrokeService")
 
             const auto rowingMetrics = strokeService.getData();
 
-            REQUIRE(rowingMetrics.strokeCount == 17);
-            REQUIRE(rowingMetrics.lastStrokeTime == 31'851'264);
-            REQUIRE_THAT(rowingMetrics.distance, Catch::Matchers::WithinRel(9'175.75398753580520861, 0.0000001));
-            REQUIRE(rowingMetrics.lastRevTime == 38'863'369);
+            REQUIRE(rowingMetrics.strokeCount == 14);
+            REQUIRE(rowingMetrics.lastStrokeTime == 25'793'352);
+            REQUIRE_THAT(rowingMetrics.distance, Catch::Matchers::WithinRel(9'132.18830547154357191, 0.0000001));
+            REQUIRE(rowingMetrics.lastRevTime == 32'800'091);
         }
 
         SECTION("change sensor signal related settings")
@@ -118,10 +118,10 @@ TEST_CASE("StrokeService")
             const auto rowingMetrics = strokeService.getData();
 
             REQUIRE(rowingMetrics.strokeCount == 10);
-            REQUIRE(rowingMetrics.lastStrokeTime == 32'552'058);
-            const auto expectedDistance = 9'742.02761388022008759;
+            REQUIRE(rowingMetrics.lastStrokeTime == 26'678'792);
+            const auto expectedDistance = 9'713.4146901604726736;
             REQUIRE_THAT(rowingMetrics.distance, Catch::Matchers::WithinRel(expectedDistance, 0.0000001));
-            REQUIRE(rowingMetrics.lastRevTime == 42'586'444);
+            REQUIRE(rowingMetrics.lastRevTime == 36'691'429);
         }
 
         SECTION("change drag factor related settings")
@@ -161,9 +161,9 @@ TEST_CASE("StrokeService")
             const auto rowingMetrics = strokeService.getData();
 
             REQUIRE(rowingMetrics.strokeCount == 10);
-            REQUIRE(rowingMetrics.lastStrokeTime == 32'552'058);
-            REQUIRE_THAT(rowingMetrics.distance, Catch::Matchers::WithinRel(9'320.0087863300304889, 0.0000001));
-            REQUIRE(rowingMetrics.lastRevTime == 39'577'207);
+            REQUIRE(rowingMetrics.lastStrokeTime == 26'678'792);
+            REQUIRE_THAT(rowingMetrics.distance, Catch::Matchers::WithinRel(9'298.52873643809107307, 0.0000001));
+            REQUIRE(rowingMetrics.lastRevTime == 33'706'297);
         }
 
         SECTION("change machine related settings")
@@ -204,9 +204,9 @@ TEST_CASE("StrokeService")
             const auto rowingMetrics = strokeService.getData();
 
             REQUIRE(rowingMetrics.strokeCount == 10);
-            REQUIRE(rowingMetrics.lastStrokeTime == 32'552'058);
-            REQUIRE_THAT(rowingMetrics.distance, Catch::Matchers::WithinRel(7'101.18982363568466099, 0.0000001));
-            REQUIRE(rowingMetrics.lastRevTime == 39'577'207);
+            REQUIRE(rowingMetrics.lastStrokeTime == 26'678'792);
+            REQUIRE_THAT(rowingMetrics.distance, Catch::Matchers::WithinRel(7'084.78850820065508742, 0.0000001));
+            REQUIRE(rowingMetrics.lastRevTime == 33'706'297);
         }
     }
 #endif
@@ -308,6 +308,11 @@ TEST_CASE("StrokeService")
                 .rawImpulseTime = totalTime,
             };
 
+            // Simulate free loop cycle and process 10 points for cyclic error filter
+            for (int i = 0; i < 10; ++i)
+            {
+                strokeService.processFilterBuffer();
+            }
             strokeService.processData(data);
             const auto prevStrokeCount = rowingMetrics.strokeCount;
             rowingMetrics = strokeService.getData();
@@ -327,10 +332,10 @@ TEST_CASE("StrokeService")
         SECTION("total rowing metrics")
         {
             REQUIRE(rowingMetrics.strokeCount == 10);
-            REQUIRE(rowingMetrics.lastStrokeTime == 32'552'058);
-            const auto expectedDistance = 9'291.37406529420513834;
+            REQUIRE(rowingMetrics.lastStrokeTime == 26'896'514);
+            const auto expectedDistance = 9'306.07625318930877256;
             REQUIRE_THAT(rowingMetrics.distance, Catch::Matchers::WithinRel(expectedDistance, 0.0000001));
-            REQUIRE(rowingMetrics.lastRevTime == 39'577'207);
+            REQUIRE(rowingMetrics.lastRevTime == 33'925'253);
         }
     }
 }
