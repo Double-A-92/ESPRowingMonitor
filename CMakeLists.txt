@@ -53,6 +53,8 @@ set(SOURCES_COMMON
     "${LIB_DIR}/utils/series/ts-quadratic-series.cpp"
     "${LIB_DIR}/utils/series/weighted-average-series.cpp"
     "${LIB_DIR}/utils/series/ts-linear-series.cpp"
+    "${LIB_DIR}/utils/series/exponential-weighted-average.cpp"
+    "${LIB_DIR}/utils/series/cyclic-error-filter.cpp"
 
     "${LIB_DIR}/rower/stroke.service.cpp"
     "${LIB_DIR}/rower/flywheel.service.cpp"
@@ -115,6 +117,8 @@ set(SOURCES_UNIT_TEST
     "${UNIT_TEST_DIR}/series/ols-linear-series.spec.cpp"
     "${UNIT_TEST_DIR}/series/weighted-average-series.spec.cpp"
     "${UNIT_TEST_DIR}/series/ts-quadratic-series.spec.cpp"
+    "${UNIT_TEST_DIR}/series/exponential-weighted-average.spec.cpp"
+    "${UNIT_TEST_DIR}/series/cyclic-error-filter.spec.cpp"
 
     "${UNIT_TEST_DIR}/include/main.cpp"
     "${UNIT_TEST_DIR}/include/Update.cpp"
