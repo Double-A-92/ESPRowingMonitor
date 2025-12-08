@@ -1,5 +1,6 @@
 // NOLINTBEGIN(readability-magic-numbers)
 #include <array>
+#include <ranges>
 #include <span>
 #include <string>
 #include <vector>
@@ -140,7 +141,7 @@ TEST_CASE("ExtendedMetricBleService broadcast", "[ble-service]")
         When(Method(mockHandleForcesCharacteristic, setCallbacks)).Do([&mockHandleForcesCharacteristic](NimBLECharacteristicCallbacks *callbacks)
                                                                       { mockHandleForcesCharacteristic.get().callbacks = callbacks; });
 
-        Fake(OverloadedMethod(mockHandleForcesCharacteristic, setValue, void(const unsigned char *data, size_t length)));
+        Fake(OverloadedMethod(mockHandleForcesCharacteristic, setValue, void(const std::span<const std::byte> data)));
         Fake(Method(mockHandleForcesCharacteristic, notify));
 
         Fake(Method(mockArduino, xTaskCreatePinnedToCore));
@@ -204,8 +205,8 @@ TEST_CASE("ExtendedMetricBleService broadcast", "[ble-service]")
                 extendedMetricBleService.broadcastHandleForces(expectedHandleForces);
 
                 Verify(
-                    OverloadedMethod(mockHandleForcesCharacteristic, setValue, void(const unsigned char *data, size_t length))
-                        .Using(Any(), Eq(2U + expectedHandleForces.size() * sizeof(float))))
+                    OverloadedMethod(mockHandleForcesCharacteristic, setValue, void(const std::span<const std::byte> data)).Matching([expectedSize = 2U + expectedHandleForces.size() * sizeof(float)](const std::span<const std::byte> data)
+                                                                                                                                     { return data.size_bytes() == expectedSize; }))
                     .Once();
             }
 
@@ -225,13 +226,13 @@ TEST_CASE("ExtendedMetricBleService broadcast", "[ble-service]")
                     extendedMetricBleService.broadcastHandleForces(expectedBigHandleForces);
 
                     Verify(
-                        OverloadedMethod(mockHandleForcesCharacteristic, setValue, void(const unsigned char *data, size_t length))
-                            .Using(Any(), Eq(2U + expectedChunkSize * sizeof(float))))
+                        OverloadedMethod(mockHandleForcesCharacteristic, setValue, void(const std::span<const std::byte> data)).Matching([expectedSize = 2U + expectedChunkSize * sizeof(float)](const std::span<const std::byte> data)
+                                                                                                                                         { return data.size_bytes() == expectedSize; }))
                         .Exactly(expectedNumberOfNotifies);
 
                     Verify(
-                        OverloadedMethod(mockHandleForcesCharacteristic, setValue, void(const unsigned char *data, size_t length))
-                            .Using(Any(), Eq(2U + (expectedBigHandleForces.size() % expectedChunkSize) * sizeof(float))))
+                        OverloadedMethod(mockHandleForcesCharacteristic, setValue, void(const std::span<const std::byte> data)).Matching([expectedSize = 2U + (expectedBigHandleForces.size() % expectedChunkSize) * sizeof(float)](const std::span<const std::byte> data)
+                                                                                                                                         { return data.size_bytes() == expectedSize; }))
                         .Exactly(expectedBigHandleForces.size() % expectedChunkSize == 0 ? 0 : 1);
                 }
             }
@@ -240,16 +241,16 @@ TEST_CASE("ExtendedMetricBleService broadcast", "[ble-service]")
         SECTION("send the total number of chunks and the current chunk id as the first two bytes")
         {
             const auto expectedMTU = 100;
-            std::vector<std::vector<unsigned char>> results{};
+            std::vector<std::vector<std::byte>> results{};
 
             const unsigned short expectedChunkSize = (expectedMTU - 3U - 2U) / sizeof(float);
             const unsigned char expectedNumberOfNotifies = expectedBigHandleForces.size() / expectedChunkSize + (expectedBigHandleForces.size() % expectedChunkSize == 0 ? 0 : 1);
 
             When(Method(mockNimBLEServer, getPeerMTU)).Return(expectedMTU);
             Fake(
-                OverloadedMethod(mockHandleForcesCharacteristic, setValue, void(const unsigned char *data, size_t length)).Matching([&results](const auto data, const auto length)
-                                                                                                                                    {
-                    results.push_back(std::vector<unsigned char>(data, data + length));
+                OverloadedMethod(mockHandleForcesCharacteristic, setValue, void(const std::span<const std::byte> data)).Matching([&results](const std::span<const std::byte> data)
+                                                                                                                                 {
+                    results.emplace_back(data.begin(), data.end());
 
                     return true; }));
 
@@ -258,15 +259,15 @@ TEST_CASE("ExtendedMetricBleService broadcast", "[ble-service]")
             for (unsigned char i = 0; i < expectedNumberOfNotifies; ++i)
             {
                 INFO("Number of total notifies: " << (int)expectedNumberOfNotifies << " Current notify: " << i + 1U);
-                REQUIRE(results[i].at(0) == expectedNumberOfNotifies);
-                REQUIRE(results[i].at(1) == i + 1);
+                REQUIRE(results[i][0] == std::byte(expectedNumberOfNotifies));
+                REQUIRE(results[i][1] == std::byte(i + 1));
             }
         }
 
         SECTION("correctly chunk handleForces data between notifies")
         {
             const auto expectedMTU = 100;
-            std::vector<std::vector<unsigned char>> results{};
+            std::vector<std::vector<std::byte>> results{};
 
             const size_t expectedChunkSize = (expectedMTU - 3U - 2U) / sizeof(float);
             const unsigned char expectedNumberOfNotifies = expectedBigHandleForces.size() / expectedChunkSize + (expectedBigHandleForces.size() % expectedChunkSize == 0 ? 0 : 1);
@@ -274,35 +275,37 @@ TEST_CASE("ExtendedMetricBleService broadcast", "[ble-service]")
             mockHandleForcesCharacteristic.ClearInvocationHistory();
             When(Method(mockNimBLEServer, getPeerMTU)).Return(expectedMTU);
             Fake(
-                OverloadedMethod(mockHandleForcesCharacteristic, setValue, void(const unsigned char *data, size_t length)).Matching([&results](const auto data, const auto length)
-                                                                                                                                    {
-                    results.push_back(std::vector<unsigned char>(data, data + length));
-
-                    return true; }));
+                OverloadedMethod(mockHandleForcesCharacteristic, setValue, void(const std::span<const std::byte> data)).Matching([&results](const std::span<const std::byte> data)
+                                                                                                                                 {
+                        results.emplace_back(data.begin(), data.end());
+                        return true; }));
 
             extendedMetricBleService.broadcastHandleForces(expectedBigHandleForces);
 
-            for (size_t i = 0; i < expectedNumberOfNotifies; ++i)
+            Verify(Method(mockHandleForcesCharacteristic, notify)).Exactly(expectedNumberOfNotifies);
+
+            auto index = 0;
+            for (const auto &result : results)
             {
                 std::vector<float> parsedHandleForces{};
-                size_t numOfFloats = (results[i].size() - 2) / sizeof(float);
-                for (size_t j = 0; j < numOfFloats; ++j)
+                const auto floatElements = std::span(result).subspan(2);
+                for (auto floatBytes : floatElements | std::views::chunk(sizeof(float)))
                 {
                     float value = NAN;
-                    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
-                    std::memcpy(&value, results[i].data() + 2 + j * sizeof(float), sizeof(float));
+                    std::memcpy(&value, floatBytes.data(), sizeof(float));
                     parsedHandleForces.push_back(value);
                 }
-                const auto beginOffset = static_cast<std::ptrdiff_t>(expectedChunkSize * i);
-                const auto endOffset = static_cast<std::ptrdiff_t>(expectedChunkSize * i + numOfFloats);
-                const auto current = std::vector<float>(cbegin(expectedBigHandleForces) + beginOffset, cbegin(expectedBigHandleForces) + endOffset);
+                const auto numOfFloats = parsedHandleForces.size();
+                const auto beginOffset = expectedChunkSize * index;
+                auto view = expectedBigHandleForces | std::views::drop(beginOffset) | std::views::take(numOfFloats);
 
-                INFO("Current notify: " << i + 1U);
+                const auto current = std::vector<float>(view.begin(), view.end());
+
+                INFO("Current notify: " << index + 1U);
                 REQUIRE_THAT(current, Catch::Matchers::RangeEquals(parsedHandleForces, [](float first, float second)
                                                                    { return std::abs(first - second) < 0.00001F; }));
+                ++index;
             }
-
-            Verify(Method(mockHandleForcesCharacteristic, notify)).Exactly(expectedNumberOfNotifies);
         }
 
         SECTION("delete task")
@@ -333,7 +336,7 @@ TEST_CASE("ExtendedMetricBleService broadcast", "[ble-service]")
         std::vector<unsigned long> expectedDeltaTimes{10000, 11000, 12000, 11000};
         const auto expectedStackSize = coreStackSize + expectedDeltaTimes.size() * sizeof(unsigned long) / 3;
 
-        Fake(OverloadedMethod(mockExtendedMetricsCharacteristic, setValue, void(const unsigned char *data, size_t length)));
+        Fake(OverloadedMethod(mockExtendedMetricsCharacteristic, setValue, void(const std::span<const std::byte> data)));
         Fake(Method(mockExtendedMetricsCharacteristic, notify));
 
         Fake(Method(mockArduino, xTaskCreatePinnedToCore));
@@ -354,12 +357,10 @@ TEST_CASE("ExtendedMetricBleService broadcast", "[ble-service]")
 
         SECTION("start task and notify broadcastDeltaTimes with the correct binary data")
         {
-            std::vector<unsigned char> results;
-            When(OverloadedMethod(mockExtendedMetricsCharacteristic, setValue, void(const unsigned char *data, size_t length)))
-                .Do([&results](const unsigned char *data, size_t length)
-                    {
-                        const auto temp = std::span<const unsigned char>(data, length);
-                        results.insert(cend(results), cbegin(temp), cend(temp)); });
+            std::vector<std::byte> results;
+            When(OverloadedMethod(mockExtendedMetricsCharacteristic, setValue, void(const std::span<const std::byte> data)))
+                .Do([&results](const std::span<const std::byte> data)
+                    { std::ranges::copy(data, std::back_inserter(results)); });
 
             extendedMetricBleService.broadcastDeltaTimes(expectedDeltaTimes);
 
@@ -368,15 +369,12 @@ TEST_CASE("ExtendedMetricBleService broadcast", "[ble-service]")
                     .Using(Ne(nullptr), StrEq("notifyDeltaTimes"), Eq(expectedStackSize), Ne(nullptr), Eq(1U), Any(), Eq(0)))
                 .Once();
             Verify(
-                OverloadedMethod(mockExtendedMetricsCharacteristic, setValue, void(const unsigned char *data, size_t length))
-                    .Using(Any(), expectedDeltaTimes.size() * sizeof(unsigned long)))
+                OverloadedMethod(mockExtendedMetricsCharacteristic, setValue, void(const std::span<const std::byte> data))
+                    .Using(Any()))
                 .Once();
-            std::vector<unsigned char> expectedData;
-            // NOLINTBEGIN(cppcoreguidelines-pro-bounds-pointer-arithmetic, cppcoreguidelines-pro-type-cstyle-cast)
-            expectedData.assign((const unsigned char *)expectedDeltaTimes.data(),
-                                (const unsigned char *)expectedDeltaTimes.data() +
-                                    expectedDeltaTimes.size() * sizeof(unsigned long));
-            // NOLINTEND(cppcoreguidelines-pro-bounds-pointer-arithmetic, cppcoreguidelines-pro-type-cstyle-cast)
+
+            std::vector<std::byte> expectedData;
+            std::ranges::copy(std::as_bytes(std::span(expectedDeltaTimes)), std::back_inserter(expectedData));
             REQUIRE_THAT(results, Catch::Matchers::Equals(expectedData));
         }
 

@@ -1,6 +1,7 @@
 // NOLINTBEGIN
 #pragma once
 
+#include <span>
 #include <string>
 #include <vector>
 
@@ -183,6 +184,7 @@ public:
     virtual void setValue(const unsigned short s) = 0;
     virtual void setValue(const unsigned char *data, size_t length) = 0;
     virtual void setValue(const std::string s) = 0;
+    virtual void setValue(const std::span<const std::byte> s) = 0;
     virtual void setValue(const std::array<unsigned char, 1U> s) = 0;
     virtual void setValue(const std::array<unsigned char, 3U> s) = 0;
     virtual void setValue(const std::array<unsigned char, 7U> s) = 0;
