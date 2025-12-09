@@ -9,7 +9,7 @@
 
 #include "globals.h"
 
-const std::array test{
+inline constexpr std::array test{
     5331447UL,
     315088UL,
     154906UL,
@@ -1776,11 +1776,11 @@ const std::array test{
     2252060UL,
 };
 
-auto i = 1U;
+auto i = 0U;
 auto lastTestRevTime = 0UL;
 auto simulationCount = 0U;
 auto now = 0ULL;
-auto lastDelta = 0UL;
+auto lastDelta = test[0];
 
 #if defined(SIMULATE_FILE) && !defined(SIMULATE_ROTATION)
     #define SIMULATE_ROTATION
