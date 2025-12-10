@@ -204,7 +204,7 @@ public:
     virtual void setValue(const std::span<const std::byte> s) = 0;
     virtual void setValue(const std::array<unsigned char, 1U> s) = 0;
     virtual void setValue(const std::array<unsigned char, 3U> s) = 0;
-    virtual void setValue(const std::array<unsigned char, 7U> s) = 0;
+    virtual void setValue(const std::array<unsigned char, 8U> s) = 0;
     virtual void setValue(const std::array<unsigned char, 11U> s) = 0;
     virtual void setValue(const std::array<unsigned char, 14U> s) = 0;
     virtual void setValue(const std::array<unsigned char, 15U> s) = 0;

@@ -14,12 +14,12 @@ This Service currently contains three characteristics:
 Extended Metrics (UUID: 808a0d51-efae-4f0c-b2e0-48bc180d65c3)
 ```
 
-Uses Notify to broadcast the following metrics (which may be extended in the future) as an array of consecutive bytes (i.e. currently a total of 7 bytes, Little Endian):
+Uses Notify to broadcast the following metrics (which may be extended in the future) as an array of consecutive bytes (i.e. currently a total of 8 bytes, Little Endian):
 
 - avgStrokePower (16bit short in Watts)
 - recoveryDuration (16bit unsigned short in seconds with a resolution of 4096)
 - driveDuration (16bit unsigned short in seconds with a resolution of 4096)
-- dragFactor (8bit unsigned char)
+- dragFactor (16bit unsigned short)
 
 New metrics are broadcasted on every stroke (after the drive ends) or at least 4 seconds (which ever happens earlier).
 

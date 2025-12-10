@@ -108,7 +108,7 @@ Configurations::precision StrokeController::getDistance() const
     return rowerState.distance;
 }
 
-unsigned char StrokeController::getDragFactor() const
+unsigned short StrokeController::getDragFactor() const
 {
     return std::lround(rowerState.dragCoefficient * 1e6);
 }

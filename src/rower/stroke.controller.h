@@ -63,5 +63,5 @@ public:
     [[nodiscard]] Configurations::precision getRecoveryDuration() const override;
     [[nodiscard]] Configurations::precision getDriveDuration() const override;
     [[nodiscard]] short getAvgStrokePower() const override;
-    [[nodiscard]] unsigned char getDragFactor() const override;
+    [[nodiscard]] unsigned short getDragFactor() const override;
 };

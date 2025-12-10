@@ -50,10 +50,10 @@ TEST_CASE("ExtendedMetricBleService broadcast", "[ble-service]")
         const unsigned short expectedRecoveryDuration = std::lroundl(recoveryDuration / secInMicroSec * 4'096);
         const unsigned short expectedDriveDuration = std::lroundl(driveDuration / secInMicroSec * 4'096);
         const auto expectedAvgStrokePower = static_cast<short>(std::lround(avgStrokePower));
-        const auto expectedDragFactor = static_cast<unsigned char>(std::lround(dragCoefficient * 1e6));
+        const auto expectedDragFactor = static_cast<unsigned short>(std::lround(dragCoefficient * 1e6));
         const auto expectedStackSize = 2'368U;
 
-        Fake(OverloadedMethod(mockExtendedMetricsCharacteristic, setValue, void(const std::array<unsigned char, 7U>)));
+        Fake(OverloadedMethod(mockExtendedMetricsCharacteristic, setValue, void(const std::array<unsigned char, 8U>)));
         Fake(Method(mockExtendedMetricsCharacteristic, notify));
         Fake(Method(mockArduino, xTaskCreatePinnedToCore));
         Fake(Method(mockArduino, vTaskDelete));
@@ -63,7 +63,7 @@ TEST_CASE("ExtendedMetricBleService broadcast", "[ble-service]")
 
         SECTION("convert recovery and drive duration to a 16bit unsigned short in seconds with a resolution of 4096")
         {
-            const auto length = 7U;
+            const auto length = 8U;
             std::array<unsigned char, length> expectedData = {
                 static_cast<unsigned char>(expectedAvgStrokePower),
                 static_cast<unsigned char>(expectedAvgStrokePower >> 8),
@@ -73,17 +73,18 @@ TEST_CASE("ExtendedMetricBleService broadcast", "[ble-service]")
                 static_cast<unsigned char>(expectedRecoveryDuration),
                 static_cast<unsigned char>(expectedRecoveryDuration >> 8),
 
-                expectedDragFactor,
+                static_cast<unsigned char>(expectedDragFactor),
+                static_cast<unsigned char>(expectedDragFactor >> 8),
             };
 
             extendedMetricBleService.broadcastExtendedMetrics(avgStrokePower, recoveryDuration, driveDuration, dragCoefficient);
 
-            Verify(OverloadedMethod(mockExtendedMetricsCharacteristic, setValue, void(const std::array<unsigned char, 7U>)).Using(Eq(expectedData))).Once();
+            Verify(OverloadedMethod(mockExtendedMetricsCharacteristic, setValue, void(const std::array<unsigned char, 8U>)).Using(Eq(expectedData))).Once();
         }
 
         SECTION("notify ExtendedMetrics with the correct binary data")
         {
-            const auto length = 7U;
+            const auto length = 8U;
             std::array<unsigned char, length> expectedData = {
                 static_cast<unsigned char>(expectedAvgStrokePower),
                 static_cast<unsigned char>(expectedAvgStrokePower >> 8),
@@ -93,7 +94,8 @@ TEST_CASE("ExtendedMetricBleService broadcast", "[ble-service]")
                 static_cast<unsigned char>(expectedRecoveryDuration),
                 static_cast<unsigned char>(expectedRecoveryDuration >> 8),
 
-                expectedDragFactor,
+                static_cast<unsigned char>(expectedDragFactor),
+                static_cast<unsigned char>(expectedDragFactor >> 8),
             };
 
             extendedMetricBleService.broadcastExtendedMetrics(avgStrokePower, recoveryDuration, driveDuration, dragCoefficient);
@@ -103,7 +105,7 @@ TEST_CASE("ExtendedMetricBleService broadcast", "[ble-service]")
                     .Using(Ne(nullptr), StrEq("notifyExtendedMetrics"), Eq(expectedStackSize), Ne(nullptr), Eq(1U), Any(), Eq(0)))
                 .Once();
             Verify(
-                OverloadedMethod(mockExtendedMetricsCharacteristic, setValue, void(const std::array<unsigned char, 7U>))
+                OverloadedMethod(mockExtendedMetricsCharacteristic, setValue, void(const std::array<unsigned char, 8U>))
                     .Using(Eq(expectedData)))
                 .Once();
         }

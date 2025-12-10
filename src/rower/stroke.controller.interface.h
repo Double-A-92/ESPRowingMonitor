@@ -30,5 +30,5 @@ public:
     [[nodiscard]] virtual Configurations::precision getRecoveryDuration() const = 0;
     [[nodiscard]] virtual Configurations::precision getDriveDuration() const = 0;
     [[nodiscard]] virtual short getAvgStrokePower() const = 0;
-    [[nodiscard]] virtual unsigned char getDragFactor() const = 0;
+    [[nodiscard]] virtual unsigned short getDragFactor() const = 0;
 };

@@ -542,7 +542,7 @@ TEST_CASE("BaseMetricsBleService", "[ble-service]")
 
                 const auto distance = static_cast<unsigned int>(std::lround(metricsMaxStroke.distance / 100U));
                 const auto avgStrokePower = static_cast<short>(std::lround(metricsMaxStroke.avgStrokePower));
-                const auto dragFactor = static_cast<unsigned char>(std::lround(metricsMaxStroke.dragCoefficient * 1e6));
+                const auto dragFactor = static_cast<unsigned short>(std::lround(metricsMaxStroke.dragCoefficient * 1e6));
                 const auto pace500m = static_cast<unsigned short>(std::lroundl(500U / (((metricsMaxStroke.distance - metricsMaxStroke.previousDistance) / 100U) / ((metricsMaxStroke.revTime - metricsMaxStroke.previousRevTime) / secInMicroSec))));
 
                 const auto length = 14U;

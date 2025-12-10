@@ -145,7 +145,7 @@ void BaseMetricsBleService::ftmsTask(void *parameters)
         const auto *const params = static_cast<const BaseMetricsBleService::BaseMetricsParams *>(parameters);
 
         const auto secInMicroSec = 1e6L;
-        const auto dragFactor = static_cast<unsigned char>(std::lround(params->data.dragCoefficient * 1e6));
+        const auto dragFactor = static_cast<unsigned short>(std::lround(params->data.dragCoefficient * 1e6));
 
         const auto strokeTimeDelta = ((params->data.strokeTime - params->data.previousStrokeTime) / secInMicroSec / 60U);
         const auto strokeRate = static_cast<unsigned char>(strokeTimeDelta > 0 ? std::lroundl((params->data.strokeCount - params->data.previousStrokeCount) / strokeTimeDelta) : 0);
