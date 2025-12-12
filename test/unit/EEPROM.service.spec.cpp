@@ -34,7 +34,6 @@ TEST_CASE("EEPROMService", "[utils]")
     static constexpr const char *strokeDetectionTypeAddress = "detectionType";
     static constexpr const char *minimumPoweredTorqueAddress = "poweredTorque";
     static constexpr const char *minimumDragTorqueAddress = "dragTorque";
-    static constexpr const char *minimumRecoverySlopeMarginAddress = "slopeMargin";
     static constexpr const char *minimumRecoverySlopeAddress = "recoverySlope";
     static constexpr const char *minimumRecoveryTimeAddress = "recoveryTime";
     static constexpr const char *minimumDriveTimeAddress = "driveTime";
@@ -73,7 +72,6 @@ TEST_CASE("EEPROMService", "[utils]")
         When(Method(mockPreferences, getUChar).Using(StrEq(strokeDetectionTypeAddress), std::to_underlying(RowerProfile::Defaults::strokeDetectionType))).Return(std::to_underlying(RowerProfile::Defaults::strokeDetectionType));
         When(Method(mockPreferences, getFloat).Using(StrEq(minimumPoweredTorqueAddress), RowerProfile::Defaults::minimumPoweredTorque)).Return(RowerProfile::Defaults::minimumPoweredTorque);
         When(Method(mockPreferences, getFloat).Using(StrEq(minimumDragTorqueAddress), RowerProfile::Defaults::minimumDragTorque)).Return(RowerProfile::Defaults::minimumDragTorque);
-        When(Method(mockPreferences, getFloat).Using(StrEq(minimumRecoverySlopeMarginAddress), RowerProfile::Defaults::minimumRecoverySlopeMargin)).Return(RowerProfile::Defaults::minimumRecoverySlopeMargin);
         When(Method(mockPreferences, getFloat).Using(StrEq(minimumRecoverySlopeAddress), RowerProfile::Defaults::minimumRecoverySlope)).Return(RowerProfile::Defaults::minimumRecoverySlope);
         When(Method(mockPreferences, getUInt).Using(StrEq(minimumRecoveryTimeAddress), RowerProfile::Defaults::minimumRecoveryTime)).Return(RowerProfile::Defaults::minimumRecoveryTime);
         When(Method(mockPreferences, getUInt).Using(StrEq(minimumDriveTimeAddress), RowerProfile::Defaults::minimumDriveTime)).Return(RowerProfile::Defaults::minimumDriveTime);
@@ -134,8 +132,6 @@ TEST_CASE("EEPROMService", "[utils]")
             Verify(Method(mockPreferences, putFloat).Using(StrEq(minimumPoweredTorqueAddress), RowerProfile::Defaults::minimumPoweredTorque)).Once();
             Verify(Method(mockPreferences, isKey).Using(StrEq(minimumDragTorqueAddress))).Once();
             Verify(Method(mockPreferences, putFloat).Using(StrEq(minimumDragTorqueAddress), RowerProfile::Defaults::minimumDragTorque)).Once();
-            Verify(Method(mockPreferences, isKey).Using(StrEq(minimumRecoverySlopeMarginAddress))).Once();
-            Verify(Method(mockPreferences, putFloat).Using(StrEq(minimumRecoverySlopeMarginAddress), RowerProfile::Defaults::minimumRecoverySlopeMargin)).Once();
             Verify(Method(mockPreferences, isKey).Using(StrEq(minimumRecoverySlopeAddress))).Once();
             Verify(Method(mockPreferences, putFloat).Using(StrEq(minimumRecoverySlopeAddress), RowerProfile::Defaults::minimumRecoverySlope)).Once();
             Verify(Method(mockPreferences, isKey).Using(StrEq(minimumRecoveryTimeAddress))).Once();
@@ -178,8 +174,6 @@ TEST_CASE("EEPROMService", "[utils]")
             Verify(Method(mockPreferences, putFloat).Using(StrEq(minimumPoweredTorqueAddress), Any())).Never();
             Verify(Method(mockPreferences, isKey).Using(StrEq(minimumDragTorqueAddress))).Never();
             Verify(Method(mockPreferences, putFloat).Using(StrEq(minimumDragTorqueAddress), Any())).Never();
-            Verify(Method(mockPreferences, isKey).Using(StrEq(minimumRecoverySlopeMarginAddress))).Never();
-            Verify(Method(mockPreferences, putFloat).Using(StrEq(minimumRecoverySlopeMarginAddress), Any())).Never();
             Verify(Method(mockPreferences, isKey).Using(StrEq(minimumRecoverySlopeAddress))).Never();
             Verify(Method(mockPreferences, putFloat).Using(StrEq(minimumRecoverySlopeAddress), Any())).Never();
             Verify(Method(mockPreferences, isKey).Using(StrEq(minimumRecoveryTimeAddress))).Never();
@@ -221,7 +215,6 @@ TEST_CASE("EEPROMService", "[utils]")
             Verify(Method(mockPreferences, getUChar).Using(StrEq(strokeDetectionTypeAddress), std::to_underlying(RowerProfile::Defaults::strokeDetectionType))).Once();
             Verify(Method(mockPreferences, getFloat).Using(StrEq(minimumPoweredTorqueAddress), RowerProfile::Defaults::minimumPoweredTorque)).Once();
             Verify(Method(mockPreferences, getFloat).Using(StrEq(minimumDragTorqueAddress), RowerProfile::Defaults::minimumDragTorque)).Once();
-            Verify(Method(mockPreferences, getFloat).Using(StrEq(minimumRecoverySlopeMarginAddress), RowerProfile::Defaults::minimumRecoverySlopeMargin)).Once();
             Verify(Method(mockPreferences, getFloat).Using(StrEq(minimumRecoverySlopeAddress), RowerProfile::Defaults::minimumRecoverySlope)).Once();
             Verify(Method(mockPreferences, getUInt).Using(StrEq(minimumRecoveryTimeAddress), RowerProfile::Defaults::minimumRecoveryTime)).Once();
             Verify(Method(mockPreferences, getUInt).Using(StrEq(minimumDriveTimeAddress), RowerProfile::Defaults::minimumDriveTime)).Once();
@@ -245,7 +238,6 @@ TEST_CASE("EEPROMService", "[utils]")
             Verify(Method(mockPreferences, getUChar).Using(StrEq(strokeDetectionTypeAddress), Any())).Never();
             Verify(Method(mockPreferences, getFloat).Using(StrEq(minimumPoweredTorqueAddress), Any())).Never();
             Verify(Method(mockPreferences, getFloat).Using(StrEq(minimumDragTorqueAddress), Any())).Never();
-            Verify(Method(mockPreferences, getFloat).Using(StrEq(minimumRecoverySlopeMarginAddress), Any())).Never();
             Verify(Method(mockPreferences, getFloat).Using(StrEq(minimumRecoverySlopeAddress), Any())).Never();
             Verify(Method(mockPreferences, getUInt).Using(StrEq(minimumRecoveryTimeAddress), Any())).Never();
             Verify(Method(mockPreferences, getUInt).Using(StrEq(minimumDriveTimeAddress), Any())).Never();
@@ -278,7 +270,6 @@ TEST_CASE("EEPROMService", "[utils]")
             REQUIRE(eepromService.getStrokePhaseDetectionSettings().strokeDetectionType == RowerProfile::Defaults::strokeDetectionType);
             REQUIRE(eepromService.getStrokePhaseDetectionSettings().minimumPoweredTorque == RowerProfile::Defaults::minimumPoweredTorque);
             REQUIRE(eepromService.getStrokePhaseDetectionSettings().minimumDragTorque == RowerProfile::Defaults::minimumDragTorque);
-            REQUIRE(eepromService.getStrokePhaseDetectionSettings().minimumRecoverySlopeMargin == RowerProfile::Defaults::minimumRecoverySlopeMargin);
             REQUIRE(eepromService.getStrokePhaseDetectionSettings().minimumRecoverySlope == RowerProfile::Defaults::minimumRecoverySlope);
             REQUIRE(eepromService.getStrokePhaseDetectionSettings().minimumRecoveryTime == RowerProfile::Defaults::minimumRecoveryTime);
             REQUIRE(eepromService.getStrokePhaseDetectionSettings().minimumDriveTime == RowerProfile::Defaults::minimumDriveTime);
@@ -673,23 +664,10 @@ TEST_CASE("EEPROMService", "[utils]")
 #if ENABLE_RUNTIME_SETTINGS
         SECTION("not save if any value is invalid")
         {
-            const auto invalidMinimumRecoverySlopeMargin = RowerProfile::StrokePhaseDetectionSettings{
-                .strokeDetectionType = StrokeDetectionType::Torque,
-                .minimumPoweredTorque = 1.0F,
-                .minimumDragTorque = 1.0F,
-                .minimumRecoverySlopeMargin = -1.0F,
-                .minimumRecoverySlope = 1.0F,
-                .minimumRecoveryTime = 1000,
-                .minimumDriveTime = 1000,
-                .impulseDataArrayLength = 10,
-                .driveHandleForcesMaxCapacity = 10,
-            };
-
             const auto invalidImpulseDataArrayLengthTooLow = RowerProfile::StrokePhaseDetectionSettings{
                 .strokeDetectionType = StrokeDetectionType::Torque,
                 .minimumPoweredTorque = 1.0F,
                 .minimumDragTorque = 1.0F,
-                .minimumRecoverySlopeMargin = 1.0F,
                 .minimumRecoverySlope = 1.0F,
                 .minimumRecoveryTime = 1000,
                 .minimumDriveTime = 1000,
@@ -701,7 +679,6 @@ TEST_CASE("EEPROMService", "[utils]")
                 .strokeDetectionType = StrokeDetectionType::Torque,
                 .minimumPoweredTorque = 1.0F,
                 .minimumDragTorque = 1.0F,
-                .minimumRecoverySlopeMargin = 1.0F,
                 .minimumRecoverySlope = 1.0F,
                 .minimumRecoveryTime = 1000,
                 .minimumDriveTime = 1000,
@@ -713,7 +690,6 @@ TEST_CASE("EEPROMService", "[utils]")
                 .strokeDetectionType = StrokeDetectionType::Torque,
                 .minimumPoweredTorque = 1.0F,
                 .minimumDragTorque = 1.0F,
-                .minimumRecoverySlopeMargin = 1.0F,
                 .minimumRecoverySlope = 1.0F,
                 .minimumRecoveryTime = 1000,
                 .minimumDriveTime = 1000,
@@ -721,7 +697,6 @@ TEST_CASE("EEPROMService", "[utils]")
                 .driveHandleForcesMaxCapacity = 0,
             };
 
-            eepromService.setStrokePhaseDetectionSettings(invalidMinimumRecoverySlopeMargin);
             eepromService.setStrokePhaseDetectionSettings(invalidImpulseDataArrayLengthTooLow);
             eepromService.setStrokePhaseDetectionSettings(invalidImpulseDataArrayLengthTooHigh);
             eepromService.setStrokePhaseDetectionSettings(invalidDriveHandleForcesMaxCapacity);
@@ -729,7 +704,6 @@ TEST_CASE("EEPROMService", "[utils]")
             Verify(Method(mockPreferences, putUChar).Using(StrEq(strokeDetectionTypeAddress), Any())).Never();
             Verify(Method(mockPreferences, putFloat).Using(StrEq(minimumPoweredTorqueAddress), Any())).Never();
             Verify(Method(mockPreferences, putFloat).Using(StrEq(minimumDragTorqueAddress), Any())).Never();
-            Verify(Method(mockPreferences, putFloat).Using(StrEq(minimumRecoverySlopeMarginAddress), Any())).Never();
             Verify(Method(mockPreferences, putFloat).Using(StrEq(minimumRecoverySlopeAddress), Any())).Never();
             Verify(Method(mockPreferences, putUInt).Using(StrEq(minimumRecoveryTimeAddress), Any())).Never();
             Verify(Method(mockPreferences, putUInt).Using(StrEq(minimumDriveTimeAddress), Any())).Never();
@@ -743,7 +717,6 @@ TEST_CASE("EEPROMService", "[utils]")
                 .strokeDetectionType = StrokeDetectionType::Both,
                 .minimumPoweredTorque = 2.0F,
                 .minimumDragTorque = 1.5F,
-                .minimumRecoverySlopeMargin = 0.5F,
                 .minimumRecoverySlope = -0.1F,
                 .minimumRecoveryTime = 500000,
                 .minimumDriveTime = 100000,
@@ -758,7 +731,6 @@ TEST_CASE("EEPROMService", "[utils]")
             Verify(Method(mockPreferences, putUChar).Using(StrEq(strokeDetectionTypeAddress), std::to_underlying(expectedStrokePhaseDetectionSettings.strokeDetectionType))).Once();
             Verify(Method(mockPreferences, putFloat).Using(StrEq(minimumPoweredTorqueAddress), expectedStrokePhaseDetectionSettings.minimumPoweredTorque)).Once();
             Verify(Method(mockPreferences, putFloat).Using(StrEq(minimumDragTorqueAddress), expectedStrokePhaseDetectionSettings.minimumDragTorque)).Once();
-            Verify(Method(mockPreferences, putFloat).Using(StrEq(minimumRecoverySlopeMarginAddress), expectedStrokePhaseDetectionSettings.minimumRecoverySlopeMargin)).Once();
             Verify(Method(mockPreferences, putFloat).Using(StrEq(minimumRecoverySlopeAddress), expectedStrokePhaseDetectionSettings.minimumRecoverySlope)).Once();
             Verify(Method(mockPreferences, putUInt).Using(StrEq(minimumRecoveryTimeAddress), expectedStrokePhaseDetectionSettings.minimumRecoveryTime)).Once();
             Verify(Method(mockPreferences, putUInt).Using(StrEq(minimumDriveTimeAddress), expectedStrokePhaseDetectionSettings.minimumDriveTime)).Once();
@@ -768,7 +740,6 @@ TEST_CASE("EEPROMService", "[utils]")
             REQUIRE(strokePhaseDetectionSettings.strokeDetectionType != expectedStrokePhaseDetectionSettings.strokeDetectionType);
             REQUIRE(strokePhaseDetectionSettings.minimumPoweredTorque != expectedStrokePhaseDetectionSettings.minimumPoweredTorque);
             REQUIRE(strokePhaseDetectionSettings.minimumDragTorque != expectedStrokePhaseDetectionSettings.minimumDragTorque);
-            REQUIRE(strokePhaseDetectionSettings.minimumRecoverySlopeMargin != expectedStrokePhaseDetectionSettings.minimumRecoverySlopeMargin);
             REQUIRE(strokePhaseDetectionSettings.minimumRecoverySlope != expectedStrokePhaseDetectionSettings.minimumRecoverySlope);
             REQUIRE(strokePhaseDetectionSettings.minimumRecoveryTime != expectedStrokePhaseDetectionSettings.minimumRecoveryTime);
             REQUIRE(strokePhaseDetectionSettings.minimumDriveTime != expectedStrokePhaseDetectionSettings.minimumDriveTime);
@@ -783,7 +754,6 @@ TEST_CASE("EEPROMService", "[utils]")
             Verify(Method(mockPreferences, putUChar).Using(StrEq(strokeDetectionTypeAddress), Any())).Never();
             Verify(Method(mockPreferences, putFloat).Using(StrEq(minimumPoweredTorqueAddress), Any())).Never();
             Verify(Method(mockPreferences, putFloat).Using(StrEq(minimumDragTorqueAddress), Any())).Never();
-            Verify(Method(mockPreferences, putFloat).Using(StrEq(minimumRecoverySlopeMarginAddress), Any())).Never();
             Verify(Method(mockPreferences, putFloat).Using(StrEq(minimumRecoverySlopeAddress), Any())).Never();
             Verify(Method(mockPreferences, putUInt).Using(StrEq(minimumRecoveryTimeAddress), Any())).Never();
             Verify(Method(mockPreferences, putUInt).Using(StrEq(minimumDriveTimeAddress), Any())).Never();

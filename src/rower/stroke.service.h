@@ -88,7 +88,6 @@ class StrokeService final : public IStrokeService
     void recoveryUpdate();
     void recoveryEnd();
 
-    void logSlopeMarginDetection() const;
     void logNewStrokeData() const;
 
 public:

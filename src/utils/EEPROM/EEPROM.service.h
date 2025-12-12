@@ -33,7 +33,6 @@ class EEPROMService final : public IEEPROMService
     static constexpr const char *strokeDetectionTypeAddress = "detectionType";
     static constexpr const char *minimumPoweredTorqueAddress = "poweredTorque";
     static constexpr const char *minimumDragTorqueAddress = "dragTorque";
-    static constexpr const char *minimumRecoverySlopeMarginAddress = "slopeMargin";
     static constexpr const char *minimumRecoverySlopeAddress = "recoverySlope";
     static constexpr const char *minimumRecoveryTimeAddress = "recoveryTime";
     static constexpr const char *minimumDriveTimeAddress = "driveTime";
@@ -62,7 +61,6 @@ class EEPROMService final : public IEEPROMService
     StrokeDetectionType strokeDetectionType = RowerProfile::Defaults::strokeDetectionType;
     float minimumPoweredTorque = RowerProfile::Defaults::minimumPoweredTorque;
     float minimumDragTorque = RowerProfile::Defaults::minimumDragTorque;
-    float minimumRecoverySlopeMargin = RowerProfile::Defaults::minimumRecoverySlopeMargin;
     float minimumRecoverySlope = RowerProfile::Defaults::minimumRecoverySlope;
     unsigned int minimumRecoveryTime = RowerProfile::Defaults::minimumRecoveryTime;
     unsigned int minimumDriveTime = RowerProfile::Defaults::minimumDriveTime;

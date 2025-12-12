@@ -74,7 +74,6 @@ TEST_CASE("SettingsBleService", "[ble-service]")
                                                   (static_cast<unsigned char>(std::is_same_v<Configurations::precision, double>) << 7U);
     const auto minimumPoweredTorque = static_cast<short>(roundf(RowerProfile::Defaults::minimumPoweredTorque * ISettingsBleService::poweredTorqueScale));
     const auto minimumDragTorque = static_cast<short>(roundf(RowerProfile::Defaults::minimumDragTorque * ISettingsBleService::dragTorqueScale));
-    const auto minimumRecoverySlopeMargin = std::bit_cast<unsigned int>(RowerProfile::Defaults::minimumRecoverySlopeMargin * ISettingsBleService::recoverySlopeMarginPayloadScale);
     const auto minimumRecoverySlope = static_cast<short>(roundf(RowerProfile::Defaults::minimumRecoverySlope * ISettingsBleService::recoverySlopeScale));
     const auto strokeTimesEncoded = (RowerProfile::Defaults::minimumRecoveryTime / ISettingsBleService::minimumStrokeTimesScale) | ((RowerProfile::Defaults::minimumDriveTime / ISettingsBleService::minimumStrokeTimesScale) << 12);
 
@@ -84,10 +83,6 @@ TEST_CASE("SettingsBleService", "[ble-service]")
         static_cast<unsigned char>(minimumPoweredTorque >> 8),
         static_cast<unsigned char>(minimumDragTorque),
         static_cast<unsigned char>(minimumDragTorque >> 8),
-        static_cast<unsigned char>(minimumRecoverySlopeMargin),
-        static_cast<unsigned char>(minimumRecoverySlopeMargin >> 8),
-        static_cast<unsigned char>(minimumRecoverySlopeMargin >> 16),
-        static_cast<unsigned char>(minimumRecoverySlopeMargin >> 24),
         static_cast<unsigned char>(minimumRecoverySlope),
         static_cast<unsigned char>(minimumRecoverySlope >> 8),
         static_cast<unsigned char>(strokeTimesEncoded),
@@ -417,7 +412,6 @@ TEST_CASE("SettingsBleService", "[ble-service]")
                 unsigned char impulseDataArrayLength = 0;
                 float minimumPoweredTorqueZero = 0.0F;
                 float minimumDragTorqueZero = 0.0F;
-                float minimumRecoverySlopeMarginZero = 0.0F;
                 float minimumRecoverySlopeZero = 0.0F;
                 unsigned int minimumRecoveryTime = 0;
                 unsigned int minimumDriveTime = 0;
@@ -430,12 +424,11 @@ TEST_CASE("SettingsBleService", "[ble-service]")
                             impulseDataArrayLength = (settings[0] >> 2) & 0x1F;
                             minimumPoweredTorqueZero = static_cast<float>(static_cast<short>(settings[1] | settings[2] << 8)) / ISettingsBleService::poweredTorqueScale;
                             minimumDragTorqueZero = static_cast<float>(static_cast<short>(settings[3] | settings[4] << 8)) / ISettingsBleService::dragTorqueScale;
-                            minimumRecoverySlopeMarginZero = std::bit_cast<float>(static_cast<unsigned int>(settings[5] | settings[6] << 8 | settings[7] << 16 | settings[8] << 24)) / ISettingsBleService::recoverySlopeMarginPayloadScale;
-                            minimumRecoverySlopeZero = static_cast<float>(static_cast<short>(settings[9] | settings[10] << 8)) / ISettingsBleService::recoverySlopeScale;
-                            const auto strokeTimes = static_cast<unsigned int>(settings[11] | settings[12] << 8 | settings[13] << 16);
+                            minimumRecoverySlopeZero = static_cast<float>(static_cast<short>(settings[5] | settings[6] << 8)) / ISettingsBleService::recoverySlopeScale;
+                            const auto strokeTimes = static_cast<unsigned int>(settings[7] | settings[8] << 8 | settings[9] << 16);
                             minimumRecoveryTime = strokeTimes & 0xFFF;
                             minimumDriveTime = strokeTimes >> 12;
-                            driveHandleForcesMaxCapacity = settings[14]; });
+                            driveHandleForcesMaxCapacity = settings[10]; });
 
                 settingsBleService.broadcastStrokeDetectionSettings();
 
@@ -443,7 +436,6 @@ TEST_CASE("SettingsBleService", "[ble-service]")
                 REQUIRE(impulseDataArrayLength == RowerProfile::Defaults::impulseDataArrayLength);
                 REQUIRE(minimumPoweredTorqueZero == RowerProfile::Defaults::minimumPoweredTorque);
                 REQUIRE(minimumDragTorqueZero == RowerProfile::Defaults::minimumDragTorque);
-                REQUIRE(minimumRecoverySlopeMarginZero == RowerProfile::Defaults::minimumRecoverySlopeMargin);
                 REQUIRE(minimumRecoverySlopeZero == RowerProfile::Defaults::minimumRecoverySlope);
                 REQUIRE(minimumRecoveryTime == RowerProfile::Defaults::minimumRecoveryTime / ISettingsBleService::minimumStrokeTimesScale);
                 REQUIRE(minimumDriveTime == RowerProfile::Defaults::minimumDriveTime / ISettingsBleService::minimumStrokeTimesScale);

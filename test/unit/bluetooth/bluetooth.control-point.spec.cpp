@@ -887,10 +887,6 @@ TEST_CASE("ControlPointCallbacks onWrite method should", "[callbacks]")
                 0,
                 0,
                 0,
-                0,
-                0,
-                0,
-                0,
                 100,
             };
 
@@ -922,7 +918,6 @@ TEST_CASE("ControlPointCallbacks onWrite method should", "[callbacks]")
                                              (static_cast<unsigned char>(std::is_same_v<Configurations::precision, double>) << 7U);
             const auto poweredTorque = static_cast<short>(roundf(RowerProfile::Defaults::minimumPoweredTorque * ISettingsBleService::poweredTorqueScale));
             const auto dragTorque = static_cast<short>(roundf(RowerProfile::Defaults::minimumDragTorque * ISettingsBleService::dragTorqueScale));
-            const auto recoverySlopeMarginBits = std::bit_cast<unsigned int>(RowerProfile::Defaults::minimumRecoverySlopeMargin * ISettingsBleService::recoverySlopeMarginPayloadScale);
             const auto recoverySlope = static_cast<short>(roundf(RowerProfile::Defaults::minimumRecoverySlope * ISettingsBleService::recoverySlopeScale));
             const auto strokeTimes = (RowerProfile::Defaults::minimumRecoveryTime / ISettingsBleService::minimumStrokeTimesScale) | ((RowerProfile::Defaults::minimumDriveTime / ISettingsBleService::minimumStrokeTimesScale) << 12U);
 
@@ -933,10 +928,6 @@ TEST_CASE("ControlPointCallbacks onWrite method should", "[callbacks]")
                 static_cast<unsigned char>(poweredTorque >> 8),
                 static_cast<unsigned char>(dragTorque),
                 static_cast<unsigned char>(dragTorque >> 8),
-                static_cast<unsigned char>(recoverySlopeMarginBits),
-                static_cast<unsigned char>(recoverySlopeMarginBits >> 8),
-                static_cast<unsigned char>(recoverySlopeMarginBits >> 16),
-                static_cast<unsigned char>(recoverySlopeMarginBits >> 24),
                 static_cast<unsigned char>(recoverySlope),
                 static_cast<unsigned char>(recoverySlope >> 8),
                 static_cast<unsigned char>(strokeTimes),
@@ -957,7 +948,6 @@ TEST_CASE("ControlPointCallbacks onWrite method should", "[callbacks]")
                         REQUIRE(newSettings.impulseDataArrayLength == RowerProfile::Defaults::impulseDataArrayLength);
                         REQUIRE(newSettings.minimumPoweredTorque == RowerProfile::Defaults::minimumPoweredTorque);
                         REQUIRE(newSettings.minimumDragTorque == RowerProfile::Defaults::minimumDragTorque);
-                        REQUIRE(newSettings.minimumRecoverySlopeMargin == RowerProfile::Defaults::minimumRecoverySlopeMargin);
                         REQUIRE(newSettings.minimumRecoverySlope == RowerProfile::Defaults::minimumRecoverySlope);
                         REQUIRE(newSettings.minimumRecoveryTime == RowerProfile::Defaults::minimumRecoveryTime);
                         REQUIRE(newSettings.minimumDriveTime == RowerProfile::Defaults::minimumDriveTime);

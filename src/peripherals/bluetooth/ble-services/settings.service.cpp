@@ -102,7 +102,6 @@ std::array<unsigned char, ISettingsBleService::strokeSettingsPayloadSize> Settin
                                               (static_cast<unsigned char>(std::is_same_v<Configurations::precision, double>) << 7U);
     const auto poweredTorque = static_cast<short>(roundf(strokeDetectionSettings.minimumPoweredTorque * ISettingsBleService::poweredTorqueScale));
     const auto dragTorque = static_cast<short>(roundf(strokeDetectionSettings.minimumDragTorque * ISettingsBleService::dragTorqueScale));
-    const auto recoverySlopeMargin = std::bit_cast<unsigned int>(strokeDetectionSettings.minimumRecoverySlopeMargin * ISettingsBleService::recoverySlopeMarginPayloadScale);
     const auto recoverySlope = static_cast<short>(roundf(strokeDetectionSettings.minimumRecoverySlope * ISettingsBleService::recoverySlopeScale));
     const auto strokeTimes = (strokeDetectionSettings.minimumRecoveryTime / ISettingsBleService::minimumStrokeTimesScale) | ((strokeDetectionSettings.minimumDriveTime / ISettingsBleService::minimumStrokeTimesScale) << 12);
 
@@ -113,10 +112,6 @@ std::array<unsigned char, ISettingsBleService::strokeSettingsPayloadSize> Settin
             static_cast<unsigned char>(poweredTorque >> 8),
             static_cast<unsigned char>(dragTorque),
             static_cast<unsigned char>(dragTorque >> 8),
-            static_cast<unsigned char>(recoverySlopeMargin),
-            static_cast<unsigned char>(recoverySlopeMargin >> 8),
-            static_cast<unsigned char>(recoverySlopeMargin >> 16),
-            static_cast<unsigned char>(recoverySlopeMargin >> 24),
             static_cast<unsigned char>(recoverySlope),
             static_cast<unsigned char>(recoverySlope >> 8),
             static_cast<unsigned char>(strokeTimes),

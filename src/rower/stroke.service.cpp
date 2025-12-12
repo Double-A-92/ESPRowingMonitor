@@ -79,13 +79,8 @@ bool StrokeService::isFlywheelUnpowered()
 {
     if (strokePhaseDetectionSettings.strokeDetectionType != StrokeDetectionType::Slope)
     {
-        if (deltaTimesSlopes.size() >= strokePhaseDetectionSettings.impulseDataArrayLength && ((currentTorque < strokePhaseDetectionSettings.minimumDragTorque && deltaTimes.coefficientA() > 0) || std::abs(deltaTimesSlopes.slope()) < strokePhaseDetectionSettings.minimumRecoverySlopeMargin))
+        if (deltaTimesSlopes.size() >= strokePhaseDetectionSettings.impulseDataArrayLength && currentTorque < strokePhaseDetectionSettings.minimumDragTorque && deltaTimes.coefficientA() > 0)
         {
-            if constexpr (Configurations::logCalibration)
-            {
-                logSlopeMarginDetection();
-            }
-
             return true;
         }
     }
@@ -399,14 +394,6 @@ void StrokeService::processData(const RowingDataModels::FlywheelData data)
 
         recoveryUpdate();
         return;
-    }
-}
-
-void StrokeService::logSlopeMarginDetection() const
-{
-    if (deltaTimesSlopes.size() >= strokePhaseDetectionSettings.impulseDataArrayLength && currentTorque > strokePhaseDetectionSettings.minimumDragTorque && std::abs(deltaTimesSlopes.slope()) < strokePhaseDetectionSettings.minimumRecoverySlopeMargin)
-    {
-        Log.infoln("slope margin detect");
     }
 }
 

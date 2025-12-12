@@ -28,7 +28,6 @@ namespace RowerProfile
         static constexpr StrokeDetectionType strokeDetectionType = STROKE_DETECTION;
         static constexpr float minimumPoweredTorque = MINIMUM_POWERED_TORQUE;
         static constexpr float minimumDragTorque = MINIMUM_DRAG_TORQUE;
-        static constexpr float minimumRecoverySlopeMargin = static_cast<float>(MINIMUM_RECOVERY_SLOPE_MARGIN) / 1e6F;
         static constexpr float minimumRecoverySlope = MINIMUM_RECOVERY_SLOPE;
         static constexpr unsigned int minimumRecoveryTime = MINIMUM_RECOVERY_TIME * 1'000;
         static constexpr unsigned int minimumDriveTime = MINIMUM_DRIVE_TIME * 1'000;
@@ -65,7 +64,6 @@ namespace RowerProfile
         StrokeDetectionType strokeDetectionType = Defaults::strokeDetectionType;
         float minimumPoweredTorque = Defaults::minimumPoweredTorque;
         float minimumDragTorque = Defaults::minimumDragTorque;
-        float minimumRecoverySlopeMargin = Defaults::minimumRecoverySlopeMargin;
         float minimumRecoverySlope = Defaults::minimumRecoverySlope;
         unsigned int minimumRecoveryTime = Defaults::minimumRecoveryTime;
         unsigned int minimumDriveTime = Defaults::minimumDriveTime;

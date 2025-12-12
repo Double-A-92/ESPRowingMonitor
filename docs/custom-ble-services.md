@@ -138,7 +138,7 @@ Stroke Detection Settings (UUID: 5d9c04cd-dcec-4551-8169-8c81f14d9d9d)
 
 Uses Notify to broadcast and allow Read the current stroke phase detection settings (which may be extended in the future) as an array of consecutive bytes. It notifies when a stroke detection setting is changed.
 
-Currently the Notify/Read includes the following data (15 bytes total):
+Currently the Notify/Read includes the following data (11 bytes total):
 
 Byte 0 includes the stroke detection type and impulse data array length with a bit mask detailed below:
 
@@ -158,16 +158,14 @@ Bytes 1-2 (signed short) is the [Minimum Powered Torque](./settings.md#minimum_p
 
 Bytes 3-4 (signed short) is the [Minimum Drag Torque](./settings.md#minimum_drag_torque) with a resolution (scale) of 10,000 (i.e. value of 2,500 translates to 0.25).
 
-Bytes 5-8 (float as unsigned int) is the [Minimum Recovery Slope Margin](./settings.md#minimum_recovery_slope_margin) as a 32-bit float represented in little-endian format.
+Bytes 5-6 (signed short) is the [Minimum Recovery Slope](./settings.md#minimum_recovery_slope) with a resolution (scale) of 1,000 (i.e. value of 1,500 translates to 1.5).
 
-Bytes 9-10 (signed short) is the [Minimum Recovery Slope](./settings.md#minimum_recovery_slope) with a resolution (scale) of 1,000 (i.e. value of 1,500 translates to 1.5).
-
-Bytes 11-13 (3 bytes) encode the minimum stroke timing values with a resolution (scale) in milliseconds:
+Bytes 7-9 (3 bytes) encode the minimum stroke timing values with a resolution (scale) in milliseconds:
 
 - _Minimum Recovery Time_ - encoded in bits 0-11 (12 bits, max value 4,095, representing up to ~4.1 seconds)
 - _Minimum Drive Time_ - encoded in bits 12-23 (12 bits, max value 4,095, representing up to ~4.1 seconds)
 
-Byte 14 (unsigned char) is the [Drive Handle Forces Max Capacity](./settings.md#drive_handle_forces_max_capacity) (minimum value is 1).
+Byte 10 (unsigned char) is the [Drive Handle Forces Max Capacity](./settings.md#drive_handle_forces_max_capacity) (minimum value is 1).
 
 ```text
 Settings Control Point (UUID: 51ba0a00-8853-477c-bf43-6a09c36aac9f)
@@ -198,7 +196,7 @@ Please note that `SetMachineSettings`, `SetSensorSignalSettings`, `SetDragFactor
 - `SetMachineSettings` follows bytes 1-8 of Settings Characteristic
 - `SetSensorSignalSettings` follows bytes 9-10 of Settings Characteristic
 - `SetDragFactorSEttings` follows bytes 11-17 of Settings Characteristic
-- `SetStrokeDetectionSettings` follows the bytes 1-15 of Stroke Detection Settings Characteristic
+- `SetStrokeDetectionSettings` follows the bytes 1-10 of Stroke Detection Settings Characteristic (11 bytes total)
 
 **Note:** The "Is Compiled With Double" bit (bit 7) in the Stroke Detection Settings is read-only and will be ignored when sent via the control point. Only bits 0-6 of byte 0 are used for `SetStrokeDetectionSettings`.
 

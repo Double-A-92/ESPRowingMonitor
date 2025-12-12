@@ -52,11 +52,10 @@ TEST_CASE("StrokeService")
                                     .strokeDetectionType = StrokeDetectionType::Torque,
                                     .minimumPoweredTorque = 0.5F,
                                     .minimumDragTorque = 0.2F,
-                                    .minimumRecoverySlopeMargin = 0.000001F,
                                     .minimumRecoverySlope = -0.1F,
                                     .minimumRecoveryTime = 500'000,
                                     .minimumDriveTime = 200'000,
-                                    .impulseDataArrayLength = 10,
+                                    .impulseDataArrayLength = 5,
                                     .driveHandleForcesMaxCapacity = 15,
                                 });
 
@@ -78,10 +77,10 @@ TEST_CASE("StrokeService")
 
             const auto rowingMetrics = strokeService.getData();
 
-            REQUIRE(rowingMetrics.strokeCount == 14);
-            REQUIRE(rowingMetrics.lastStrokeTime == 25'793'352);
-            REQUIRE_THAT(rowingMetrics.distance, Catch::Matchers::WithinRel(9'132.18830547154357191, 0.0000001));
-            REQUIRE(rowingMetrics.lastRevTime == 32'800'091);
+            CHECK(rowingMetrics.strokeCount == 11);
+            CHECK(rowingMetrics.lastStrokeTime == 26'217'932);
+            CHECK_THAT(rowingMetrics.distance, Catch::Matchers::WithinRel(9'230.74789692319063761, 0.0000001));
+            CHECK(rowingMetrics.lastRevTime == 33'241'257);
         }
 
         SECTION("change sensor signal related settings")
