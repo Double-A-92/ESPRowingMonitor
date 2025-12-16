@@ -343,4 +343,35 @@ In order to run the simulation, the e2e test needs to be compiled. There is a ma
 
 So basically, change one setting at a time, note whether the stroke detection improves and then tweak the settings until stroke detection is consistent i.e. the reported number of strokes matches the number of strokes done.
 
-Please note that after changing a setting the executable needs recompiling (i.e. running `make e2e`).
+### Calibration Helper Desktop GUI
+
+A cross-platform desktop GUI is available for analyzing and visualizing the simulation output to help tune ESP Rowing Monitor settings for new machines. The tool simplifies the calibration process by providing visual feedback on sensor data quality and stroke detection accuracy.
+
+**Features:**
+
+- **Delta Times Analysis**: Visualize raw vs. cleaned delta times from the cyclic error filter to understand sensor data quality and identify noise patterns.
+- **Handle Force Visualization**: Iterate over handle force curves for each stroke with navigation controls to identify anomalies.
+- **Stroke Detection Analysis**: Identify missed or duplicate strokes using Theil-Sen regression analysis with adjustable parameters.
+- **Interactive Charts**: Zoom, pan, and navigate through data using toolbar controls.
+
+**Download:**
+
+- Windows: download the `calibration-helper-gui-windows-x64.exe` from the release assets and run it.
+- Linux: download the `calibration-helper-gui-linux-x64` executable, mark it executable if needed (`chmod +x`), and run it.
+- macOS: download the `calibration-helper-gui-macos-x64.tar.gz`, extract it, then open the `.app`.
+
+**Usage:**
+
+1. Record delta times from a rowing session (via SD card, BLE logging, or serial monitor)
+2. Run the e2e simulation with the recorded delta times and pipe the output to a file:
+
+   ```bash
+   ./build/e2e-test.out path/to/delta-times.csv > simulation-output.txt
+   ```
+
+3. Open the calibration helper GUI and load the simulation output file
+4. Use the **Delta Times** tab to analyze raw vs. cleaned delta times and identify sensor noise patterns
+5. Use the **Handle Forces** tab to inspect force curves for each stroke and identify anomalies
+6. Use the **Stroke Detection** tab to identify missed or duplicate strokes
+7. Adjust settings based on the analysis, recompile and repeat the simulation
+8. Refresh the data in the GUI to see the changes

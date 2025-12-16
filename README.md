@@ -53,6 +53,7 @@ _Highlights:_
 - BLE connectivity supporting multiple devices simultaneously.
 - WebGUI for intuitive setup and data visualization.
 - OTA firmware updates for seamless usage and detailed logging for replay.
+- Calibration helper GUI for visual analysis of sensor data and stroke detection.
 
 ### Web interface
 
