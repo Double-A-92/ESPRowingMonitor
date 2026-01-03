@@ -54,7 +54,7 @@ Please see more details on their specifications and protocols under [Custom BLE 
 
 Version 6 introduced over-the-air bluetooth update protocol. The protocol is implemented in the WebGUI so installation can be done from there. This makes updates much easier as the device may not need to be removed. As well as allows potential auto update feature in future.
 
-More detailed on the specification of the protocol can be found [here](docs/custom-ble-services.md#over-the-air-updater)
+More detailed on the specification of the protocol can be found in the [OTA protocol documentation](custom-ble-services.md#over-the-air-updater)
 
 ## Logging
 

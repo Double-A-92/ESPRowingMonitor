@@ -30,9 +30,10 @@ The `dragFactor` field in the Extended Metrics characteristic has been changed f
 3. [Key Features](#🚀-key-features)
 4. [Installation](#📥-installation)
 5. [Settings](#⚙️-settings)
-6. [Technical Details](#🛠️-technical-details)
-7. [Backlog](#📋-backlog)
-8. [Attribution](#🙏-attribution)
+6. [FAQ](#❓-faq)
+7. [Technical Details](#🛠️-technical-details)
+8. [Backlog](#📋-backlog)
+9. [Attribution](#🙏-attribution)
 
 ## 🎯 Aim of the project
 
@@ -57,7 +58,7 @@ _Highlights:_
 
 ### Web interface
 
-An intuitive WebGUI can be accessed [here](https://abasz.github.io/ESPRowingMonitor-WebGUI/) that simplifies monitoring, configuration, and firmware updates, accessible directly through a browser. It’s an installable Progressive Web App (PWA) that works offline after installation. It connects to ESP Rowing Monitor via bluetooth taking advantage the WebBluetooth stack. For further details please read the [documentation](https://github.com/Abasz/ESPRowingMonitor-WebGUI/).
+An intuitive [WebGUI](https://abasz.github.io/ESPRowingMonitor-WebGUI/) is available that simplifies monitoring, configuration, and firmware updates, accessible directly through a browser. It's an installable Progressive Web App (PWA) that works offline after installation. It connects to ESP Rowing Monitor via bluetooth taking advantage the WebBluetooth stack. For further details please read the [documentation](https://github.com/Abasz/ESPRowingMonitor-WebGUI/).
 
 ### Metrics
 
@@ -100,7 +101,7 @@ Please see more details on their specifications and protocols under [Custom BLE 
 
 As of version 6 after the initial installation, an over-the-air Bluetooth update protocol is available. The protocol is implemented in the WebGUI so installation can be done from there.
 
-More details on the specification can be found [here](docs/custom-ble-services.md#over-the-air-updater)
+More details on the specification can be found in the [OTA protocol documentation](docs/custom-ble-services.md#over-the-air-updater)
 
 ### SD-Card impulse logging
 
@@ -114,9 +115,19 @@ Please see dedicated [installation page](docs/installation.md)
 
 Please see dedicated [settings page](docs/settings.md)
 
+## ❓ FAQ
+
+For common questions, troubleshooting guides, and community-proven solutions, see the [FAQ](docs/faq.md). The FAQ covers:
+
+- Hardware compatibility and sensor selection
+- Calibration workflow and flywheel inertia measurement
+- Stroke detection tuning
+- BLE connectivity and app compatibility
+- Troubleshooting common issues
+
 ## 🛠️ Technical details
 
-The monitor works by detecting the speed of the rotating flywheel via measuring the time between impulses through a reed or hall sensor on the rowing machine (more on the physics [here](https://github.com/laberning/openrowingmonitor/blob/v1beta/docs/physics_openrowingmonitor.md)).
+The monitor works by detecting the speed of the rotating flywheel via measuring the time between impulses through a reed or hall sensor on the rowing machine (more on the physics in the [ORM physics documentation](https://github.com/laberning/openrowingmonitor/tree/v1beta/docs/physics_openrowingmonitor.md)).
 
 Please note that, for this monitor to function correctly, you need to measure the rotation speed of the flywheel rather than the handle speed. There are [several discussions](https://github.com/laberning/openrowingmonitor/discussions/95) on this topic under the ORM repos. It is possible that one can make it work but I have not tested such setup. I recommend reading those discussions to better understand the consequences of not measuring the flywheel speed.
 
@@ -126,7 +137,7 @@ All the metrics calculated are based on measuring the time between two consecuti
 
 One advantage of the ESP32 ISR is that it is real-time (compared to ORM's polling strategy), which in theory would make this solution more accurate. However, testing showed that any deviation of the data produced by ORM and ESP Rowing Monitor is within the margin of error. So there is no real evidence that this added accuracy can be translated into an apparent improvement of the data quality. Actually, due to some noise filtering that ORM has, ORM may be a better choice for certain setups (mostly machines that produce quite some noise).
 
-This project by default uses the same [Theil Sen Quadratic Regression](https://github.com/laberning/openrowingmonitor/blob/v1beta/docs/physics_openrowingmonitor.md#a-mathematical-perspective-on-key-metrics) model to determine torque as ORM, which is used as the main stroke detection algorithm. 
+This project by default uses the same [Theil Sen Quadratic Regression](https://github.com/JaapvanEkris/openrowingmonitor/tree/main/docs/physics_openrowingmonitor.md#a-mathematical-perspective-on-key-metrics) model to determine torque as ORM, which is used as the main stroke detection algorithm.
 
 Nevertheless, for certain machines (based on experience where only 1 or 2 impulses per rotation is present), the user can select the traditional stroke detection algorithm. There are three options in this respect:
 
@@ -142,6 +153,6 @@ Please note that due to the difference between the Rpi and the ESP32 (including 
 
 ## 🙏 Attribution
 
-[Lars Berning](https://github.com/laberning/) - Original ORM implementation
-
-[Jaap van Ekris](https://github.com/JaapvanEkris) - Lots of help and explanation on the background and inner workings of the upgraded stroke detection algorithm
+- [Lars Berning](https://github.com/laberning/) - Original ORM implementation
+- [Jaap van Ekris](https://github.com/JaapvanEkris) - Lots of help and explanation on the background and inner workings of the upgraded stroke detection algorithm
+- [Double-A-92](https://github.com/Double-A-92) - For the Kettler Stroker rower profile
