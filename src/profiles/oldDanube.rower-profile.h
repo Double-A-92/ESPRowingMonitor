@@ -13,6 +13,7 @@
 
 #define ADD_SERIAL_TO_DEVICE_NAME true
 #define ADD_BLE_SERVICE_TO_DEVICE_NAME false
+#define MIN_BLE_UPDATE_INTERVAL 1'500
 
 // Hardware settings
 #define IMPULSES_PER_REVOLUTION 6

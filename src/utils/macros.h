@@ -121,6 +121,14 @@ consteval std::string_view getHardwareRevision()
     #define DEFAULT_BLE_SERVICE BleServiceFlag::CpsService
 #endif
 
+#if !defined(MIN_BLE_UPDATE_INTERVAL)
+    #define MIN_BLE_UPDATE_INTERVAL 4'000
+#endif
+
+#if MIN_BLE_UPDATE_INTERVAL < 1'000
+    #error "MIN_BLE_UPDATE_INTERVAL is set to less than 1,000 milliseconds which is not allowed"
+#endif
+
 #if STROKE_DETECTION_TYPE == STROKE_DETECTION_BOTH
     #define STROKE_DETECTION StrokeDetectionType::Both
 #elif STROKE_DETECTION_TYPE == STROKE_DETECTION_SLOPE

@@ -187,6 +187,16 @@ Serial number for the BLE device profile. This can be anything but should be wit
 
 Include the Serial Number in the BLE device name with an additional `-` separator from the device name. Please note that the total device name length cannot be longer than 18 characters. Default is false.
 
+#### MIN_BLE_UPDATE_INTERVAL
+
+The minimum time interval (in milliseconds) between BLE data updates when no new stroke has been detected. This setting controls how frequently the data to be sent to the connected BLE clients (e.g., Garmin watches, WebGUI) should be updated with fresh distance and other metrics when the rower is active but hasn't completed a new stroke.
+
+This value must be at least 1,000 millisecond.
+
+Please note setting this to too low would create ripples in the speed data, while setting this to too high would increase the distance mismatch in Garmin watches due to their interpolation behaviour (please see [issue #25](https://github.com/Abasz/ESPRowingMonitor/issues/25) for further details).
+
+Default: 4000 (4 seconds)
+
 ### Machine settings
 
 #### IMPULSES_PER_REVOLUTION

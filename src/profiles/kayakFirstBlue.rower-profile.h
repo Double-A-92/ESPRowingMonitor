@@ -7,6 +7,8 @@
 #define MODEL_NUMBER Blue
 #define SERIAL_NUMBER "03172022/1"
 
+#define MIN_BLE_UPDATE_INTERVAL 1'500
+
 // Hardware settings
 #define IMPULSES_PER_REVOLUTION 6
 #define FLYWHEEL_INERTIA 0.029
