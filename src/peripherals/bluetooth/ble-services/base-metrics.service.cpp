@@ -146,8 +146,18 @@ void BaseMetricsBleService::ftmsTask(void *parameters)
 
         const auto secInMicroSec = 1e6L;
         const auto dragFactor = static_cast<unsigned char>(lround(params->data.dragCoefficient * 1e6));
-        const unsigned char strokeRate = static_cast<unsigned char>(lroundl((params->data.strokeCount - params->data.previousStrokeCount) / ((params->data.strokeTime - params->data.previousStrokeTime) / secInMicroSec / 60U)));
-        const auto pace500m = static_cast<unsigned short>(lroundl(500U / (((params->data.distance - params->data.previousDistance) / 100U) / ((params->data.revTime - params->data.previousRevTime) / secInMicroSec))));
+
+        unsigned char strokeRate = 0;
+        const auto strokeTimeDelta = ((params->data.strokeTime - params->data.previousStrokeTime) / secInMicroSec / 60U);
+        if (strokeTimeDelta > 0L)
+            strokeRate = static_cast<unsigned char>(lroundl((params->data.strokeCount - params->data.previousStrokeCount) / strokeTimeDelta));
+
+        unsigned short pace500m = 0;
+        const auto revTimeDelta = ((params->data.revTime - params->data.previousRevTime) / secInMicroSec);
+        const auto distanceDelta = ((params->data.distance - params->data.previousDistance) / 100U);
+        if (distanceDelta > 0L)
+            pace500m = static_cast<unsigned short>(lroundl(500U * (revTimeDelta / distanceDelta)));
+
         const auto distance = static_cast<unsigned int>(lround(params->data.distance / 100U));
         const auto avgStrokePower = static_cast<short>(lround(params->data.avgStrokePower));
 
