@@ -143,6 +143,7 @@ void BaseMetricsBleService::ftmsTask(void *parameters)
 {
     {
         const auto *const params = static_cast<const BaseMetricsBleService::BaseMetricsParams *>(parameters);
+        unsigned short presentFeatures = FTMSSensorBleFlags::ftmsMeasurementFeaturesFlag;
 
         const auto secInMicroSec = 1e6L;
         const auto dragFactor = static_cast<unsigned char>(lround(params->data.dragCoefficient * 1e6));
@@ -157,14 +158,16 @@ void BaseMetricsBleService::ftmsTask(void *parameters)
         const auto distanceDelta = ((params->data.distance - params->data.previousDistance) / 100U);
         if (distanceDelta > 0L)
             pace500m = static_cast<unsigned short>(lroundl(500U * (revTimeDelta / distanceDelta)));
+        else
+            presentFeatures &= ~FTMSMeasurementFeaturesFlags::InstantaneousPacePresent;
 
         const auto distance = static_cast<unsigned int>(lround(params->data.distance / 100U));
         const auto avgStrokePower = static_cast<short>(lround(params->data.avgStrokePower));
 
         const auto length = 14U;
         array<unsigned char, length> temp = {
-            static_cast<unsigned char>(FTMSSensorBleFlags::ftmsMeasurementFeaturesFlag),
-            static_cast<unsigned char>(FTMSSensorBleFlags::ftmsMeasurementFeaturesFlag >> 8),
+            static_cast<unsigned char>(presentFeatures),
+            static_cast<unsigned char>(presentFeatures >> 8),
 
             // Stroke rate is with a resolution of 0.5. While this works for a rower it will not work for a kayak erg in all cases (as kayak stroke rate can be up to 160spm)
             static_cast<unsigned char>(strokeRate * 2 > UCHAR_MAX ? UCHAR_MAX : strokeRate * 2),
