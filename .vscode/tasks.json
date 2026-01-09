@@ -145,7 +145,9 @@
 				"-S",
 				".",
 				"-B",
-				"build"
+				"build",
+				"-G",
+				"Unix Makefiles"
 			],
 			"options": {
 				"cwd": "${cwd}"
