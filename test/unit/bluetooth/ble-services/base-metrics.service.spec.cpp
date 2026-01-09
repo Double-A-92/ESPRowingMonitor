@@ -541,6 +541,57 @@ TEST_CASE("BaseMetricsBleService", "[ble-service]")
                 Verify(OverloadedMethod(mockBaseMetricsCharacteristic, setValue, void(const std::array<unsigned char, length>)).Using(Eq(expectedData))).Once();
                 Verify(Method(mockBaseMetricsCharacteristic, notify)).Once();
             }
+
+            SECTION("when in stopped state")
+            {
+                BleMetricsModel::BleMetricsData metricsStopped{
+                    .revTime = 40'000'000ULL,
+                    .previousRevTime = 40'000'000ULL,
+                    .distance = 400.0,
+                    .previousDistance = 400.0,
+                    .strokeTime = 40'000'000ULL,
+                    .previousStrokeTime = 40'000'000ULL,
+                    .strokeCount = 10,
+                    .previousStrokeCount = 10,
+                    .avgStrokePower = 0.0,
+                    .dragCoefficient = 110 / 1e6,
+                };
+
+                const auto distance = static_cast<unsigned int>(lround(metricsStopped.distance / 100U));
+                const auto avgStrokePower = static_cast<short>(lround(metricsStopped.avgStrokePower));
+                const auto dragFactor = static_cast<unsigned short>(lround(metricsStopped.dragCoefficient * 1e6));
+                const auto strokeRate = static_cast<unsigned char>(0);
+                const auto pace500m = static_cast<unsigned short>(0);
+
+                const auto length = 14U;
+                std::array<unsigned char, length> expectedData = {
+                    static_cast<unsigned char>(FTMSSensorBleFlags::ftmsMeasurementFeaturesFlag),
+                    static_cast<unsigned char>(FTMSSensorBleFlags::ftmsMeasurementFeaturesFlag >> 8),
+
+                    static_cast<unsigned char>(strokeRate * 2),
+                    static_cast<unsigned char>(metricsStopped.strokeCount),
+                    static_cast<unsigned char>(metricsStopped.strokeCount >> 8),
+
+                    static_cast<unsigned char>(distance),
+                    static_cast<unsigned char>(distance >> 8),
+                    static_cast<unsigned char>(distance >> 16),
+
+                    static_cast<unsigned char>(pace500m),
+                    static_cast<unsigned char>(pace500m >> 8),
+
+                    static_cast<unsigned char>(avgStrokePower),
+                    static_cast<unsigned char>(avgStrokePower >> 8),
+
+                    static_cast<unsigned char>(dragFactor),
+                    static_cast<unsigned char>(dragFactor >> 8),
+                };
+                baseMetricsBleService.setup(&mockNimBLEServer.get(), BleServiceFlag::FtmsService);
+
+                baseMetricsBleService.broadcastBaseMetrics(metricsStopped);
+
+                Verify(OverloadedMethod(mockBaseMetricsCharacteristic, setValue, void(const std::array<unsigned char, length>)).Using(Eq(expectedData))).Once();
+                Verify(Method(mockBaseMetricsCharacteristic, notify)).Once();
+            }
         }
 
         SECTION("delete task")

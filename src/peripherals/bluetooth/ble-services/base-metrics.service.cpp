@@ -148,11 +148,11 @@ void BaseMetricsBleService::ftmsTask(void *parameters)
         const auto dragFactor = static_cast<unsigned char>(lround(params->data.dragCoefficient * 1e6));
 
         const auto strokeTimeDelta = ((params->data.strokeTime - params->data.previousStrokeTime) / secInMicroSec / 60U);
-        const unsigned char strokeRate = strokeTimeDelta > 0L ? lroundl((params->data.strokeCount - params->data.previousStrokeCount) / strokeTimeDelta) : 0U;
+        const auto strokeRate = static_cast<unsigned char>(strokeTimeDelta > 0 ? lroundl((params->data.strokeCount - params->data.previousStrokeCount) / strokeTimeDelta) : 0);
 
         const auto revTimeDelta = ((params->data.revTime - params->data.previousRevTime) / secInMicroSec);
         const auto distanceDelta = ((params->data.distance - params->data.previousDistance) / 100U);
-        const unsigned short pace500m = distanceDelta > 0L ? lroundl(500U * (revTimeDelta / distanceDelta)) : 0U;
+        const auto pace500m = static_cast<unsigned short>(distanceDelta > 0 ? lroundl(500U * (revTimeDelta / distanceDelta)) : 0);
 
         const auto distance = static_cast<unsigned int>(lround(params->data.distance / 100U));
         const auto avgStrokePower = static_cast<short>(lround(params->data.avgStrokePower));
