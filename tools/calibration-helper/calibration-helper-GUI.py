@@ -580,6 +580,12 @@ class DataVisualizer:
         self.summary_tree = None
         self.summary_tooltip = None
         
+        # Sync view state memory (remembers which files were synced per tab)
+        self.sync_state_memory: dict[str, set[str]] = {
+            'delta': set(),
+            'stroke_detection': set()
+        }
+        
         # Handle window close properly
         self.root.protocol("WM_DELETE_WINDOW", self._on_close)
         
@@ -1745,6 +1751,17 @@ class DataVisualizer:
         )
         reset_btn.pack(side=tk.LEFT, padx=10)
         
+        # Add Sync View State button
+        sync_btn = tk.Button(
+            y_control_frame,
+            text="Sync View State",
+            command=lambda: self._show_sync_view_dialog('delta'),
+            font=('Arial', 9),
+            bg='#2196F3',
+            fg='white'
+        )
+        sync_btn.pack(side=tk.LEFT, padx=10)
+        
         # Add horizontal scrollbar for x-axis navigation
         x_scroll_frame.pack(side=tk.BOTTOM, fill=tk.X, pady=2)
         
@@ -1862,6 +1879,277 @@ class DataVisualizer:
             self.delta_x_scrollbar.set(0)
         
         self.delta_canvas.draw()
+    
+    def _show_sync_view_dialog(self, tab_type: str):
+        """Show dialog to select files to sync view state to.
+        
+        Args:
+            tab_type: Either 'delta' for Delta Times tab or 'stroke_detection' for Stroke Detection tab
+        """
+        if self.current_file is None:
+            messagebox.showwarning("No File", "No file is currently open")
+            return
+        
+        if len(self.loaded_files) < 2:
+            messagebox.showinfo("Single File", "Only one file is loaded. Open more files to sync view state.")
+            return
+        
+        # Save current view state first
+        self._save_current_state()
+        
+        # Get current view limits based on tab type
+        if tab_type == 'delta':
+            if self.delta_ax is None:
+                messagebox.showwarning("No Chart", "Delta times chart is not available")
+                return
+            current_xlim = self.delta_ax.get_xlim()
+            current_ylim = self.delta_ax.get_ylim()
+            title = "Sync Delta Times View State"
+            description = f"Current view: X=[{current_xlim[0]:.0f}, {current_xlim[1]:.0f}], Y=[{current_ylim[0]:.0f}, {current_ylim[1]:.0f}]"
+        elif tab_type == 'stroke_detection':
+            if self.sd_ax is None:
+                messagebox.showwarning("No Chart", "Stroke detection chart is not available")
+                return
+            current_xlim = self.sd_ax.get_xlim()
+            current_ylim = self.sd_ax.get_ylim()
+            title = "Sync Stroke Detection View State"
+            description = f"Current view: X=[{current_xlim[0]:.0f}, {current_xlim[1]:.0f}], Y=[{current_ylim[0]:.0f}, {current_ylim[1]:.0f}]"
+        else:
+            return
+        
+        # Create dialog
+        dialog = tk.Toplevel(self.root)
+        dialog.title(title)
+        dialog.geometry("500x400")
+        dialog.transient(self.root)
+        dialog.grab_set()
+        
+        # Center the dialog
+        dialog.update_idletasks()
+        x = self.root.winfo_x() + (self.root.winfo_width() - 500) // 2
+        y = self.root.winfo_y() + (self.root.winfo_height() - 400) // 2
+        dialog.geometry(f"+{x}+{y}")
+        
+        # Description label
+        tk.Label(
+            dialog,
+            text=f"Sync view state from: {self.current_file.display_name}",
+            font=('Arial', 10, 'bold'),
+            wraplength=480
+        ).pack(padx=10, pady=(10, 5))
+        
+        tk.Label(
+            dialog,
+            text=description,
+            font=('Arial', 9),
+            fg='#666666'
+        ).pack(padx=10, pady=(0, 10))
+        
+        tk.Label(
+            dialog,
+            text="Select files to apply this view state to:",
+            font=('Arial', 10)
+        ).pack(padx=10, pady=5)
+        
+        # Frame for checkboxes with scrollbar (fixed height)
+        list_frame = tk.Frame(dialog, height=200)
+        list_frame.pack(fill=tk.X, padx=10, pady=5)
+        list_frame.pack_propagate(False)  # Prevent frame from shrinking
+        
+        canvas = tk.Canvas(list_frame, height=180)
+        scrollbar = tk.Scrollbar(list_frame, orient="vertical", command=canvas.yview)
+        scrollable_frame = tk.Frame(canvas)
+        
+        scrollable_frame.bind(
+            "<Configure>",
+            lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
+        )
+        
+        canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+        canvas.configure(yscrollcommand=scrollbar.set)
+        
+        # Bind mouse wheel scrolling
+        def on_mousewheel(event):
+            canvas.yview_scroll(int(-1*(event.delta/120)), "units")
+        
+        def on_mousewheel_linux(event):
+            if event.num == 4:
+                canvas.yview_scroll(-1, "units")
+            elif event.num == 5:
+                canvas.yview_scroll(1, "units")
+        
+        # Bind for Windows/Mac
+        canvas.bind("<MouseWheel>", on_mousewheel)
+        # Bind for Linux
+        canvas.bind("<Button-4>", on_mousewheel_linux)
+        canvas.bind("<Button-5>", on_mousewheel_linux)
+        
+        # Also bind to scrollable_frame so scrolling works when hovering over checkboxes
+        scrollable_frame.bind("<MouseWheel>", on_mousewheel)
+        scrollable_frame.bind("<Button-4>", on_mousewheel_linux)
+        scrollable_frame.bind("<Button-5>", on_mousewheel_linux)
+        
+        canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        
+        # Helper function to check if two names share at least 2/3 prefix
+        def names_are_similar(name1: str, name2: str) -> bool:
+            """Check if names share at least 2/3 of their length from the start."""
+            # Remove file extension for comparison
+            base1 = os.path.splitext(name1)[0].lower()
+            base2 = os.path.splitext(name2)[0].lower()
+            
+            # Calculate minimum prefix length needed (2/3 of shorter string)
+            min_len = min(len(base1), len(base2))
+            if min_len == 0:
+                return False
+            required_prefix_len = (min_len * 2) // 3
+            if required_prefix_len < 3:  # At least 3 chars must match
+                required_prefix_len = min(3, min_len)
+            
+            # Check if first required_prefix_len characters match
+            return base1[:required_prefix_len] == base2[:required_prefix_len]
+        
+        # Get previously synced files for this tab type (memory)
+        previously_synced = self.sync_state_memory.get(tab_type, set())
+        
+        # Create checkboxes for each file (except current)
+        file_vars = {}
+        for filepath, file_data in self.loaded_files.items():
+            if filepath == self.current_file.filepath:
+                continue  # Skip current file
+            
+            # Determine initial check state:
+            # 1. If we have memory of previous sync, use that
+            # 2. Otherwise, check if names share at least 2/3 prefix
+            if previously_synced:
+                # Use memory: check if this file was previously synced
+                initial_checked = filepath in previously_synced
+            else:
+                # No memory: use prefix similarity matching
+                initial_checked = names_are_similar(
+                    self.current_file.display_name, 
+                    file_data.display_name
+                )
+            
+            var = tk.BooleanVar(value=initial_checked)
+            file_vars[filepath] = var
+            
+            cb = tk.Checkbutton(
+                scrollable_frame,
+                text=file_data.display_name,
+                variable=var,
+                font=('Arial', 10),
+                anchor='w'
+            )
+            cb.pack(fill=tk.X, padx=5, pady=2)
+        
+        # Select All / Deselect All buttons
+        select_frame = tk.Frame(dialog)
+        select_frame.pack(fill=tk.X, padx=10, pady=5)
+        
+        def select_all():
+            for var in file_vars.values():
+                var.set(True)
+        
+        def deselect_all():
+            for var in file_vars.values():
+                var.set(False)
+        
+        tk.Button(
+            select_frame,
+            text="Select All",
+            command=select_all,
+            font=('Arial', 9),
+            pady=3
+        ).pack(side=tk.LEFT, padx=5)
+        
+        tk.Button(
+            select_frame,
+            text="Deselect All",
+            command=deselect_all,
+            font=('Arial', 9),
+            pady=3
+        ).pack(side=tk.LEFT, padx=5)
+        
+        # OK / Cancel buttons
+        button_frame = tk.Frame(dialog)
+        button_frame.pack(side=tk.BOTTOM, fill=tk.X, padx=10, pady=15)
+        
+        def apply_sync():
+            selected_files = [fp for fp, var in file_vars.items() if var.get()]
+            if not selected_files:
+                messagebox.showwarning("No Selection", "No files selected for sync")
+                return
+            
+            synced_files = []
+            skipped_files = []
+            
+            # Apply view state to selected files (with validation)
+            for filepath in selected_files:
+                file_data = self.loaded_files.get(filepath)
+                if file_data is None:
+                    continue
+                
+                # Validate that target file has enough data for the view range
+                can_sync = False
+                if tab_type == 'delta':
+                    if file_data.has_delta() and file_data.raw_deltas is not None:
+                        data_len = len(file_data.raw_deltas)
+                        # Check if at least part of the X range overlaps with data
+                        if current_xlim[0] < data_len:
+                            can_sync = True
+                elif tab_type == 'stroke_detection':
+                    if file_data.has_stroke_data() and file_data.stroke_raw_deltas is not None:
+                        data_len = len(file_data.stroke_raw_deltas)
+                        # Check if at least part of the X range overlaps with data
+                        if current_xlim[0] < data_len:
+                            can_sync = True
+                
+                if can_sync:
+                    if tab_type == 'delta':
+                        file_data.delta_view_xlim = current_xlim
+                        file_data.delta_view_ylim = current_ylim
+                    elif tab_type == 'stroke_detection':
+                        file_data.stroke_detection_view_xlim = current_xlim
+                        file_data.stroke_detection_view_ylim = current_ylim
+                    synced_files.append(file_data.display_name)
+                else:
+                    skipped_files.append(file_data.display_name)
+            
+            # Remember selected files for next time (save to memory)
+            self.sync_state_memory[tab_type] = set(selected_files)
+            
+            dialog.destroy()
+            
+            # Only show warning if some files were skipped
+            if skipped_files:
+                messagebox.showwarning(
+                    "Partial Sync",
+                    f"Synced to {len(synced_files)} file(s).\n\n"
+                    f"Could not sync to {len(skipped_files)} file(s) "
+                    "(view range exceeds data bounds):\n• " + "\n• ".join(skipped_files)
+                )
+        
+        tk.Button(
+            button_frame,
+            text="Apply Sync",
+            command=apply_sync,
+            font=('Arial', 10, 'bold'),
+            bg='#4CAF50',
+            fg='white',
+            padx=20,
+            pady=5
+        ).pack(side=tk.RIGHT, padx=5)
+        
+        tk.Button(
+            button_frame,
+            text="Cancel",
+            command=dialog.destroy,
+            font=('Arial', 10),
+            padx=20,
+            pady=5
+        ).pack(side=tk.RIGHT, padx=5)
     
     def _copy_delta_chart_to_clipboard(self):
         """Copy the current delta times chart to the system clipboard."""
@@ -2938,6 +3226,22 @@ class DataVisualizer:
             font=('Arial', 9)
         )
         next_btn.pack(side=tk.LEFT, padx=2)
+        
+        # Sync View State button
+        sync_frame = tk.Frame(control_panel)
+        sync_frame.pack(fill=tk.X, padx=5, pady=10)
+        
+        sync_btn = tk.Button(
+            sync_frame,
+            text="Sync View State",
+            command=lambda: self._show_sync_view_dialog('stroke_detection'),
+            font=('Arial', 10),
+            bg='#2196F3',
+            fg='white',
+            padx=15,
+            pady=5
+        )
+        sync_btn.pack(fill=tk.X)
         
         # Right chart panel
         chart_panel = tk.Frame(main_container)
