@@ -101,7 +101,7 @@ test/calibration/**/output/*
 !src/profiles/firebeetle2.board-profile.h
 !src/profiles/firebeetle2-s3.board-profile.h
 !src/profiles/esp32s3-zero.board-profile.h
-!src/profiles/esp32-s3-super-mini.board-profile.h
+!src/profiles/esp32s3-super-mini.board-profile.h
 
 #Rowers
 !src/profiles/dynamic.rower-profile.h
