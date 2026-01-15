@@ -19,7 +19,15 @@ jobs:
       - name: 📥 Checkout repository
         uses: actions/checkout@v4
 
+      - name: 🔧 Install GCC 14
+        run: |
+          sudo apt update
+          sudo apt install -y gcc-14 g++-14
+
       - name: ⚙️ Configure CMake
+        env:
+          CC: gcc-14
+          CXX: g++-14
         run: cmake -S . -B build
 
       - name: 🧪 Build & Run unit tests
