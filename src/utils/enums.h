@@ -20,7 +20,29 @@ enum class BleServiceFlag : unsigned char
 {
     CpsService,
     CscService,
-    FtmsService
+    FtmsService,
+    Pm5Service
+};
+
+class Pm5BleFlags
+{
+public:
+    inline static const std::string discoverySvcUuid = "ce060010-43e5-11e4-916c-0800200c9a66";
+    inline static const std::string modelNumberUuid = "ce060011-43e5-11e4-916c-0800200c9a66";
+    inline static const std::string serialNumberUuid = "ce060012-43e5-11e4-916c-0800200c9a66";
+    inline static const std::string hwRevisionUuid = "ce060013-43e5-11e4-916c-0800200c9a66";
+    inline static const std::string fwRevisionUuid = "ce060014-43e5-11e4-916c-0800200c9a66";
+    inline static const std::string mfgNameUuid = "ce060015-43e5-11e4-916c-0800200c9a66";
+    inline static const std::string machineTypeUuid = "ce060016-43e5-11e4-916c-0800200c9a66";
+
+    inline static const std::string controlSvcUuid = "ce060020-43e5-11e4-916c-0800200c9a66";
+    inline static const std::string controlTransmitUuid = "ce060021-43e5-11e4-916c-0800200c9a66";
+    inline static const std::string controlReceiveUuid = "ce060022-43e5-11e4-916c-0800200c9a66";
+
+    inline static const std::string rowingSvcUuid = "ce060030-43e5-11e4-916c-0800200c9a66";
+    inline static const std::string generalStatusUuid = "ce060031-43e5-11e4-916c-0800200c9a66";
+    inline static const std::string strokeDataUuid = "ce060035-43e5-11e4-916c-0800200c9a66";
+    inline static const std::string multiplexedInfoUuid = "ce060080-43e5-11e4-916c-0800200c9a66";
 };
 
 enum class BleSignalStrength : signed char

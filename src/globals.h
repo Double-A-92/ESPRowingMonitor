@@ -11,6 +11,7 @@
 #include "./peripherals/bluetooth/ble-services/extended-metrics.service.h"
 #include "./peripherals/bluetooth/ble-services/ota.service.h"
 #include "./peripherals/bluetooth/ble-services/settings.service.h"
+#include "./peripherals/bluetooth/ble-services/pm5.service.h"
 #include "./peripherals/bluetooth/bluetooth.controller.h"
 #include "./peripherals/bluetooth/callbacks/connection-manager.callbacks.h"
 #include "./peripherals/peripherals.controller.h"
@@ -45,6 +46,7 @@ extern BatteryBleService batteryBleService;
 extern DeviceInfoBleService deviceInfoBleService;
 extern OtaBleService otaBleService;
 extern BaseMetricsBleService baseMetricsBleService;
+extern Pm5Service pm5BleService;
 extern ExtendedMetricBleService extendedMetricsBleService;
 extern ConnectionManagerCallbacks connectionManagerCallbacks;
 extern SdCardService sdCardService;

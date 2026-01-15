@@ -23,10 +23,11 @@ DeviceInfoBleService deviceInfoBleService;
 OtaBleService otaBleService(otaService);
 SettingsBleService settingsBleService(sdCardService, eepromService);
 BaseMetricsBleService baseMetricsBleService(settingsBleService, eepromService);
+Pm5Service pm5BleService;
 ExtendedMetricBleService extendedMetricsBleService;
 ConnectionManagerCallbacks connectionManagerCallbacks;
 
-BluetoothController bleController(eepromService, otaService, settingsBleService, batteryBleService, deviceInfoBleService, otaBleService, baseMetricsBleService, extendedMetricsBleService, connectionManagerCallbacks);
+BluetoothController bleController(eepromService, otaService, settingsBleService, batteryBleService, deviceInfoBleService, otaBleService, baseMetricsBleService, pm5BleService, extendedMetricsBleService, connectionManagerCallbacks);
 
 PeripheralsController peripheralController(bleController, sdCardService, eepromService);
 StrokeController strokeController(strokeService, flywheelService, eepromService);

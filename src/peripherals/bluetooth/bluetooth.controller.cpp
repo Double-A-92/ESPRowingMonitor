@@ -11,7 +11,7 @@
 #include "../../utils/configuration.h"
 #include "./bluetooth.controller.h"
 
-BluetoothController::BluetoothController(IEEPROMService &_eepromService, IOtaUpdaterService &_otaService, ISettingsBleService &_settingsBleService, IBatteryBleService &_batteryBleService, IDeviceInfoBleService &_deviceInfoBleService, IOtaBleService &_otaBleService, IBaseMetricsBleService &_baseMetricsBleService, IExtendedMetricBleService &_extendedMetricsBleService, IConnectionManagerCallbacks &_connectionManagerCallbacks) : eepromService(_eepromService), otaService(_otaService), settingsBleService(_settingsBleService), batteryBleService(_batteryBleService), deviceInfoBleService(_deviceInfoBleService), otaBleService(_otaBleService), baseMetricsBleService(_baseMetricsBleService), extendedMetricsBleService(_extendedMetricsBleService), connectionManagerCallbacks(_connectionManagerCallbacks)
+BluetoothController::BluetoothController(IEEPROMService &_eepromService, IOtaUpdaterService &_otaService, ISettingsBleService &_settingsBleService, IBatteryBleService &_batteryBleService, IDeviceInfoBleService &_deviceInfoBleService, IOtaBleService &_otaBleService, IBaseMetricsBleService &_baseMetricsBleService, IPm5Service &_pm5Service, IExtendedMetricBleService &_extendedMetricsBleService, IConnectionManagerCallbacks &_connectionManagerCallbacks) : eepromService(_eepromService), otaService(_otaService), settingsBleService(_settingsBleService), batteryBleService(_batteryBleService), deviceInfoBleService(_deviceInfoBleService), otaBleService(_otaBleService), baseMetricsBleService(_baseMetricsBleService), pm5Service(_pm5Service), extendedMetricsBleService(_extendedMetricsBleService), connectionManagerCallbacks(_connectionManagerCallbacks)
 {
     if constexpr (Configurations::enableBluetoothDeltaTimeLogging)
     {
@@ -96,6 +96,11 @@ void BluetoothController::setupBleDevice()
             deviceName.append("FTMS)");
 
             break;
+
+        case BleServiceFlag::Pm5Service:
+            deviceName.append("PM5)");
+
+            break;
         default:
             std::unreachable();
         }
@@ -122,7 +127,16 @@ void BluetoothController::setupServices()
     Log.verboseln("Setting up BLE Services");
     auto *server = NimBLEDevice::getServer();
 
-    baseMetricsBleService.setup(server, eepromService.getBleServiceFlag())->start();
+    const auto serviceFlag = eepromService.getBleServiceFlag();
+    if (serviceFlag != BleServiceFlag::Pm5Service)
+    {
+        baseMetricsBleService.setup(server, serviceFlag)->start();
+    }
+    
+    if (serviceFlag == BleServiceFlag::Pm5Service)
+    {
+        pm5Service.setup(server, serviceFlag);
+    }
 
     if constexpr (Configurations::hasExtendedBleMetrics)
     {
@@ -166,6 +180,7 @@ void BluetoothController::setupAdvertisement(const std::string &deviceName) cons
         return;
 
     case BleServiceFlag::FtmsService:
+    {
         pAdvertising->addServiceUUID(FTMSSensorBleFlags::ftmsSvcUuid);
 
         const std::string ftmsType{
@@ -175,6 +190,14 @@ void BluetoothController::setupAdvertisement(const std::string &deviceName) cons
         };
         pAdvertising->setServiceData(FTMSSensorBleFlags::ftmsSvcUuid, ftmsType);
 
+        return;
+    }
+
+    case BleServiceFlag::Pm5Service:
+        pAdvertising->setAppearance(0); 
+        pAdvertising->addServiceUUID(Pm5BleFlags::discoverySvcUuid);
+        pAdvertising->addServiceUUID(Pm5BleFlags::rowingSvcUuid);
+        
         return;
     }
 }
@@ -243,6 +266,11 @@ void BluetoothController::notifyNewMetrics(const RowingDataModels::RowingMetrics
     if (isBaseMetricsSubscribed)
     {
         baseMetricsBleService.broadcastBaseMetrics(bleData);
+    }
+    
+    if (eepromService.getBleServiceFlag() == BleServiceFlag::Pm5Service)
+    {
+        pm5Service.broadcastBaseMetrics(data);
     }
 
     lastMetricsBroadcastTime = millis();

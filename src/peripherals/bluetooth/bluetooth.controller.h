@@ -17,6 +17,7 @@
 #include "./ble-services/extended-metrics.service.interface.h"
 #include "./ble-services/ota.service.interface.h"
 #include "./ble-services/settings.service.interface.h"
+#include "./ble-services/pm5.service.interface.h"
 #include "./bluetooth.controller.interface.h"
 #include "./callbacks/connection-manager.callbacks.interface.h"
 
@@ -32,6 +33,7 @@ class BluetoothController final : public IBluetoothController
     IDeviceInfoBleService &deviceInfoBleService;
     IOtaBleService &otaBleService;
     IBaseMetricsBleService &baseMetricsBleService;
+    IPm5Service &pm5Service;
     IExtendedMetricBleService &extendedMetricsBleService;
 
     IConnectionManagerCallbacks &connectionManagerCallbacks;
@@ -51,7 +53,7 @@ class BluetoothController final : public IBluetoothController
     void flushBleDeltaTimes(unsigned short mtu);
 
 public:
-    explicit BluetoothController(IEEPROMService &_eepromService, IOtaUpdaterService &_otaService, ISettingsBleService &_settingsBleService, IBatteryBleService &_batteryBleService, IDeviceInfoBleService &_deviceInfoBleService, IOtaBleService &_otaBleService, IBaseMetricsBleService &_baseMetricsBleService, IExtendedMetricBleService &_extendedMetricsBleService, IConnectionManagerCallbacks &_connectionManagerCallbacks);
+    explicit BluetoothController(IEEPROMService &_eepromService, IOtaUpdaterService &_otaService, ISettingsBleService &_settingsBleService, IBatteryBleService &_batteryBleService, IDeviceInfoBleService &_deviceInfoBleService, IOtaBleService &_otaBleService, IBaseMetricsBleService &_baseMetricsBleService, IPm5Service &_pm5Service, IExtendedMetricBleService &_extendedMetricsBleService, IConnectionManagerCallbacks &_connectionManagerCallbacks);
 
     void update() override;
 
