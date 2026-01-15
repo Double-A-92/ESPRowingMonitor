@@ -3,6 +3,8 @@
 
 The purpose of this project is to provide professional-grade rowing (and other similar ergometer) analytics to indoor rowing machines, similar to the [Open Rowing Monitor Project](https://github.com/laberning/openrowingmonitor) (ORM), but with a much more affordable ESP32 microcontroller.
 
+> 💡 **New to ESP Rowing Monitor?** Start with the [DeepWiki documentation](https://deepwiki.com/Abasz/ESPRowingMonitor) for an interactive guide to setup, calibration, and troubleshooting. Or explore the [FAQ](docs/faq.md) for quick answers to common questions.
+
 ## ⚠️ Breaking Changes (7.0.0)
 
 ### Stroke Detection Settings BLE Characteristic (Dec 2025)
