@@ -5,10 +5,7 @@
 // NOLINTBEGIN(cppcoreguidelines-macro-usage,cppcoreguidelines-macro-to-enum)
 
 #define DEVICE_NAME Kettler Stroker
-// clang-format off
-// NOLINTNEXTLINE(bugprone-macro-parentheses)
-#define MODEL_NUMBER 07982-500
-// clang-format on
+#define MODEL_NUMBER "07982-500"
 #define ADD_BLE_SERVICE_TO_DEVICE_NAME false
 
 // Hardware settings
