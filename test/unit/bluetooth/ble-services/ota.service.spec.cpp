@@ -1,4 +1,4 @@
-// NOLINTBEGIN(readability-magic-numbers)
+// NOLINTBEGIN(readability-magic-numbers, readability-function-cognitive-complexity, cppcoreguidelines-avoid-do-while, modernize-type-traits)
 #include <string>
 
 #include "catch2/catch_test_macros.hpp"
@@ -38,7 +38,7 @@ TEST_CASE("OtaBleService", "[ble-service]")
     SECTION("setup method should")
     {
         const unsigned int expectedPropertyTx = NIMBLE_PROPERTY::NOTIFY | NIMBLE_PROPERTY::READ;
-        const unsigned int expectedPropertyRx = NIMBLE_PROPERTY::WRITE;
+        const unsigned int expectedPropertyRx = NIMBLE_PROPERTY::WRITE_NR | NIMBLE_PROPERTY::WRITE;
 
         SECTION("create over-the-air update service")
         {
@@ -92,4 +92,4 @@ TEST_CASE("OtaBleService", "[ble-service]")
         }
     }
 }
-// NOLINTEND(readability-magic-numbers)
+// NOLINTEND(readability-magic-numbers, readability-function-cognitive-complexity, cppcoreguidelines-avoid-do-while, modernize-type-traits)

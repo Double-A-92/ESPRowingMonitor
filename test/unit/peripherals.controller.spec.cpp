@@ -1,4 +1,4 @@
-// NOLINTBEGIN(readability-magic-numbers)
+// NOLINTBEGIN(readability-magic-numbers, readability-function-cognitive-complexity, cppcoreguidelines-avoid-do-while)
 #include "catch2/catch_test_macros.hpp"
 #include "catch2/matchers/catch_matchers_container_properties.hpp"
 #include "catch2/matchers/catch_matchers_range_equals.hpp"
@@ -272,8 +272,6 @@ TEST_CASE("PeripheralController", "[peripheral]")
 
             SECTION("skip adding new deltaTime when")
             {
-                PeripheralsController peripheralsController(mockBluetoothController.get(), mockSdCardService.get(), mockEEPROMService.get());
-
                 SECTION("logging to sd-card is disabled")
                 {
                     When(Method(mockSdCardService, isLogFileOpen)).AlwaysReturn(true);
@@ -308,8 +306,6 @@ TEST_CASE("PeripheralController", "[peripheral]")
 
         SECTION("to the bluetooth data")
         {
-            PeripheralsController peripheralsController(mockBluetoothController.get(), mockSdCardService.get(), mockEEPROMService.get());
-
             SECTION("skip adding new deltaTime when logging to bluetooth is disabled")
             {
                 When(Method(mockEEPROMService, getLogToBluetooth)).AlwaysReturn(false);
@@ -385,4 +381,4 @@ TEST_CASE("PeripheralController", "[peripheral]")
         }
     }
 }
-// NOLINTEND(readability-magic-numbers)
+// NOLINTEND(readability-magic-numbers, readability-function-cognitive-complexity, cppcoreguidelines-avoid-do-while)

@@ -3,6 +3,7 @@
 #include <cmath>
 #include <numeric>
 
+#include "driver/gpio.h"
 #include "driver/rtc_io.h"
 
 #include "Arduino.h"
@@ -14,10 +15,6 @@
 #include "../configuration.h"
 #include "./power-manager.service.h"
 
-PowerManagerService::PowerManagerService()
-{
-}
-
 unsigned char PowerManagerService::setup() const
 {
     printWakeupReason();
@@ -25,9 +22,16 @@ unsigned char PowerManagerService::setup() const
     {
         powerSensorOn();
     }
+
     if constexpr (Configurations::batteryPinNumber != GPIO_NUM_NC)
     {
-        return setupBatteryMeasurement();
+
+        const auto batteryLevel = setupBatteryMeasurement();
+
+        Log.traceln("Setting up battery measurement on pin %d", Configurations::batteryPinNumber);
+        Log.verboseln("Initial battery level measurement: %d%%", batteryLevel);
+
+        return batteryLevel;
     }
 
     return 0;
@@ -51,6 +55,8 @@ void PowerManagerService::goToSleep() const
     if constexpr (Configurations::hasSensorOnSwitchPinNumber)
     {
         digitalWrite(Configurations::sensorOnSwitchPinNumber, LOW);
+        gpio_hold_en(Configurations::sensorOnSwitchPinNumber);
+        gpio_deep_sleep_hold_en();
     }
 
     const auto wakeupPin = Configurations::hasWakeupPinNumber ? Configurations::wakeupPinNumber : Configurations::sensorPinNumber;
@@ -85,14 +91,14 @@ unsigned char PowerManagerService::measureBattery() const
     }
 
     const unsigned char mid = Configurations::batteryLevelArrayLength / 2;
-    std::nth_element(begin(batteryLevels), begin(batteryLevels) + mid + 1, end(batteryLevels));
+    std::ranges::nth_element(begin(batteryLevels), std::next(begin(batteryLevels), mid + 1), end(batteryLevels));
 
     if constexpr (isOdd(batteryLevels.size()))
     {
-        return lround(batteryLevels[mid]);
+        return std::lround(batteryLevels[mid]);
     }
 
-    return lround((batteryLevels[mid] + *std::max_element(cbegin(batteryLevels), cbegin(batteryLevels) + mid)) / 2);
+    return std::lround((batteryLevels[mid] + *std::ranges::max_element(cbegin(batteryLevels), std::next(cbegin(batteryLevels), mid))) / 2);
 }
 
 unsigned char PowerManagerService::setupBatteryMeasurement() const
@@ -108,7 +114,7 @@ unsigned char PowerManagerService::setupBatteryMeasurement() const
         delay(100);
     }
 
-    return lround((float)sum / (float)i);
+    return std::lround((float)sum / (float)i);
 }
 
 void PowerManagerService::printWakeupReason()

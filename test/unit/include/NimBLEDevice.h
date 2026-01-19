@@ -1,6 +1,9 @@
 // NOLINTBEGIN
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 #pragma once
 
+#include <span>
 #include <string>
 #include <vector>
 
@@ -9,7 +12,7 @@
 /**
  * @brief Bluetooth TX power level(index), it's just a index corresponding to power(dbm).
  */
-typedef enum
+enum esp_power_level_t : unsigned char
 {
     ESP_PWR_LVL_N12 = 0,               /*!< Corresponding to -12dbm */
     ESP_PWR_LVL_N9 = 1,                /*!< Corresponding to  -9dbm */
@@ -27,9 +30,9 @@ typedef enum
     ESP_PWR_LVL_P1 = ESP_PWR_LVL_P3,   /*!< Backward compatibility! Setting to  +1dbm will actually result to  +3dbm */
     ESP_PWR_LVL_P4 = ESP_PWR_LVL_P6,   /*!< Backward compatibility! Setting to  +4dbm will actually result to  +6dbm */
     ESP_PWR_LVL_P7 = ESP_PWR_LVL_P9,   /*!< Backward compatibility! Setting to  +7dbm will actually result to  +9dbm */
-} esp_power_level_t;
+};
 
-typedef enum
+enum esp_ble_power_type_t : unsigned char
 {
     ESP_BLE_PWR_TYPE_CONN_HDL0 = 0, /*!< For connection handle 0 */
     ESP_BLE_PWR_TYPE_CONN_HDL1 = 1, /*!< For connection handle 1 */
@@ -44,20 +47,21 @@ typedef enum
     ESP_BLE_PWR_TYPE_SCAN = 10,     /*!< For scan */
     ESP_BLE_PWR_TYPE_DEFAULT = 11,  /*!< For default, if not set other, it will use default value */
     ESP_BLE_PWR_TYPE_NUM = 12,      /*!< TYPE numbers */
-} esp_ble_power_type_t;
+};
 
 struct ble_gap_conn_desc
 {
     unsigned short conn_handle;
 };
 
-typedef enum
+enum NIMBLE_PROPERTY : unsigned short
 {
     READ = 0x0002,
+    WRITE_NR = 0x0004,
     WRITE = 0x0008,
     NOTIFY = 0x0010,
     INDICATE = 0x0020,
-} NIMBLE_PROPERTY;
+};
 
 class NimBLEAttValue
 {
@@ -85,7 +89,7 @@ public:
         return &_data.back() + 1;
     }
 
-    const unsigned char operator[](size_t index) const
+    unsigned char operator[](size_t index) const
     {
         return _data[index];
     }
@@ -127,6 +131,9 @@ public:
 
 class NimBLEConnInfo
 {
+protected:
+    ~NimBLEConnInfo() = default;
+
 public:
     virtual uint16_t getConnHandle() = 0;
 };
@@ -137,6 +144,9 @@ class NimBLECharacteristic;
 
 class NimBLEServerCallbacks
 {
+protected:
+    ~NimBLEServerCallbacks() = default;
+
 public:
     virtual void onConnect(NimBLEServer *pServer, NimBLEConnInfo &connInfo) {};
     virtual void onDisconnect(NimBLEServer *pServer, NimBLEConnInfo &connInfo, int reason) {};
@@ -144,6 +154,9 @@ public:
 
 class NimBLECharacteristicCallbacks
 {
+protected:
+    ~NimBLECharacteristicCallbacks() = default;
+
 public:
     virtual void onWrite(NimBLECharacteristic *pCharacteristic, NimBLEConnInfo &connInfo) {};
     virtual void onSubscribe(NimBLECharacteristic *pCharacteristic, NimBLEConnInfo &connInfo, unsigned short subValue) {};
@@ -151,6 +164,9 @@ public:
 
 class NimBLEServer
 {
+protected:
+    ~NimBLEServer() = default;
+
 public:
     NimBLEServerCallbacks *callbacks;
 
@@ -174,6 +190,9 @@ extern fakeit::Mock<NimBLEServer> mockNimBLEServer;
 
 class NimBLECharacteristic
 {
+protected:
+    ~NimBLECharacteristic() = default;
+
 public:
     NimBLECharacteristicCallbacks *callbacks;
 
@@ -182,12 +201,12 @@ public:
     virtual void setValue(const unsigned short s) = 0;
     virtual void setValue(const unsigned char *data, size_t length) = 0;
     virtual void setValue(const std::string s) = 0;
+    virtual void setValue(const std::span<const std::byte> s) = 0;
     virtual void setValue(const std::array<unsigned char, 1U> s) = 0;
     virtual void setValue(const std::array<unsigned char, 3U> s) = 0;
-    virtual void setValue(const std::array<unsigned char, 7U> s) = 0;
+    virtual void setValue(const std::array<unsigned char, 8U> s) = 0;
     virtual void setValue(const std::array<unsigned char, 11U> s) = 0;
     virtual void setValue(const std::array<unsigned char, 14U> s) = 0;
-    virtual void setValue(const std::array<unsigned char, 15U> s) = 0;
     virtual void setValue(const std::array<unsigned char, 18U> s) = 0;
     virtual void setCallbacks(NimBLECharacteristicCallbacks *pCallbacks)
     {
@@ -210,6 +229,9 @@ extern fakeit::Mock<NimBLECharacteristic> mockNimBLECharacteristic;
 
 class NimBLEService
 {
+protected:
+    ~NimBLEService() = default;
+
 public:
     virtual NimBLECharacteristic *createCharacteristic(const unsigned short uuid, unsigned int properties) = 0;
     virtual NimBLECharacteristic *createCharacteristic(const std::string uuid, unsigned int properties) = 0;
@@ -220,6 +242,9 @@ extern fakeit::Mock<NimBLEService> mockNimBLEService;
 
 class NimBLEAdvertising
 {
+protected:
+    ~NimBLEAdvertising() = default;
+
 public:
     virtual bool start() = 0;
     virtual bool stop() = 0;
@@ -264,4 +289,5 @@ public:
         mockNimBLEServer.get().setSecurityAuth(bonding, middleProtection, secureConnection);
     };
 };
+#pragma GCC diagnostic pop
 // NOLINTEND

@@ -13,7 +13,7 @@ using std::array;
 
 BaseMetricsBleService::BaseMetricsBleService(ISettingsBleService &_settingsBleService, IEEPROMService &_eepromService) : controlPointCallbacks(_settingsBleService, _eepromService)
 {
-    broadcastTask = [](void *parameters)
+    broadcastTask = [](void *)
     {
         ASSERT_SETUP_FAILED(__CLASS_NAME__);
     };
@@ -57,7 +57,7 @@ void BaseMetricsBleService::broadcastBaseMetrics(const BleMetricsModel::BleMetri
         coreStackSize,
         &parameters,
         1,
-        NULL,
+        nullptr,
         0);
 }
 
@@ -74,9 +74,9 @@ void BaseMetricsBleService::cscTask(void *parameters)
         const auto *const params = static_cast<const BaseMetricsBleService::BaseMetricsParams *>(parameters);
 
         const auto secInMicroSec = 1e6L;
-        const auto revTime = static_cast<unsigned short>(lroundl((params->data.revTime / secInMicroSec) * 1'024) % USHRT_MAX);
-        const auto revCount = static_cast<unsigned int>(lround(params->data.distance));
-        const auto strokeTime = static_cast<unsigned short>(lroundl((params->data.strokeTime / secInMicroSec) * 1'024) % USHRT_MAX);
+        const auto revTime = static_cast<unsigned short>(std::lroundl((params->data.revTime / secInMicroSec) * 1'024) % USHRT_MAX);
+        const auto revCount = static_cast<unsigned int>(std::lround(params->data.distance));
+        const auto strokeTime = static_cast<unsigned short>(std::lroundl((params->data.strokeTime / secInMicroSec) * 1'024) % USHRT_MAX);
 
         const auto length = 11U;
         array<unsigned char, length> temp = {
@@ -98,7 +98,7 @@ void BaseMetricsBleService::cscTask(void *parameters)
         params->characteristic->setValue(temp);
         params->characteristic->notify();
     }
-    vTaskDelete(NULL);
+    vTaskDelete(nullptr);
 }
 
 void BaseMetricsBleService::pscTask(void *parameters)
@@ -107,10 +107,10 @@ void BaseMetricsBleService::pscTask(void *parameters)
         const auto *const params = static_cast<const BaseMetricsBleService::BaseMetricsParams *>(parameters);
 
         const auto secInMicroSec = 1e6L;
-        const auto revTime = static_cast<unsigned short>(lroundl((params->data.revTime / secInMicroSec) * 2'048) % USHRT_MAX);
-        const auto revCount = static_cast<unsigned int>(lround(params->data.distance));
-        const auto strokeTime = static_cast<unsigned short>(lroundl((params->data.strokeTime / secInMicroSec) * 1'024) % USHRT_MAX);
-        const auto avgStrokePower = static_cast<short>(lround(params->data.avgStrokePower));
+        const auto revTime = static_cast<unsigned short>(std::lroundl((params->data.revTime / secInMicroSec) * 2'048) % USHRT_MAX);
+        const auto revCount = static_cast<unsigned int>(std::lround(params->data.distance));
+        const auto strokeTime = static_cast<unsigned short>(std::lroundl((params->data.strokeTime / secInMicroSec) * 1'024) % USHRT_MAX);
+        const auto avgStrokePower = static_cast<short>(std::lround(params->data.avgStrokePower));
 
         const auto length = 14U;
         array<unsigned char, length> temp = {
@@ -136,7 +136,7 @@ void BaseMetricsBleService::pscTask(void *parameters)
         params->characteristic->setValue(temp);
         params->characteristic->notify();
     }
-    vTaskDelete(NULL);
+    vTaskDelete(nullptr);
 }
 
 void BaseMetricsBleService::ftmsTask(void *parameters)
@@ -145,17 +145,16 @@ void BaseMetricsBleService::ftmsTask(void *parameters)
         const auto *const params = static_cast<const BaseMetricsBleService::BaseMetricsParams *>(parameters);
 
         const auto secInMicroSec = 1e6L;
-        const auto dragFactor = static_cast<unsigned char>(lround(params->data.dragCoefficient * 1e6));
+        const auto dragFactor = static_cast<unsigned short>(std::lround(params->data.dragCoefficient * 1e6));
 
         const auto strokeTimeDelta = ((params->data.strokeTime - params->data.previousStrokeTime) / secInMicroSec / 60U);
-        const auto strokeRate = static_cast<unsigned char>(strokeTimeDelta > 0 ? lroundl((params->data.strokeCount - params->data.previousStrokeCount) / strokeTimeDelta) : 0);
+        const auto strokeRate = static_cast<unsigned char>(strokeTimeDelta > 0 ? std::lroundl((params->data.strokeCount - params->data.previousStrokeCount) / strokeTimeDelta) : 0);
 
         const auto revTimeDelta = ((params->data.revTime - params->data.previousRevTime) / secInMicroSec);
         const auto distanceDelta = ((params->data.distance - params->data.previousDistance) / 100U);
-        const auto pace500m = static_cast<unsigned short>(distanceDelta > 0 ? lroundl(500U * (revTimeDelta / distanceDelta)) : 0);
-
-        const auto distance = static_cast<unsigned int>(lround(params->data.distance / 100U));
-        const auto avgStrokePower = static_cast<short>(lround(params->data.avgStrokePower));
+        const auto pace500m = static_cast<unsigned short>(distanceDelta > 0 ? std::lroundl(500U * (revTimeDelta / distanceDelta)) : 0);
+        const auto distance = static_cast<unsigned int>(std::lround(params->data.distance / 100U));
+        const auto avgStrokePower = static_cast<short>(std::lround(params->data.avgStrokePower));
 
         const auto length = 14U;
         array<unsigned char, length> temp = {
@@ -184,7 +183,7 @@ void BaseMetricsBleService::ftmsTask(void *parameters)
         params->characteristic->setValue(temp);
         params->characteristic->notify();
     }
-    vTaskDelete(NULL);
+    vTaskDelete(nullptr);
 }
 
 NimBLEService *BaseMetricsBleService::setupCscServices(NimBLEServer *const server)
@@ -203,7 +202,7 @@ NimBLEService *BaseMetricsBleService::setupCscServices(NimBLEServer *const serve
         ->createCharacteristic(CommonBleFlags::sensorLocationUuid, NIMBLE_PROPERTY::READ)
         ->setValue(CommonBleFlags::sensorLocationFlag);
 
-    cscService->createCharacteristic(CSCSensorBleFlags::cscControlPointUuid, NIMBLE_PROPERTY::WRITE | NIMBLE_PROPERTY::INDICATE)->setCallbacks(&controlPointCallbacks);
+    cscService->createCharacteristic(CSCSensorBleFlags::cscControlPointUuid, NIMBLE_PROPERTY::WRITE_NR | NIMBLE_PROPERTY::WRITE | NIMBLE_PROPERTY::INDICATE)->setCallbacks(&controlPointCallbacks);
 
     return cscService;
 }
@@ -223,7 +222,7 @@ NimBLEService *BaseMetricsBleService::setupPscServices(NimBLEServer *const serve
         ->createCharacteristic(CommonBleFlags::sensorLocationUuid, NIMBLE_PROPERTY::READ)
         ->setValue(CommonBleFlags::sensorLocationFlag);
 
-    pscService->createCharacteristic(PSCSensorBleFlags::pscControlPointUuid, NIMBLE_PROPERTY::WRITE | NIMBLE_PROPERTY::INDICATE)->setCallbacks(&controlPointCallbacks);
+    pscService->createCharacteristic(PSCSensorBleFlags::pscControlPointUuid, NIMBLE_PROPERTY::WRITE_NR | NIMBLE_PROPERTY::WRITE | NIMBLE_PROPERTY::INDICATE)->setCallbacks(&controlPointCallbacks);
 
     return pscService;
 }
@@ -236,7 +235,7 @@ NimBLEService *BaseMetricsBleService::setupFtmsServices(NimBLEServer *const serv
     parameters.characteristic = ftmsService->createCharacteristic(FTMSSensorBleFlags::rowerDataUuid, NIMBLE_PROPERTY::NOTIFY);
     parameters.characteristic->setCallbacks(&connectionManager);
 
-    ftmsService->createCharacteristic(FTMSSensorBleFlags::ftmsControlPointUuid, NIMBLE_PROPERTY::WRITE | NIMBLE_PROPERTY::INDICATE)->setCallbacks(&controlPointCallbacks);
+    ftmsService->createCharacteristic(FTMSSensorBleFlags::ftmsControlPointUuid, NIMBLE_PROPERTY::WRITE_NR | NIMBLE_PROPERTY::WRITE | NIMBLE_PROPERTY::INDICATE)->setCallbacks(&controlPointCallbacks);
 
     ftmsService
         ->createCharacteristic(FTMSSensorBleFlags::ftmsFeaturesUuid, NIMBLE_PROPERTY::READ)

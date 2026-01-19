@@ -1,4 +1,6 @@
 // NOLINTBEGIN
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 #pragma once
 
 #include <string>
@@ -7,11 +9,11 @@
 
 #include "./Esp32-typedefs.h"
 
-typedef int BaseType_t;
-typedef unsigned int UBaseType_t;
-typedef void (*TaskFunction_t)(void *);
-typedef void *TaskHandle_t;
-typedef void (*voidFuncPtr)(void);
+using BaseType_t = int;
+using UBaseType_t = unsigned int;
+using TaskFunction_t = void (*)(void *);
+using TaskHandle_t = void *;
+using voidFuncPtr = void (*)(void);
 
 struct hw_timer_t;
 
@@ -39,6 +41,9 @@ public:
 
 class MockArduino
 {
+protected:
+    ~MockArduino() = default;
+
 public:
     virtual void abort(int errorCode) = 0;
     virtual unsigned long analogReadMilliVolts(unsigned char pin) = 0;
@@ -48,6 +53,7 @@ public:
     virtual unsigned long millis() = 0;
     virtual int digitalRead(unsigned char pin) = 0;
     virtual void gpio_hold_en(gpio_num_t gpio_num) = 0;
+    virtual void gpio_deep_sleep_hold_en() = 0;
     virtual int rtc_gpio_pullup_en(gpio_num_t gpio_num) = 0;
     virtual unsigned short analogRead(unsigned char pin) = 0;
     virtual void delay(unsigned int delay) = 0;
@@ -158,11 +164,14 @@ inline void esp_restart() {}
 
 class HardwareSerial : public Print
 {
+protected:
+    ~HardwareSerial() = default;
+
 public:
     virtual inline void begin(unsigned long baud, unsigned int config = 134217756, char rxPin = -1, char txPin = -1, bool invert = false, unsigned long timeout_ms = 20'000UL, unsigned char rxfifo_full_thrhd = 112) {}
     virtual inline void end(bool fullyTerminate = true) {}
     virtual inline void updateBaudRate(unsigned long baud) {}
-    virtual inline const int available() { return 0; }
+    virtual inline int available() { return 0; }
     virtual inline int availableForWrite() { return 0; }
     inline void printf(const std::string __fmt, ...) {};
     virtual inline void flush() {}
@@ -174,4 +183,5 @@ public:
 extern fakeit::Mock<HardwareSerial> mockSerial;
 extern HardwareSerial &Serial;
 
+#pragma GCC diagnostic pop
 // NOLINTEND

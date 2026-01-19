@@ -1,3 +1,4 @@
+#include <algorithm>
 
 #include "NimBLEDevice.h"
 
@@ -9,7 +10,7 @@ SubscriptionManagerCallbacks::SubscriptionManagerCallbacks()
     clientIds.reserve(Configurations::maxConnectionCount);
 }
 
-void SubscriptionManagerCallbacks::onSubscribe(NimBLECharacteristic *const pCharacteristic, NimBLEConnInfo &connInfo, unsigned short subValue)
+void SubscriptionManagerCallbacks::onSubscribe([[maybe_unused]] NimBLECharacteristic *const pCharacteristic, NimBLEConnInfo &connInfo, unsigned short subValue)
 {
     if (subValue > 0)
     {
@@ -18,15 +19,11 @@ void SubscriptionManagerCallbacks::onSubscribe(NimBLECharacteristic *const pChar
         return;
     }
 
+    const auto [first, last] = std::ranges::remove_if(clientIds, [&](unsigned char connectionId)
+                                                      { return connectionId == connInfo.getConnHandle(); });
     clientIds.erase(
-        std::remove_if(
-            begin(clientIds),
-            end(clientIds),
-            [&](unsigned char connectionId)
-            {
-                return connectionId == connInfo.getConnHandle();
-            }),
-        cend(clientIds));
+        first,
+        last);
 }
 
 const vector<unsigned char> &SubscriptionManagerCallbacks::getClientIds() const

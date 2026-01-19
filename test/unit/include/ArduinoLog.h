@@ -1,4 +1,8 @@
 // NOLINTBEGIN
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+#pragma GCC diagnostic ignored "-Wformat-security"
+#pragma GCC diagnostic ignored "-Wformat-nonliteral"
 #pragma once
 
 #include <cstdio>
@@ -7,7 +11,7 @@
 
 #include "./test.settings.h"
 
-typedef void (*printfunction)(Print *, int);
+using printfunction = void (*)(Print *, int);
 
 enum class ArduinoLogLevel : unsigned char
 {
@@ -24,70 +28,57 @@ enum class ArduinoLogLevel : unsigned char
 class Logging
 {
 public:
+    virtual ~Logging() = default;
+
     template <class T, typename... Args>
     void infoln(T msg, Args... args)
     {
         if (DEFAULT_CPS_LOGGING_LEVEL >= ArduinoLogLevel::LogLevelInfo)
         {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wformat-security"
             printf(msg, args...);
             printf("\n");
-#pragma GCC diagnostic pop
         }
-    };
+    }
 
     template <class T, typename... Args>
     void verboseln(T msg, Args... args)
     {
         if (DEFAULT_CPS_LOGGING_LEVEL >= ArduinoLogLevel::LogLevelVerbose)
         {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wformat-security"
             printf(msg, args...);
             printf("\n");
-#pragma GCC diagnostic pop
         }
-    };
+    }
 
     template <class T, typename... Args>
     void traceln(T msg, Args... args)
     {
         if (DEFAULT_CPS_LOGGING_LEVEL >= ArduinoLogLevel::LogLevelTrace)
         {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wformat-security"
             printf(msg, args...);
             printf("\n");
-#pragma GCC diagnostic pop
         }
-    };
+    }
 
     template <class T, typename... Args>
     void warningln(T msg, Args... args)
     {
         if (DEFAULT_CPS_LOGGING_LEVEL >= ArduinoLogLevel::LogLevelWarning)
         {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wformat-security"
             printf(msg, args...);
             printf("\n");
-#pragma GCC diagnostic pop
         }
-    };
+    }
 
     template <class T, typename... Args>
     void errorln(T msg, Args... args)
     {
         if (DEFAULT_CPS_LOGGING_LEVEL >= ArduinoLogLevel::LogLevelError)
         {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wformat-security"
             printf(msg, args...);
             printf("\n");
-#pragma GCC diagnostic pop
         }
-    };
+    }
 
     virtual inline void setLevel(ArduinoLogLevel level) {}
     inline void begin(ArduinoLogLevel level, Print *logOutput, bool showLevel = true) {}
@@ -95,4 +86,6 @@ public:
 };
 
 extern Logging Log;
+
+#pragma GCC diagnostic pop
 // NOLINTEND

@@ -31,9 +31,7 @@ class OtaUpdaterService final : public IOtaUpdaterService
     void flushBuffer();
 
 public:
-    OtaUpdaterService();
-
-    bool isUpdating() const override;
+    [[nodiscard]] bool isUpdating() const override;
     void onData(const NimBLEAttValue &data, unsigned short newMtu) override;
     void begin(NimBLECharacteristic *otaTxCharacteristic) override;
 };

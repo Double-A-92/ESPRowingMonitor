@@ -8,8 +8,6 @@
 
 using std::minmax;
 
-FlywheelService::FlywheelService() {}
-
 void FlywheelService::setup(const RowerProfile::MachineSettings machineSettings, const RowerProfile::SensorSignalSettings sensorSignalSettings)
 {
 #if ENABLE_RUNTIME_SETTINGS

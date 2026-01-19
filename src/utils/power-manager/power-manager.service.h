@@ -4,14 +4,12 @@
 
 class PowerManagerService final : public IPowerManagerService
 {
-    unsigned char setupBatteryMeasurement() const;
+    [[nodiscard]] unsigned char setupBatteryMeasurement() const;
     static void printWakeupReason();
     static void powerSensorOn();
 
 public:
-    PowerManagerService();
-
-    unsigned char setup() const override;
+    [[nodiscard]] unsigned char setup() const override;
     void goToSleep() const override;
-    unsigned char measureBattery() const override;
+    [[nodiscard]] unsigned char measureBattery() const override;
 };

@@ -20,7 +20,7 @@ jobs:
       - name: 🔧 Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.x'
+          python-version: '3.13'
 
       - name: 🔧 Set up PlatformIO Core
         run: pip install -U platformio esptool
@@ -83,16 +83,10 @@ jobs:
         include:
           - os: ubuntu-latest
             platform: linux
-            artifact_name: esptool-gui
-            asset_name: esptool-gui-linux-x64
           - os: windows-latest
             platform: windows
-            artifact_name: esptool-gui.exe
-            asset_name: esptool-gui-windows-x64.exe
           - os: macos-latest
             platform: macos
-            artifact_name: esptool-gui
-            asset_name: esptool-gui-macos-x64
 
     steps:
       - name: 📥 Checkout repository
@@ -105,17 +99,17 @@ jobs:
 
       - name: 📦 Install dependencies
         run: |
-          pip install pyinstaller pyserial esptool certifi
+          pip install pyinstaller pyserial esptool certifi matplotlib numpy pyperclipimg Pillow
 
-      - name: 🏗️ Build executable with PyInstaller (Linux)
+      - name: 🏗️ Build esptool-gui with PyInstaller (Linux)
         if: runner.os == 'Linux'
-        working-directory: tools
+        working-directory: tools/ESPTools-GUI
         run: |
           ESPTOOL_LOCATION=$(pip show esptool | grep '^Location: ' | cut -c11- | tr -d '\n')
           ESPTOOL_TARGETS_1="${ESPTOOL_LOCATION}/esptool/targets/stub_flasher/1/*.json:./esptool/targets/stub_flasher/1/"
           ESPTOOL_TARGETS_2="${ESPTOOL_LOCATION}/esptool/targets/stub_flasher/2/*.json:./esptool/targets/stub_flasher/2/"
 
-          pyinstaller --onefile --windowed --name "${{ matrix.artifact_name }}" \
+          pyinstaller --onefile --windowed --name "esptool-gui" \
             --icon ESPTools-GUI.ico \
             --hidden-import serial.tools.list_ports \
             --hidden-import esptool \
@@ -130,16 +124,36 @@ jobs:
             esptool_gui.py
         shell: bash
 
-      - name: 🏗️ Build executable with PyInstaller (Windows)
+      - name: 🏗️ Build calibration-helper-GUI with PyInstaller (Linux)
+        if: runner.os == 'Linux'
+        working-directory: tools/calibration-helper
+        run: |
+          pyinstaller --onefile --windowed --name "calibration-helper-gui" \
+            --icon calibration-helper-GUI.ico \
+            --hidden-import matplotlib \
+            --hidden-import matplotlib.backends.backend_tkagg \
+            --hidden-import numpy \
+            --hidden-import pyperclipimg \
+            --hidden-import PIL \
+            --hidden-import tkinter \
+            --hidden-import tkinter.ttk \
+            --hidden-import tkinter.filedialog \
+            --hidden-import tkinter.messagebox \
+            --hidden-import tkinter.scrolledtext \
+            --add-data "./calibration-helper-GUI.ico:." \
+            calibration-helper-GUI.py
+        shell: bash
+
+      - name: 🏗️ Build esptool-gui with PyInstaller (Windows)
         if: runner.os == 'Windows'
-        working-directory: tools
+        working-directory: tools/ESPTools-GUI
         shell: pwsh
         run: |
          $ESPTOOL_LOCATION = $(pip show esptool | findstr '^Location: ').Substring(10).Trim()
           $ESPTOOL_TARGETS_1 = "${ESPTOOL_LOCATION}\esptool\targets\stub_flasher\1\*.json;./esptool/targets/stub_flasher/1/"
           $ESPTOOL_TARGETS_2 = "${ESPTOOL_LOCATION}\esptool\targets\stub_flasher\2\*.json;./esptool/targets/stub_flasher/2/"
 
-          pyinstaller --onefile --windowed --name "${{ matrix.artifact_name }}" `
+          pyinstaller --onefile --windowed --name "esptool-gui" `
             --icon ESPTools-GUI.ico `
             --hidden-import serial.tools.list_ports `
             --hidden-import esptool `
@@ -153,9 +167,29 @@ jobs:
             --add-data "$ESPTOOL_TARGETS_2" `
             esptool_gui.py
 
-      - name: 🏗️ Build executable with PyInstaller (macOS .app bundle)
+      - name: 🏗️ Build calibration-helper-GUI with PyInstaller (Windows)
+        if: runner.os == 'Windows'
+        working-directory: tools/calibration-helper
+        shell: pwsh
+        run: |
+          pyinstaller --onefile --windowed --name "calibration-helper-gui" `
+            --icon calibration-helper-GUI.ico `
+            --hidden-import matplotlib `
+            --hidden-import matplotlib.backends.backend_tkagg `
+            --hidden-import numpy `
+            --hidden-import pyperclipimg `
+            --hidden-import PIL `
+            --hidden-import tkinter `
+            --hidden-import tkinter.ttk `
+            --hidden-import tkinter.filedialog `
+            --hidden-import tkinter.messagebox `
+            --hidden-import tkinter.scrolledtext `
+            --add-data ".\\calibration-helper-GUI.ico;." `
+            calibration-helper-GUI.py
+
+      - name: 🏗️ Build esptool-gui with PyInstaller (macOS .app bundle)
         if: runner.os == 'macOS'
-        working-directory: tools
+        working-directory: tools/ESPTools-GUI
         run: |
           # On macOS create an onedir .app bundle instead of --onefile
           pip install pillow
@@ -163,7 +197,7 @@ jobs:
           ESPTOOL_TARGETS_1="${ESPTOOL_LOCATION}/esptool/targets/stub_flasher/1/*.json:./esptool/targets/stub_flasher/1/"
           ESPTOOL_TARGETS_2="${ESPTOOL_LOCATION}/esptool/targets/stub_flasher/2/*.json:./esptool/targets/stub_flasher/2/"
 
-          pyinstaller --windowed --onedir --name "${{ matrix.artifact_name }}" \
+          pyinstaller --windowed --onedir --name "esptool-gui" \
             --icon ESPTools-GUI.ico \
             --hidden-import serial.tools.list_ports \
             --hidden-import esptool \
@@ -178,31 +212,59 @@ jobs:
             esptool_gui.py
         shell: bash
 
-      - name: 📦 Prepare release asset (Linux)
+      - name: 🏗️ Build calibration-helper-GUI with PyInstaller (macOS .app bundle)
+        if: runner.os == 'macOS'
+        working-directory: tools/calibration-helper
+        run: |
+          # On macOS create an onedir .app bundle instead of --onefile
+          pyinstaller --windowed --onedir --name "calibration-helper-gui" \
+            --icon calibration-helper-GUI.ico \
+            --hidden-import matplotlib \
+            --hidden-import matplotlib.backends.backend_tkagg \
+            --hidden-import numpy \
+            --hidden-import pyperclipimg \
+            --hidden-import PIL \
+            --hidden-import Quartz \
+            --hidden-import tkinter \
+            --hidden-import tkinter.ttk \
+            --hidden-import tkinter.filedialog \
+            --hidden-import tkinter.messagebox \
+            --hidden-import tkinter.scrolledtext \
+            --add-data "./calibration-helper-GUI.ico:." \
+            calibration-helper-GUI.py
+        shell: bash
+
+      - name: 📦 Prepare release assets (Linux)
         if: runner.os == 'Linux'
         working-directory: tools
         run: |
-          chmod +x dist/${{ matrix.artifact_name }}
-          mv dist/${{ matrix.artifact_name }} ${{ matrix.asset_name }}
+          chmod +x ESPTools-GUI/dist/esptool-gui
+          chmod +x calibration-helper/dist/calibration-helper-gui
+          mv ESPTools-GUI/dist/esptool-gui esptool-gui-linux-x64
+          mv calibration-helper/dist/calibration-helper-gui calibration-helper-gui-linux-x64
 
-      - name: 📦 Prepare release asset (Windows)
+      - name: 📦 Prepare release assets (Windows)
         if: runner.os == 'Windows'
         working-directory: tools
         shell: bash
         run: |
-          mv dist/${{ matrix.artifact_name }} ${{ matrix.asset_name }}
+          mv ESPTools-GUI/dist/esptool-gui.exe esptool-gui-windows-x64.exe
+          mv calibration-helper/dist/calibration-helper-gui.exe calibration-helper-gui-windows-x64.exe
 
-      - name: 📦 Prepare release asset (macOS .app -> tar.gz)
+      - name: 📦 Prepare release assets (macOS .app -> tar.gz)
         if: runner.os == 'macOS'
         working-directory: tools
         run: |
-          # macOS produces a <name>.app directory — package it as a tar.gz for upload
-          tar -C dist -czf ${{ matrix.asset_name }}.tar.gz "${{ matrix.artifact_name }}.app"
+          # macOS produces .app directories — package each as a tar.gz for upload
+          tar -C ESPTools-GUI/dist -czf esptool-gui-macos-x64.tar.gz "esptool-gui.app"
+          tar -C calibration-helper/dist -czf calibration-helper-gui-macos-x64.tar.gz "calibration-helper-gui.app"
 
-      - name: 📎 Upload GUI executable to release
+      - name: 📎 Upload executables to release
         uses: softprops/action-gh-release@v2
         with:
-          files: "tools/${{ matrix.asset_name }}*"
+          files: |
+            tools/esptool-gui-*
+            tools/calibration-helper-*
           fail_on_unmatched_files: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

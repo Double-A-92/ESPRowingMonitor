@@ -12,5 +12,5 @@ public:
 
     virtual void setup() = 0;
     virtual void saveDeltaTime(const std::vector<unsigned long> &deltaTime) = 0;
-    virtual bool isLogFileOpen() const = 0;
+    [[nodiscard]] virtual bool isLogFileOpen() const = 0;
 };

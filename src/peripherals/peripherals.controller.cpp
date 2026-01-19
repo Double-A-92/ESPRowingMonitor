@@ -5,7 +5,10 @@
 #include "../utils/configuration.h"
 #include "./peripherals.controller.h"
 
-PeripheralsController::PeripheralsController(IBluetoothController &_bluetoothController, ISdCardService &_sdCardService, IEEPROMService &_eepromService) : bluetoothController(_bluetoothController), sdCardService(_sdCardService), eepromService(_eepromService)
+PeripheralsController::PeripheralsController(IBluetoothController &_bluetoothController, ISdCardService &_sdCardService, IEEPROMService &_eepromService)
+    : bluetoothController(_bluetoothController),
+      sdCardService(_sdCardService),
+      eepromService(_eepromService)
 {
     if constexpr ((Configurations::supportSdCardLogging && Configurations::sdCardChipSelectPin != GPIO_NUM_NC))
     {

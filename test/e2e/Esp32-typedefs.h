@@ -1,6 +1,6 @@
 #pragma once
 
-typedef enum gpio_num_t
+enum gpio_num_t : char
 {
     GPIO_NUM_NC = -1,
     GPIO_NUM_0 = 0,
@@ -43,9 +43,9 @@ typedef enum gpio_num_t
     GPIO_NUM_38 = 38,
     GPIO_NUM_39 = 39,
     GPIO_NUM_MAX,
-} gpio_num_t;
+};
 
-typedef enum
+enum esp_sleep_source_t : unsigned char
 {
     ESP_SLEEP_WAKEUP_UNDEFINED,       //!< In case of deep sleep, reset was not caused by exit from deep sleep
     ESP_SLEEP_WAKEUP_ALL,             //!< Not a wakeup cause, used to disable all wakeup sources with esp_sleep_disable_wakeup_source
@@ -60,6 +60,6 @@ typedef enum
     ESP_SLEEP_WAKEUP_COCPU,           //!< Wakeup caused by COCPU int
     ESP_SLEEP_WAKEUP_COCPU_TRAP_TRIG, //!< Wakeup caused by COCPU crash
     ESP_SLEEP_WAKEUP_BT,              //!< Wakeup caused by BT (light sleep only)
-} esp_sleep_source_t;
+};
 
-typedef esp_sleep_source_t esp_sleep_wakeup_cause_t;
+using esp_sleep_wakeup_cause_t = esp_sleep_source_t;

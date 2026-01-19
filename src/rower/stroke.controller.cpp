@@ -4,7 +4,10 @@
 
 #include "./stroke.controller.h"
 
-StrokeController::StrokeController(IStrokeService &_strokeService, IFlywheelService &_flywheelService, IEEPROMService &_eepromService) : strokeService(_strokeService), flywheelService(_flywheelService), eepromService(_eepromService)
+StrokeController::StrokeController(IStrokeService &_strokeService, IFlywheelService &_flywheelService, IEEPROMService &_eepromService)
+    : strokeService(_strokeService),
+      flywheelService(_flywheelService),
+      eepromService(_eepromService)
 {
 }
 
@@ -22,6 +25,8 @@ void StrokeController::begin()
 
 void StrokeController::update()
 {
+    strokeService.processFilterBuffer();
+
     if (flywheelService.hasDataChanged())
     {
         const auto lastFlywheelData = flywheelData;
@@ -55,7 +60,7 @@ unsigned long long StrokeController::getLastRevTime() const
 
 unsigned int StrokeController::getRevCount() const
 {
-    return lround(rowerState.distance);
+    return std::lround(rowerState.distance);
 }
 
 unsigned long long StrokeController::getLastStrokeTime() const
@@ -95,7 +100,7 @@ Configurations::precision StrokeController::getRecoveryDuration() const
 
 short StrokeController::getAvgStrokePower() const
 {
-    return static_cast<short>(round(rowerState.avgStrokePower));
+    return static_cast<short>(std::round(rowerState.avgStrokePower));
 }
 
 Configurations::precision StrokeController::getDistance() const
@@ -103,9 +108,9 @@ Configurations::precision StrokeController::getDistance() const
     return rowerState.distance;
 }
 
-unsigned char StrokeController::getDragFactor() const
+unsigned short StrokeController::getDragFactor() const
 {
-    return lround(rowerState.dragCoefficient * 1e6);
+    return std::lround(rowerState.dragCoefficient * 1e6);
 }
 
 unsigned int StrokeController::getPreviousRevCount() const
@@ -125,7 +130,7 @@ unsigned long StrokeController::getPreviousRawImpulseCount() const
 
 void StrokeController::setPreviousRevCount()
 {
-    previousRevCount = lround(rowerState.distance);
+    previousRevCount = std::lround(rowerState.distance);
 }
 
 void StrokeController::setPreviousStrokeCount()

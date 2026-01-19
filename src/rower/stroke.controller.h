@@ -17,23 +17,24 @@ class StrokeController final : public IStrokeController
     unsigned long previousRawImpulseCount = 0U;
 
     RowingDataModels::RowingMetrics rowerState{
-        0.0,
-        0ULL,
-        0ULL,
-        0U,
-        0U,
-        0U,
-        0.0,
-        0.0,
-        std::vector<float>{},
+        .distance = 0.0,
+        .lastRevTime = 0ULL,
+        .lastStrokeTime = 0ULL,
+        .strokeCount = 0U,
+        .driveDuration = 0U,
+        .recoveryDuration = 0U,
+        .avgStrokePower = 0.0,
+        .dragCoefficient = 0.0,
+        .driveHandleForces = std::vector<float>{},
     };
 
     RowingDataModels::FlywheelData flywheelData{
-        0UL,
-        0UL,
-        0ULL,
-        0UL,
-        0UL,
+        .rawImpulseCount = 0UL,
+        .deltaTime = 0UL,
+        .totalTime = 0ULL,
+        .totalAngularDisplacement = 0UL,
+        .cleanImpulseTime = 0UL,
+        .rawImpulseTime = 0UL,
     };
 
 public:
@@ -42,25 +43,25 @@ public:
     void begin() override;
     void update() override;
 
-    const RowingDataModels::RowingMetrics &getAllData() const override;
-    unsigned int getPreviousRevCount() const override;
+    [[nodiscard]] const RowingDataModels::RowingMetrics &getAllData() const override;
+    [[nodiscard]] unsigned int getPreviousRevCount() const override;
     void setPreviousRevCount() override;
-    unsigned int getPreviousStrokeCount() const override;
+    [[nodiscard]] unsigned int getPreviousStrokeCount() const override;
     void setPreviousStrokeCount() override;
 
-    unsigned long getPreviousRawImpulseCount() const override;
+    [[nodiscard]] unsigned long getPreviousRawImpulseCount() const override;
     void setPreviousRawImpulseCount() override;
-    unsigned long getRawImpulseCount() const override;
-    unsigned long getLastImpulseTime() const override;
+    [[nodiscard]] unsigned long getRawImpulseCount() const override;
+    [[nodiscard]] unsigned long getLastImpulseTime() const override;
 
-    unsigned long getDeltaTime() const override;
-    unsigned long long getLastRevTime() const override;
-    unsigned int getRevCount() const override;
-    unsigned long long getLastStrokeTime() const override;
-    unsigned short getStrokeCount() const override;
-    Configurations::precision getDistance() const override;
-    Configurations::precision getRecoveryDuration() const override;
-    Configurations::precision getDriveDuration() const override;
-    short getAvgStrokePower() const override;
-    unsigned char getDragFactor() const override;
+    [[nodiscard]] unsigned long getDeltaTime() const override;
+    [[nodiscard]] unsigned long long getLastRevTime() const override;
+    [[nodiscard]] unsigned int getRevCount() const override;
+    [[nodiscard]] unsigned long long getLastStrokeTime() const override;
+    [[nodiscard]] unsigned short getStrokeCount() const override;
+    [[nodiscard]] Configurations::precision getDistance() const override;
+    [[nodiscard]] Configurations::precision getRecoveryDuration() const override;
+    [[nodiscard]] Configurations::precision getDriveDuration() const override;
+    [[nodiscard]] short getAvgStrokePower() const override;
+    [[nodiscard]] unsigned short getDragFactor() const override;
 };

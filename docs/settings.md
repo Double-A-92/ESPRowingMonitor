@@ -1,6 +1,6 @@
 # Settings
 
-There are several settings that need to be set and tuned in before ESP Rowing Monitor will properly detect strokes and calculate correct metrics.
+There are several settings that need to be set and tuned in before ESP Rowing Monitor will properly detect strokes and calculate correct metrics. For a comprehensive calibration guide and troubleshooting tips, see the [FAQ](./faq.md).
 
 Please note that ORM has a very good [wiki](https://github.com/laberning/openrowingmonitor/blob/v1beta/docs/rower_settings.md) on the settings it uses as well as some recommendations on tuning in the settings. Some settings used by ESP Rowing Monitor are the same or very similar. So in case of questions I recommend reading that page through as well.
 
@@ -15,6 +15,8 @@ Example of a custom settings file is shown in the default.settings.h file (which
 Below is a list of all settings which can be set, there are 3 categories
 
 ## General settings
+
+###
 
 #### DEFAULT_CPS_LOGGING_LEVEL
 
@@ -71,7 +73,7 @@ Enables debounce filter for incoming rotation/sensor impulses. This setting aims
 Typical bounce on reed looks something like this:
 ![Reed bounce](imgs/very-noisy-delta-times.jpg)
 
-Enabling this filter is recommended only if you're using a mechanical/reed sensor that occasionally produces spurious pulses or when you observe large, single-sample delta drops in recorded impulse data. For Hall-effect sensors (which due to built in hysteresis are les prone to such issue) the filter is generally not required. For more information on reed bounce please see [this video](https://www.youtube.com/watch?v=7LimjYS04FQ&t=278s)
+Enabling this filter is recommended only if you're using a mechanical/reed sensor that occasionally produces spurious pulses or when you observe large, single-sample delta drops in recorded impulse data. For Hall-effect sensors (which due to built in hysteresis are less prone to such issue) the filter is generally not required. For more information on reed bounce please see [this video](https://www.youtube.com/watch?v=7LimjYS04FQ&t=278s) and [FAQ Entry #5](./faq.md#5-reed-switches-bounce--can-i-reduce-bounce-reliably) for community-proven techniques to reduce bounce.
 
 Default: false
 
@@ -115,7 +117,7 @@ The pin number of the ESP32 to which the SD Card chip select is connected (typeo
 
 #### SENSOR_PIN_NUMBER
 
-The pin number of the ESP32 to which the sensor is connected (typeof `gpio_num_t`).
+The pin number of the ESP32 to which the sensor is connected (typeof `gpio_num_t`). For guidance on choosing between Hall effect sensors and reed switches, see [FAQ Entry #3](./faq.md#3-should-i-use-a-hall-sensor-or-a-reed-switch) and [FAQ Entry #6](./faq.md#6-which-hall-sensor-modules-are-known-to-work) for known working sensor modules.
 
 #### SENSOR_ON_SWITCH_PIN_NUMBER
 
@@ -123,7 +125,7 @@ Hall sensors consume a relatively significant amount of power (around 3mA in gen
 
 #### WAKEUP_SENSOR_PIN_NUMBER
 
-In case where the signal pin is disabled (e.g. because the hall sensor is switched off) the auto wake up interrupt feature of the device (i.e. when it detects a signal start the monitor automatically) cannot work. So this settings enable an alternative wake up pin to wake the monitor up from deep sleep mode. On my machine I have a reed sensor on the handle that gets triggered when the handle is pulled and that wakes up the monitor so the hall sensor can be off and save battery while in deep sleep. If this pin is not used set it to `GPIO_NUM_NC` (which is also default). This disables the related features as well.
+In case where the signal pin is disabled (e.g. because the hall sensor is switched off) the auto wake up interrupt feature of the device (i.e. when it detects a signal start the monitor automatically) cannot work. So this settings enable an alternative wake up pin to wake the monitor up from deep sleep mode. On my machine I have a reed sensor on the handle that gets triggered when the handle is pulled and that wakes up the monitor so the hall sensor can be off and save battery while in deep sleep. If this pin is not used set it to `GPIO_NUM_NC` (which is also default). This disables the related features as well. For detailed wiring guidance, see [FAQ Entry #12](./faq.md#12-how-do-i-wire-the-wakeup-sensor-for-battery-powered-setups).
 
 ### Device power management settings
 
@@ -187,19 +189,29 @@ Serial number for the BLE device profile. This can be anything but should be wit
 
 Include the Serial Number in the BLE device name with an additional `-` separator from the device name. Please note that the total device name length cannot be longer than 18 characters. Default is false.
 
+#### MIN_BLE_UPDATE_INTERVAL
+
+The minimum time interval (in milliseconds) between BLE data updates when no new stroke has been detected. This setting controls how frequently the data to be sent to the connected BLE clients (e.g., Garmin watches, WebGUI) should be updated with fresh distance and other metrics when the rower is active but hasn't completed a new stroke.
+
+This value must be at least 1,000 millisecond.
+
+Please note setting this to too low would create ripples in the speed data, while setting this to too high would increase the distance mismatch in Garmin watches due to their interpolation behaviour (please see [issue #25](https://github.com/Abasz/ESPRowingMonitor/issues/25) for further details).
+
+Default: 4000 (4 seconds)
+
 ### Machine settings
 
 #### IMPULSES_PER_REVOLUTION
 
-The number of impulses triggered by one full revolution of the flywheel. This is typically the number of magnets present on the flywheel.
+The number of impulses triggered by one full revolution of the flywheel. This is typically the number of magnets present on the flywheel. For guidance on how many magnets to use and placement considerations, see [FAQ Entry #7](./faq.md#7-how-many-magnets-should-i-use-and-where-should-they-be-placed).
 
 #### FLYWHEEL_INERTIA
 
-The moment of inertia of the flywheel (in kg*m2). Please refer to the ORM [wiki](https://github.com/laberning/openrowingmonitor/blob/v1beta/docs/rower_settings.md#setting-the-flywheel-inertia) for more details.
+The moment of inertia of the flywheel (in kg\*m²). This is a critical parameter that directly affects calculated power, distance, and drag factor. For comprehensive measurement methods including swing period, CAD modeling, component-by-component calculation, estimation from similar machines, and iterative tuning, see [FAQ Entry #10](./faq.md#10-how-do-i-measure-flywheel-inertia).
 
 #### SPROCKET_RADIUS
 
-The sprocket that attaches the belt/chain to the flywheel (in centimeters) of the rowing machine.
+The sprocket that attaches the belt/chain to the flywheel (in centimeters) of the rowing machine. Measure the effective radius at the point where the chain/belt contacts the pulley, not the outer edge. For detailed measurement guidance, see [FAQ Entry #8](./faq.md#8-where-to-measure-sprocket-radius-and-why-it-matters).
 
 Please see ORM [wiki](https://github.com/laberning/openrowingmonitor/blob/v1beta/docs/rower_settings.md#review-sprocketradius-and-minumumforcebeforestroke)
 
@@ -211,7 +223,7 @@ Please see ORM [wiki](https://github.com/laberning/openrowingmonitor/blob/v1beta
 
 ### Sensor signal filter settings
 
-These settings refer to the nose reduction of the reed/hall sensor signal. Please note that this is significantly simpler than the filtering that ORM does. Hence the use of a hall sensor is recommended, though I have tested this with reeds and issues generally only occur at a relatively slower rotation speed of the flywheel. There are several good resources on this topic. ORM has this [discussion](https://github.com/laberning/openrowingmonitor/discussions/121) and [this](https://github.com/laberning/openrowingmonitor/discussions/122) on the topic as well as a [youtube video](https://www.youtube.com/watch?v=7LimjYS04FQ&t=272s) on how reeds work.
+These settings refer to the noise reduction of the reed/hall sensor signal. Please note that this is significantly simpler than the filtering that ORM does. Hence the use of a hall sensor is recommended (see [FAQ Entry #3](./faq.md#3-should-i-use-a-hall-sensor-or-a-reed-switch) for Hall vs Reed comparison and [FAQ Entry #6](./faq.md#6-which-hall-sensor-modules-are-known-to-work) for known working modules), though I have tested this with reeds and issues generally only occur at a relatively slower rotation speed of the flywheel. For reed bounce reduction techniques, see [FAQ Entry #5](./faq.md#5-reed-switches-bounce--can-i-reduce-bounce-reliably). There are several good resources on this topic. ORM has this [discussion](https://github.com/laberning/openrowingmonitor/discussions/121) and [this](https://github.com/laberning/openrowingmonitor/discussions/122) on the topic as well as a [youtube video](https://www.youtube.com/watch?v=7LimjYS04FQ&t=272s) on how reeds work.
 
 #### ROTATION_DEBOUNCE_TIME_MIN
 
@@ -229,7 +241,7 @@ These settings control the drag factor calculation and provides different level 
 
 #### GOODNESS_OF_FIT_THRESHOLD
 
-This settings determines the minimum level of quality needed for the recovery slope to be considered valid for the drag factor calculation. This setting is equivalent to ORM's [`minimumDragQuality`](https://github.com/laberning/openrowingmonitor/blob/v1beta/docs/rower_settings.md#dynamically-adapting-the-drag-factor).
+This settings determines the minimum level of quality needed for the recovery slope to be considered valid for the drag factor calculation. This setting is equivalent to ORM's [`minimumDragQuality`](https://github.com/laberning/openrowingmonitor/blob/v1beta/docs/rower_settings.md#dynamically-adapting-the-drag-factor). Note: Water rowers and magnetic rowers may need lower values (0.6-0.8) due to their resistance characteristics — see [FAQ Entry #10](./faq.md#10-how-do-i-measure-flywheel-inertia) for water rower specific considerations.
 
 #### MAX_DRAG_FACTOR_RECOVERY_PERIOD
 
@@ -253,7 +265,7 @@ These are the most important settings for getting the stroke detection correct. 
 
 #### IMPULSE_DATA_ARRAY_LENGTH
 
-This setting determines how many consecutive impulses should be analyzed (used) for the stroke detection to consider a stroke to begin or end. The ORM [wiki]( https://github.com/laberning/openrowingmonitor/blob/v1beta/docs/rower_settings.md#setting-flanklength-and-minimumstrokequality) include more details I recommend reviewing it in detail (`flankLength`).
+This setting determines how many consecutive impulses should be analyzed (used) for the stroke detection to consider a stroke to begin or end. Typically set to 1.5-2× your magnet count (e.g., 6-7 for 4 magnets). Setting this too high can lead to skipped strokes while too low can result in ghost strokes. The ORM [wiki](https://github.com/laberning/openrowingmonitor/blob/v1beta/docs/rower_settings.md#setting-flanklength-and-minimumstrokequality) includes more details I recommend reviewing it in detail (`flankLength`). For comprehensive calibration guidance, see [FAQ Entry #9](./faq.md#9-how-do-i-calibrate-esp-rowing-monitor).
 
 #### FLOATING_POINT_PRECISION
 
@@ -281,12 +293,6 @@ There are three options in this respect:
 - _STROKE_DETECTION_SLOPE_: the slope based (that is basically the traditional acceleration and deceleration base method), or
 - _STROKE_DETECTION_BOTH_: use both at the same time
 
-#### MINIMUM_RECOVERY_SLOPE_MARGIN
-
-This setting controls the fall back algorithm for detecting recovery. This value is basically the allowed absolute deviation that the slope of the recovery slopes within the last `IMPULSE_DATA_ARRAY_LENGTH` can be from a completely flat (i.e. zero) slope. Setting this to a very small number makes the algorithm conservative while higher values would require less flat slope (i.e. more likely to detect recovery). I recommend starting with a rather small value and if there are missed strokes starting incremental increase while looking at the handle force values to see whether torque detection for the drive works correctly. If for instance recovery is not detected because the torque never goes below a certain value it may be better to set _MINIMUM_DRAG_TORQUE_ instead of increasing this setting. Based on my experience on air rower (with limited noise I might add) this is useful if the damper is set on the fly as it creates certain undesired issues that throws off torque based detection. So the fall back is needed to compensate for the stroke which had the damper setting movement. After which it all goes back to the normal track.
-
-Only relevant if STROKE_DETECTION_TYPE is either BOTH or TORQUE
-
 #### MINIMUM_RECOVERY_SLOPE
 
 This is the minimum recovery slope. This setting corresponds to the [minimumRecoverySlope](https://github.com/JaapvanEkris/openrowingmonitor/blob/v1beta_updates/docs/rower_settings.md#setting-flanklength-and-minimumstrokequality) settings in ORM with the difference that there is no check for the slope quality. Setting this to 0 would mean that a stroke is detected as soon as the slope of the flanks becomes positive (i.e. flywheel is decelerating).
@@ -295,11 +301,11 @@ Only relevant if STROKE_DETECTION_TYPE is either BOTH or SLOPE
 
 #### MINIMUM_RECOVERY_TIME
 
-This is the minimum time that is required to stay in the recovery phase, if change would be triggered within this period it is ignored. This should generally mean that this is the minimum time before drive phase can start within the stroke. This setting corresponds to ORM's `minimumRecoveryTime` (please see [here](https://github.com/laberning/openrowingmonitor/blob/v1beta/docs/rower_settings.md#minimumdrivetime-and-minimumrecoverytime)).
+This is the minimum time that is required to stay in the recovery phase, if change would be triggered within this period it is ignored. This should generally mean that this is the minimum time before drive phase can start within the stroke. This setting corresponds to ORM's `minimumRecoveryTime` (please see [ORM rower settings documentation](https://github.com/JaapvanEkris/openrowingmonitor/tree/main/docs/rower_settings.md#minimumdrivetime-and-minimumrecoverytime)).
 
 #### MINIMUM_DRIVE_TIME
 
-This is the minimum time that is required to stay in the drive phase, if change would be triggered within this period it is ignored. This should generally mean that this is the minimum time before recovery phase can start within the strokes. This setting corresponds to ORM's `minimumDriveTime` (please see [here](https://github.com/laberning/openrowingmonitor/blob/v1beta/docs/rower_settings.md#minimumdrivetime-and-minimumrecoverytime)).
+This is the minimum time that is required to stay in the drive phase, if change would be triggered within this period it is ignored. This should generally mean that this is the minimum time before recovery phase can start within the strokes. This setting corresponds to ORM's `minimumDriveTime` (please see [ORM rower settings documentation](https://github.com/JaapvanEkris/openrowingmonitor/tree/main/docs/rower_settings.md#minimumdrivetime-and-minimumrecoverytime)).
 
 #### DRIVE_HANDLE_FORCES_MAX_CAPACITY
 
@@ -309,11 +315,7 @@ This is the maximum number of datapoint that can occur within one drive phase (u
 
 ### Flywheel inertia
 
-In order for ESP Rowing Monitor to calculate accurate metrics it needs the moment of inertia of the flywheel. This can be measured based on the following [guide](https://pressbooks.online.ucf.edu/osuniversityphysics/chapter/10-5-calculating-moments-of-inertia/). This may seem complicated, but essentially it is possible to account for each piece of element in the flywheel and add their contribution. This has been done in the open [ergware project](https://dvernooy.github.io/projects/ergware/). Note this requires disassembly of the machine and the flywheel so that the individual parts can be measured.
-
-In [one of the discussions](https://github.com/laberning/openrowingmonitor/discussions/113) under ORM another method has been reported that can be used for calculating the inertia of the flywheel, but I have not tried it myself.
-
-Please note that if the moment of inertia cannot be measured, than I recommend a trial and error approach, where setting it to some figure and see if it spits out sensible data. Actually, if one does not compare the performance measured on different machines than the important part is consistency in the results. Alternative approach is to go and measure an interval session on a Concept 2 and than do the same on the machine that is being calibrated and tweak the inertia so they both show similar results. I recommend using heart rate to see if both machines show the same effort.
+In order for ESP Rowing Monitor to calculate accurate metrics it needs the moment of inertia of the flywheel. For comprehensive measurement methods including swing period, CAD modeling, component-by-component calculation, estimation from similar machines, and iterative tuning, see [FAQ Entry #10](./faq.md#10-how-do-i-measure-flywheel-inertia). Typical values range from 0.03 to 0.1 kg*m².
 
 ### Stroke detection
 
@@ -339,14 +341,53 @@ Too noisy and needs hardware tweaking and potentially additional cleanup:
 
 ![Too noisy delta times](imgs/very-noisy-delta-times.jpg)
 
-Actually, the above chart shows that the reed/hall sensor bounces (this is more of an issue with reeds). One my get away with increasing the `ROTATION_DEBOUNCE_TIME_MIN` but possibly better sensor placement should be reviewed as well. There are several discussions on noise reduction under the ORM repo. I recommend starting [here](https://github.com/laberning/openrowingmonitor/discussions/122).
+Actually, the above chart shows that the reed/hall sensor bounces (this is more of an issue with reeds). One may get away with increasing the `ROTATION_DEBOUNCE_TIME_MIN` but possibly better sensor placement should be reviewed as well. For detailed guidance on reducing reed switch bounce, see [FAQ Entry #5](./faq.md#5-reed-switches-bounce--can-i-reduce-bounce-reliably). There are also several helpful discussions on noise reduction under the ORM repo, including [this noise reduction discussion](https://github.com/laberning/openrowingmonitor/discussions/122).
 
-Once the input data is sufficiently cleaned up it is possible to replay a previous session on a PC with the e2e test. To do this one needs to include the delta times in a text file (every delta time, but just the time should be on a separate line). See example [here](examples/steady).
+Once the input data is sufficiently cleaned up it is possible to replay a previous session on a PC with the e2e test. To do this one needs to include the delta times in a text file (every delta time, but just the time should be on a separate line). See the [steady stroke example file](examples/steady).
 
 ### Running a simulation
 
-In order to run the simulation, the e2e test needs to be compiled. There is a makefile to ease the compilation that needs to be run with the e2e flag (`make e2e`). The executable will be under `build/run_e2e_test.out`. This file should receive the file path that contains the delta times as parameter.
+In order to run the simulation, the e2e test needs to be compiled. There is a cmake target to ease the compilation that needs to be run via the `build/build-e2e rowerProfileName-board-id` (or with `custom` as argument in case of using `custom.settings.h` file for settings). The compiled executable will be under `build/run_e2e_test.out`. This file should receive the file path that contains the delta times as parameter (in a CSV format i.e. one number per line).
+
+To run a simulation use the below command:
+
+```bash
+./build/e2e-test.out path/to/delta-times.csv
+```
 
 So basically, change one setting at a time, note whether the stroke detection improves and then tweak the settings until stroke detection is consistent i.e. the reported number of strokes matches the number of strokes done.
 
-Please note that after changing a setting the executable needs recompiling (i.e. running `make e2e`).
+Please note that after changing a setting the executable needs recompiling (i.e. running `build/build-e2e` with correct argument).
+
+### Calibration Helper Desktop GUI
+
+A cross-platform desktop GUI is available for analyzing and visualizing the simulation output to help tune ESP Rowing Monitor settings for new machines. The tool simplifies the calibration process by providing visual feedback on sensor data quality and stroke detection accuracy.
+
+**Features:**
+
+- **Delta Times Analysis**: Visualize raw vs. cleaned delta times from the cyclic error filter to understand sensor data quality and identify noise patterns.
+- **Handle Force Visualization**: Iterate over handle force curves for each stroke with navigation controls to identify anomalies.
+- **Stroke Detection Analysis**: Identify missed or duplicate strokes using Theil-Sen regression analysis with adjustable parameters.
+- **Interactive Charts**: Zoom, pan, and navigate through data using toolbar controls.
+
+**Download:**
+
+- Windows: download the `calibration-helper-gui-windows-x64.exe` from the release assets and run it.
+- Linux: download the `calibration-helper-gui-linux-x64` executable, mark it executable if needed (`chmod +x`), and run it.
+- macOS: download the `calibration-helper-gui-macos-x64.tar.gz`, extract it, then open the `.app`.
+
+**Usage:**
+
+1. Record delta times from a rowing session (via SD card, BLE logging, or serial monitor)
+2. Run the e2e simulation with the recorded delta times and pipe the output to a file:
+
+   ```bash
+   ./build/e2e-test.out path/to/delta-times.csv > simulation-output.txt
+   ```
+
+3. Open the calibration helper GUI and load the simulation output file
+4. Use the **Delta Times** tab to analyze raw vs. cleaned delta times and identify sensor noise patterns
+5. Use the **Handle Forces** tab to inspect force curves for each stroke and identify anomalies
+6. Use the **Stroke Detection** tab to identify missed or duplicate strokes
+7. Adjust settings based on the analysis, recompile and repeat the simulation
+8. Refresh the data in the GUI to see the changes

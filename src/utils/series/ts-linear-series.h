@@ -10,7 +10,7 @@ using std::vector;
 class TSLinearSeries
 {
     unsigned char maxSeriesLength;
-    unsigned short maxSlopeSeriesLength = ((maxSeriesLength - 2) * (maxSeriesLength - 1)) / 2;
+    unsigned short maxSlopeSeriesLength = (maxSeriesLength * (maxSeriesLength - 1)) / 2;
     unsigned short initialCapacity;
     bool shouldRecalculateB = true;
     bool shouldRecalculateA = true;
@@ -21,13 +21,17 @@ class TSLinearSeries
     Series seriesY;
     vector<vector<Configurations::precision>> slopes;
 
-    Configurations::precision calculateSlope(unsigned char pointOne, unsigned char pointTwo) const;
+    [[nodiscard]] Configurations::precision calculateSlope(unsigned char pointOne, unsigned char pointTwo) const;
 
 public:
     constexpr explicit TSLinearSeries(
         const unsigned char _maxSeriesLength = 0,
         const unsigned short _initialCapacity = Configurations::defaultAllocationCapacity,
-        const unsigned short _maxAllocationCapacity = 1'000) : maxSeriesLength(_maxSeriesLength), initialCapacity(_initialCapacity), seriesX(_maxSeriesLength, _initialCapacity, _maxAllocationCapacity), seriesY(_maxSeriesLength, _initialCapacity, _maxAllocationCapacity)
+        const unsigned short _maxAllocationCapacity = 1'000)
+        : maxSeriesLength(_maxSeriesLength),
+          initialCapacity(_initialCapacity),
+          seriesX(_maxSeriesLength, _initialCapacity, _maxAllocationCapacity),
+          seriesY(_maxSeriesLength, _initialCapacity, _maxAllocationCapacity)
     {
         if (_maxSeriesLength > 0)
         {
@@ -35,11 +39,13 @@ public:
         }
     }
 
-    Configurations::precision yAtSeriesBegin() const;
-    Configurations::precision median() const;
+    [[nodiscard]] Configurations::precision yAtSeriesBegin() const;
+    [[nodiscard]] Configurations::precision xAtSeriesEnd() const;
+    [[nodiscard]] Configurations::precision xAtSeriesBegin() const;
+    [[nodiscard]] Configurations::precision median() const;
     Configurations::precision coefficientA();
     Configurations::precision coefficientB();
-    size_t size() const;
+    [[nodiscard]] size_t size() const;
 
     void push(Configurations::precision pointX, Configurations::precision pointY);
     void reset();

@@ -1,3 +1,4 @@
+// NOLINTBEGIN(cppcoreguidelines-avoid-do-while)
 #include "catch2/catch_test_macros.hpp"
 
 #include "./include/globals.h"
@@ -11,3 +12,4 @@ TEST_CASE("generateSerial", "[globals]")
         REQUIRE(result == "090807");
     }
 }
+// NOLINTEND(cppcoreguidelines-avoid-do-while)
