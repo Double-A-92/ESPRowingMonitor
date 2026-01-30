@@ -25,6 +25,6 @@
 #define BATTERY_LEVEL_ARRAY_LENGTH 5
 #define INITIAL_BATTERY_LEVEL_MEASUREMENT_COUNT 10
 #define BATTERY_MEASUREMENT_FREQUENCY 10
-#define DEEP_SLEEP_TIMEOUT 4
+#define DEEP_SLEEP_TIMEOUT 2
 
 // NOLINTEND(cppcoreguidelines-macro-usage,cppcoreguidelines-macro-to-enum)

@@ -17,7 +17,7 @@ ControlPointCallbacks::ControlPointCallbacks(ISettingsBleService &_settingsBleSe
 {
 }
 
-void ControlPointCallbacks::onWrite(NimBLECharacteristic *const pCharacteristic, NimBLEConnInfo &connInfo)
+void ControlPointCallbacks::onWrite(NimBLECharacteristic *const pCharacteristic, [[maybe_unused]] NimBLEConnInfo &connInfo)
 {
     NimBLEAttValue message = pCharacteristic->getValue();
 
@@ -494,11 +494,6 @@ ResponseOpCodes ControlPointCallbacks::processStrokeDetectionSettingsChange(cons
     const float minimumDragTorque = static_cast<float>(static_cast<short>(message[bytePosition] | message[bytePosition + 1] << 8)) / ISettingsBleService::dragTorqueScale;
     bytePosition += ISettingsBleService::dragTorquePayloadSize;
 
-    float minimumRecoverySlopeMargin = 0.0F;
-    std::memcpy(&minimumRecoverySlopeMargin, std::next(message.data(), bytePosition), ISettingsBleService::recoverySlopeMarginPayloadSize);
-    minimumRecoverySlopeMargin /= ISettingsBleService::recoverySlopeMarginPayloadScale;
-    bytePosition += ISettingsBleService::recoverySlopeMarginPayloadSize;
-
     const float minimumRecoverySlope = static_cast<float>(static_cast<short>(message[bytePosition] | message[bytePosition + 1] << 8)) / ISettingsBleService::recoverySlopeScale;
     bytePosition += ISettingsBleService::recoverySlopePayloadSize;
 
@@ -513,7 +508,6 @@ ResponseOpCodes ControlPointCallbacks::processStrokeDetectionSettingsChange(cons
         .strokeDetectionType = strokeDetectionType,
         .minimumPoweredTorque = minimumPoweredTorque,
         .minimumDragTorque = minimumDragTorque,
-        .minimumRecoverySlopeMargin = minimumRecoverySlopeMargin,
         .minimumRecoverySlope = minimumRecoverySlope,
         .minimumRecoveryTime = minimumRecoveryTime,
         .minimumDriveTime = minimumDriveTime,

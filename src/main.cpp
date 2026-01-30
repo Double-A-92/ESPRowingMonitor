@@ -69,8 +69,7 @@ void loop()
     }
 
     const auto now = millis();
-    const auto minUpdateInterval = 4'000;
-    if (strokeController.getStrokeCount() != strokeController.getPreviousStrokeCount() || now - lastUpdateTime > minUpdateInterval)
+    if (strokeController.getStrokeCount() != strokeController.getPreviousStrokeCount() || now - lastUpdateTime > Configurations::minBleUpdateInterval)
     {
         peripheralController.updateData(strokeController.getAllData());
         lastUpdateTime = now;

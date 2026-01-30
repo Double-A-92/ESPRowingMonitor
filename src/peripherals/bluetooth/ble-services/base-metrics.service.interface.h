@@ -20,5 +20,5 @@ public:
 
     virtual void broadcastBaseMetrics(const BleMetricsModel::BleMetricsData &data) = 0;
 
-    virtual const std::vector<unsigned char> &getClientIds() const = 0;
+    [[nodiscard]] virtual const std::vector<unsigned char> &getClientIds() const = 0;
 };

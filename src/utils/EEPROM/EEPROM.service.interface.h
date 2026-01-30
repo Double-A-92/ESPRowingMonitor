@@ -22,18 +22,18 @@ public:
     virtual void setDragFactorSettings(RowerProfile::DragFactorSettings newDragFactorSettings) = 0;
     virtual void setStrokePhaseDetectionSettings(RowerProfile::StrokePhaseDetectionSettings newStrokePhaseDetectionSettings) = 0;
 
-    virtual BleServiceFlag getBleServiceFlag() const = 0;
-    virtual ArduinoLogLevel getLogLevel() const = 0;
-    virtual bool getLogToBluetooth() const = 0;
-    virtual bool getLogToSdCard() const = 0;
+    [[nodiscard]] virtual BleServiceFlag getBleServiceFlag() const = 0;
+    [[nodiscard]] virtual ArduinoLogLevel getLogLevel() const = 0;
+    [[nodiscard]] virtual bool getLogToBluetooth() const = 0;
+    [[nodiscard]] virtual bool getLogToSdCard() const = 0;
 
-    virtual RowerProfile::MachineSettings getMachineSettings() const = 0;
-    virtual RowerProfile::SensorSignalSettings getSensorSignalSettings() const = 0;
-    virtual RowerProfile::DragFactorSettings getDragFactorSettings() const = 0;
-    virtual RowerProfile::StrokePhaseDetectionSettings getStrokePhaseDetectionSettings() const = 0;
+    [[nodiscard]] virtual RowerProfile::MachineSettings getMachineSettings() const = 0;
+    [[nodiscard]] virtual RowerProfile::SensorSignalSettings getSensorSignalSettings() const = 0;
+    [[nodiscard]] virtual RowerProfile::DragFactorSettings getDragFactorSettings() const = 0;
+    [[nodiscard]] virtual RowerProfile::StrokePhaseDetectionSettings getStrokePhaseDetectionSettings() const = 0;
 
-    virtual bool validateMachineSettings(const RowerProfile::MachineSettings &newMachineSettings) const = 0;
-    virtual bool validateSensorSignalSettings(const RowerProfile::SensorSignalSettings &newSensorSignalSettings) const = 0;
-    virtual bool validateDragFactorSettings(const RowerProfile::DragFactorSettings &newDragFactorSettings) const = 0;
-    virtual bool validateStrokePhaseDetectionSettings(const RowerProfile::StrokePhaseDetectionSettings &newStrokePhaseDetectionSettings) const = 0;
+    [[nodiscard]] virtual bool validateMachineSettings(const RowerProfile::MachineSettings &newMachineSettings) const = 0;
+    [[nodiscard]] virtual bool validateSensorSignalSettings(const RowerProfile::SensorSignalSettings &newSensorSignalSettings) const = 0;
+    [[nodiscard]] virtual bool validateDragFactorSettings(const RowerProfile::DragFactorSettings &newDragFactorSettings) const = 0;
+    [[nodiscard]] virtual bool validateStrokePhaseDetectionSettings(const RowerProfile::StrokePhaseDetectionSettings &newStrokePhaseDetectionSettings) const = 0;
 };

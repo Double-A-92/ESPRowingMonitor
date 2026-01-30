@@ -17,7 +17,7 @@ public:
 
     void begin() override;
     void update(unsigned long lastImpulseTime, bool isDeviceConnected) override;
-    unsigned char getBatteryLevel() const override;
-    unsigned char getPreviousBatteryLevel() const override;
+    [[nodiscard]] unsigned char getBatteryLevel() const override;
+    [[nodiscard]] unsigned char getPreviousBatteryLevel() const override;
     void setPreviousBatteryLevel() override;
 };

@@ -14,7 +14,7 @@ size_t WeightedAverageSeries::capacity() const
 
 Configurations::precision WeightedAverageSeries::average() const
 {
-    const auto weightSeriesSum = weightSeries.sum();    
+    const auto weightSeriesSum = weightSeries.sum();
 
     if (weightedSeries.size() == 0 || weightSeriesSum == 0)
     {

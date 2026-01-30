@@ -14,4 +14,5 @@ public:
 #endif
     virtual RowingDataModels::RowingMetrics getData() = 0;
     virtual void processData(RowingDataModels::FlywheelData data) = 0;
+    virtual void processFilterBuffer() = 0;
 };

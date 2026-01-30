@@ -3,8 +3,6 @@
 #include "../bluetooth.controller.h"
 #include "./ota.callbacks.h"
 
-using std::array;
-
 OtaRxCallbacks::OtaRxCallbacks(IOtaUpdaterService &_otaService) : otaService(_otaService)
 {
 }

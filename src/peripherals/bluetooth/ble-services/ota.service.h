@@ -16,5 +16,5 @@ public:
 
     NimBLEService *setup(NimBLEServer *server) override;
 
-    NimBLECharacteristic *getOtaTx() const override;
+    [[nodiscard]] NimBLECharacteristic *getOtaTx() const override;
 };

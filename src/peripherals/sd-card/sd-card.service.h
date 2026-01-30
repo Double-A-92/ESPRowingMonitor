@@ -25,7 +25,7 @@ class SdCardService final : public ISdCardService
     void initSdCard();
 
 public:
-    explicit SdCardService();
+    SdCardService();
     ~SdCardService();
 
     SdCardService(const SdCardService &) = delete;
@@ -35,5 +35,5 @@ public:
 
     void setup() override;
     void saveDeltaTime(const vector<unsigned long> &deltaTime) override;
-    bool isLogFileOpen() const override;
+    [[nodiscard]] bool isLogFileOpen() const override;
 };

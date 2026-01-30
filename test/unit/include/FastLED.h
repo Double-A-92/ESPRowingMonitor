@@ -27,41 +27,26 @@ struct CRGB
     CRGB() = default;
     constexpr CRGB(unsigned int colorcode) noexcept : r((colorcode >> 16) & 0xFF), g((colorcode >> 8) & 0xFF), b((colorcode >> 0) & 0xFF) {}
 
-    typedef enum
+    enum HTMLColorCode : unsigned int
     {
         Black = 0x000000,
         Blue = 0x0000FF,
         Green = 0x008000,
         Red = 0xFF0000
-    } HTMLColorCode;
-
-    union
-    {
-        struct
-        {
-            union
-            {
-                unsigned char r;   ///< Red channel value
-                unsigned char red; ///< @copydoc r
-            };
-            union
-            {
-                unsigned char g;     ///< Green channel value
-                unsigned char green; ///< @copydoc g
-            };
-            union
-            {
-                unsigned char b;    ///< Blue channel value
-                unsigned char blue; ///< @copydoc b
-            };
-        };
-        /// Access the red, green, and blue data as an array.
-        /// Where:
-        /// * `raw[0]` is the red value
-        /// * `raw[1]` is the green value
-        /// * `raw[2]` is the blue value
-        unsigned char raw[3];
     };
+
+    unsigned char r;     ///< Red channel value
+    unsigned char red;   ///< @copydoc r
+    unsigned char g;     ///< Green channel value
+    unsigned char green; ///< @copydoc g
+    unsigned char b;     ///< Blue channel value
+    unsigned char blue;  ///< @copydoc b
+    /// Access the red, green, and blue data as an array.
+    /// Where:
+    /// * `raw[0]` is the red value
+    /// * `raw[1]` is the green value
+    /// * `raw[2]` is the blue value
+    unsigned char raw[3];
 
     CRGB &operator=(const unsigned int rhs);
 };
@@ -70,6 +55,9 @@ bool operator==(const CRGB &lhs, const CRGB &rhs);
 
 class MockCFastLED
 {
+protected:
+    ~MockCFastLED() = default;
+
 public:
     virtual CLEDController &addLeds(struct CRGB *data, int nLedsOrOffset, int nLedsIfOffset = 0) = 0;
     virtual void clear(bool writeData = false) = 0;

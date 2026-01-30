@@ -39,5 +39,5 @@ public:
 
     void broadcastBaseMetrics(const BleMetricsModel::BleMetricsData &data) override;
 
-    const vector<unsigned char> &getClientIds() const override;
+    [[nodiscard]] const vector<unsigned char> &getClientIds() const override;
 };

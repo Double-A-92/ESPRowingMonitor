@@ -1,5 +1,7 @@
 // NOLINTBEGIN
 #pragma once
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 
 #include "fakeit.hpp"
 
@@ -21,6 +23,9 @@
 
 class UpdateClass
 {
+protected:
+    ~UpdateClass() = default;
+
 public:
     UpdateClass();
 
@@ -71,4 +76,6 @@ public:
 
 extern fakeit::Mock<UpdateClass> mockUpdate;
 extern UpdateClass &Update;
+
+#pragma GCC diagnostic pop
 // NOLINTEND

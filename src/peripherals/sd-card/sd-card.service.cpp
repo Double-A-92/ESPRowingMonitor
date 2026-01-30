@@ -4,7 +4,12 @@
 #include "../../utils/configuration.h"
 #include "./sd-card.service.h"
 
-SdCardService::SdCardService() : sdCardTaskParameters{logFile, {}} {}
+SdCardService::SdCardService() : sdCardTaskParameters{
+                                     .logFile = logFile,
+                                     .deltaTimes = {},
+                                 }
+{
+}
 
 SdCardService::~SdCardService()
 {
@@ -105,7 +110,7 @@ void SdCardService::saveDeltaTime(const vector<unsigned long> &deltaTimes)
         stackCoreSize,
         &sdCardTaskParameters,
         1,
-        NULL,
+        nullptr,
         0);
 }
 

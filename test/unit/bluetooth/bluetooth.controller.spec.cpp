@@ -1,4 +1,4 @@
-// NOLINTBEGIN(readability-magic-numbers)
+// NOLINTBEGIN(readability-magic-numbers,cppcoreguidelines-avoid-do-while,readability-function-cognitive-complexity)
 #include <utility>
 
 #include "catch2/catch_test_macros.hpp"
@@ -107,15 +107,20 @@ TEST_CASE("BluetoothController", "[peripheral]")
         {
             const BleMetricsModel::BleMetricsData expectedBleData{
                 .revTime = expectedData.lastRevTime,
+                .previousRevTime = 0,
                 .distance = expectedData.distance,
+                .previousDistance = 0,
                 .strokeTime = expectedData.lastStrokeTime,
+                .previousStrokeTime = 0,
                 .strokeCount = expectedData.strokeCount,
+                .previousStrokeCount = 0,
                 .avgStrokePower = expectedData.avgStrokePower,
+                .dragCoefficient = expectedData.dragCoefficient,
             };
 
             When(Method(mockArduino, millis))
                 .Return(1'001);
-            When(Method(mockBaseMetricsBleService, getClientIds)).Return({0});
+            When(Method(mockBaseMetricsBleService, getClientIds)).ReturnValCapt({0});
             Fake(Method(mockBaseMetricsBleService, broadcastBaseMetrics));
 
             bluetoothController.update();
@@ -133,7 +138,7 @@ TEST_CASE("BluetoothController", "[peripheral]")
         SECTION("not notify base metric when last notification was send less than 1 seconds ago")
         {
             When(Method(mockArduino, millis)).Return(999);
-            When(Method(mockBaseMetricsBleService, getClientIds)).Return({0});
+            When(Method(mockBaseMetricsBleService, getClientIds)).ReturnValCapt({0});
 
             bluetoothController.update();
 
@@ -156,7 +161,7 @@ TEST_CASE("BluetoothController", "[peripheral]")
 
             std::vector<std::vector<unsigned long>> notifiedDeltaTimes{};
             When(Method(mockArduino, millis)).Return(blinkInterval, blinkInterval);
-            When(Method(mockExtendedMetricsBleService, getDeltaTimesClientIds)).AlwaysReturn({0});
+            When(Method(mockExtendedMetricsBleService, getDeltaTimesClientIds)).AlwaysReturnValCapt({0});
             When(Method(mockExtendedMetricsBleService, calculateMtu)).AlwaysReturn(minimumDeltaTimeMtu);
             Fake(Method(mockExtendedMetricsBleService, broadcastDeltaTimes).Matching([&notifiedDeltaTimes](const std::vector<unsigned long> &deltaTimes)
                                                                                      {
@@ -182,7 +187,7 @@ TEST_CASE("BluetoothController", "[peripheral]")
             {
                 When(Method(mockArduino, millis)).AlwaysReturn(999);
                 When(Method(mockExtendedMetricsBleService, calculateMtu)).AlwaysReturn(minimumDeltaTimeMtu);
-                When(Method(mockExtendedMetricsBleService, getDeltaTimesClientIds)).AlwaysReturn({0});
+                When(Method(mockExtendedMetricsBleService, getDeltaTimesClientIds)).AlwaysReturnValCapt({0});
                 bluetoothController.notifyNewDeltaTime(expectedDeltaTime);
 
                 bluetoothController.update();
@@ -193,7 +198,7 @@ TEST_CASE("BluetoothController", "[peripheral]")
             SECTION("no client is connected")
             {
                 When(Method(mockArduino, millis)).AlwaysReturn(1'001);
-                When(Method(mockExtendedMetricsBleService, getDeltaTimesClientIds)).Return({0}).AlwaysReturn(emptyClientIds);
+                When(Method(mockExtendedMetricsBleService, getDeltaTimesClientIds)).ReturnValCapt({0}).AlwaysReturn(emptyClientIds);
                 When(Method(mockExtendedMetricsBleService, calculateMtu)).AlwaysReturn(minimumDeltaTimeMtu);
                 bluetoothController.notifyNewDeltaTime(expectedDeltaTime);
 
@@ -206,7 +211,7 @@ TEST_CASE("BluetoothController", "[peripheral]")
             {
                 When(Method(mockArduino, millis)).AlwaysReturn(1'001);
                 When(Method(mockExtendedMetricsBleService, calculateMtu)).AlwaysReturn(minimumDeltaTimeMtu);
-                When(Method(mockExtendedMetricsBleService, getDeltaTimesClientIds)).AlwaysReturn({0});
+                When(Method(mockExtendedMetricsBleService, getDeltaTimesClientIds)).AlwaysReturnValCapt({0});
 
                 bluetoothController.update();
 
@@ -452,4 +457,4 @@ TEST_CASE("BluetoothController", "[peripheral]")
         }
     }
 }
-// NOLINTEND(readability-magic-numbers)
+// NOLINTEND(readability-magic-numbers,cppcoreguidelines-avoid-do-while,readability-function-cognitive-complexity)

@@ -12,7 +12,12 @@
 void loop(const unsigned long now)
 {
     simulateRotation(now);
-    strokeController.update();
+
+    // Simulate free loop cycle and process 10 points for cyclic error filter
+    for (int i = 0; i < 10; ++i)
+    {
+        strokeController.update();
+    }
     if (strokeController.getRevCount() != strokeController.getPreviousRevCount())
     {
         Log.infoln("distance: %f", strokeController.getDistance() / 100.0);

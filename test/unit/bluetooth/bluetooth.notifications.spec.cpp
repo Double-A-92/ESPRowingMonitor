@@ -1,4 +1,4 @@
-// NOLINTBEGIN(readability-magic-numbers)
+// NOLINTBEGIN(readability-magic-numbers, readability-function-cognitive-complexity, cppcoreguidelines-avoid-do-while)
 #include <vector>
 
 #include "catch2/catch_test_macros.hpp"
@@ -77,11 +77,11 @@ TEST_CASE("BluetoothController", "[callbacks]")
     When(Method(mockOtaBleService, getOtaTx)).AlwaysReturn(&mockNimBLECharacteristic.get());
 
     When(Method(mockBaseMetricsBleService, setup)).AlwaysReturn(&mockNimBLEService.get());
-    When(Method(mockBaseMetricsBleService, getClientIds)).AlwaysReturn({0});
+    When(Method(mockBaseMetricsBleService, getClientIds)).AlwaysReturnValCapt({0});
     Fake(Method(mockBaseMetricsBleService, broadcastBaseMetrics));
 
     When(Method(mockExtendedMetricsBleService, setup)).AlwaysReturn(&mockNimBLEService.get());
-    When(Method(mockExtendedMetricsBleService, getHandleForcesClientIds)).AlwaysReturn({0});
+    When(Method(mockExtendedMetricsBleService, getHandleForcesClientIds)).AlwaysReturnValCapt({0});
     When(Method(mockExtendedMetricsBleService, getDeltaTimesClientIds)).AlwaysReturn(emptyClientIds);
     When(Method(mockExtendedMetricsBleService, getExtendedMetricsClientIds)).AlwaysReturn(emptyClientIds);
     Fake(Method(mockExtendedMetricsBleService, broadcastExtendedMetrics));
@@ -126,7 +126,7 @@ TEST_CASE("BluetoothController", "[callbacks]")
             }
             SECTION("subscribed should broadcast with the correct parameters")
             {
-                When(Method(mockExtendedMetricsBleService, getExtendedMetricsClientIds)).AlwaysReturn({0});
+                When(Method(mockExtendedMetricsBleService, getExtendedMetricsClientIds)).AlwaysReturnValCapt({0});
 
                 bluetoothController.notifyNewMetrics(expectedData);
 
@@ -138,7 +138,7 @@ TEST_CASE("BluetoothController", "[callbacks]")
         {
             SECTION("not subscribed should not broadcast")
             {
-                When(Method(mockExtendedMetricsBleService, getHandleForcesClientIds)).Return({});
+                When(Method(mockExtendedMetricsBleService, getHandleForcesClientIds)).ReturnValCapt({});
 
                 bluetoothController.notifyNewMetrics(expectedData);
 
@@ -159,7 +159,7 @@ TEST_CASE("BluetoothController", "[callbacks]")
                     .driveHandleForces = {},
                 };
 
-                When(Method(mockExtendedMetricsBleService, getHandleForcesClientIds)).Return({0});
+                When(Method(mockExtendedMetricsBleService, getHandleForcesClientIds)).ReturnValCapt({0});
 
                 bluetoothController.notifyNewMetrics(driveForcesEmptyData);
 
@@ -168,7 +168,7 @@ TEST_CASE("BluetoothController", "[callbacks]")
 
             SECTION("subscribed and not empty should broadcast with the correct parameters")
             {
-                When(Method(mockExtendedMetricsBleService, getHandleForcesClientIds)).Return({0});
+                When(Method(mockExtendedMetricsBleService, getHandleForcesClientIds)).ReturnValCapt({0});
 
                 bluetoothController.notifyNewMetrics(expectedData);
 
@@ -193,12 +193,17 @@ TEST_CASE("BluetoothController", "[callbacks]")
             {
                 const BleMetricsModel::BleMetricsData expectedBleData{
                     .revTime = expectedData.lastRevTime,
+                    .previousRevTime = 0,
                     .distance = expectedData.distance,
+                    .previousDistance = 0,
                     .strokeTime = expectedData.lastStrokeTime,
+                    .previousStrokeTime = 0,
                     .strokeCount = expectedData.strokeCount,
+                    .previousStrokeCount = 0,
                     .avgStrokePower = expectedData.avgStrokePower,
+                    .dragCoefficient = expectedData.dragCoefficient,
                 };
-                When(Method(mockBaseMetricsBleService, getClientIds)).Return({0});
+                When(Method(mockBaseMetricsBleService, getClientIds)).ReturnValCapt({0});
 
                 bluetoothController.notifyNewMetrics(expectedData);
 
@@ -216,7 +221,7 @@ TEST_CASE("BluetoothController", "[callbacks]")
         SECTION("reset lastMetricsBroadcastTime")
         {
             When(Method(mockArduino, millis)).Return(bleUpdateInterval, bleUpdateInterval * 2 - 1);
-            When(Method(mockBaseMetricsBleService, getClientIds)).AlwaysReturn({0});
+            When(Method(mockBaseMetricsBleService, getClientIds)).AlwaysReturnValCapt({0});
 
             bluetoothController.notifyNewMetrics(expectedData);
             mockBaseMetricsBleService.ClearInvocationHistory();
@@ -332,4 +337,4 @@ TEST_CASE("BluetoothController", "[callbacks]")
         }
     }
 }
-// NOLINTEND(readability-magic-numbers)
+// NOLINTEND(readability-magic-numbers, readability-function-cognitive-complexity, cppcoreguidelines-avoid-do-while)

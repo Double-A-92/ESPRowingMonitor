@@ -1,5 +1,6 @@
-// NOLINTBEGIN(readability-magic-numbers)
+// NOLINTBEGIN(readability-magic-numbers, readability-function-cognitive-complexity, cppcoreguidelines-avoid-do-while, modernize-type-traits)
 #include <array>
+#include <ranges>
 
 #include "catch2/catch_test_macros.hpp"
 #include "catch2/matchers/catch_matchers_vector.hpp"
@@ -107,7 +108,7 @@ TEST_CASE("BaseMetricsBleService", "[ble-service]")
 
             SECTION("setup CPS control point characteristic with correct parameters")
             {
-                const unsigned int expectedControlPointProperty = NIMBLE_PROPERTY::WRITE | NIMBLE_PROPERTY::INDICATE;
+                const unsigned int expectedControlPointProperty = NIMBLE_PROPERTY::WRITE_NR | NIMBLE_PROPERTY::WRITE | NIMBLE_PROPERTY::INDICATE;
 
                 When(Method(mockControlPointCharacteristic, setCallbacks)).Do([&mockControlPointCharacteristic](NimBLECharacteristicCallbacks *callbacks)
                                                                               { mockControlPointCharacteristic.get().callbacks = callbacks; });
@@ -130,7 +131,18 @@ TEST_CASE("BaseMetricsBleService", "[ble-service]")
                 Fake(Method(mockCpsCharacteristic, notify));
                 baseMetricsBleService.setup(&mockNimBLEServer.get(), BleServiceFlag::CpsService);
 
-                baseMetricsBleService.broadcastBaseMetrics({1, 1, 1, 1, 1});
+                baseMetricsBleService.broadcastBaseMetrics({
+                    .revTime = 1ULL,
+                    .previousRevTime = 1ULL,
+                    .distance = 1.0,
+                    .previousDistance = 1.0,
+                    .strokeTime = 1ULL,
+                    .previousStrokeTime = 0ULL,
+                    .strokeCount = 0,
+                    .previousStrokeCount = 0,
+                    .avgStrokePower = 0.0,
+                    .dragCoefficient = 0.0,
+                });
 
                 Verify(OverloadedMethod(mockCpsCharacteristic, setValue, void(const std::array<unsigned char, 14U>))).Once();
             }
@@ -201,7 +213,7 @@ TEST_CASE("BaseMetricsBleService", "[ble-service]")
 
             SECTION("setup CSC control point characteristic with correct parameters")
             {
-                const unsigned int expectedControlPointProperty = NIMBLE_PROPERTY::WRITE | NIMBLE_PROPERTY::INDICATE;
+                const unsigned int expectedControlPointProperty = NIMBLE_PROPERTY::WRITE_NR | NIMBLE_PROPERTY::WRITE | NIMBLE_PROPERTY::INDICATE;
 
                 When(Method(mockControlPointCharacteristic, setCallbacks)).Do([&mockControlPointCharacteristic](NimBLECharacteristicCallbacks *callbacks)
                                                                               { mockControlPointCharacteristic.get().callbacks = callbacks; });
@@ -233,7 +245,18 @@ TEST_CASE("BaseMetricsBleService", "[ble-service]")
                 Fake(Method(mockCscCharacteristic, notify));
                 baseMetricsBleService.setup(&mockNimBLEServer.get(), BleServiceFlag::CscService);
 
-                baseMetricsBleService.broadcastBaseMetrics({1, 1, 1, 1, 1});
+                baseMetricsBleService.broadcastBaseMetrics(BleMetricsModel::BleMetricsData{
+                    .revTime = 1ULL,
+                    .previousRevTime = 1ULL,
+                    .distance = 1.0,
+                    .previousDistance = 1.0,
+                    .strokeTime = 1ULL,
+                    .previousStrokeTime = 0ULL,
+                    .strokeCount = 0,
+                    .previousStrokeCount = 0,
+                    .avgStrokePower = 0.0,
+                    .dragCoefficient = 0.0,
+                });
 
                 Verify(OverloadedMethod(mockCscCharacteristic, setValue, void(const std::array<unsigned char, 11U>))).Once();
             }
@@ -291,7 +314,7 @@ TEST_CASE("BaseMetricsBleService", "[ble-service]")
 
             SECTION("setup FTMS control point characteristic with correct parameters")
             {
-                const unsigned int expectedControlPointProperty = NIMBLE_PROPERTY::WRITE | NIMBLE_PROPERTY::INDICATE;
+                const unsigned int expectedControlPointProperty = NIMBLE_PROPERTY::WRITE_NR | NIMBLE_PROPERTY::WRITE | NIMBLE_PROPERTY::INDICATE;
 
                 When(Method(mockControlPointCharacteristic, setCallbacks)).Do([&mockControlPointCharacteristic](NimBLECharacteristicCallbacks *callbacks)
                                                                               { mockControlPointCharacteristic.get().callbacks = callbacks; });
@@ -321,7 +344,18 @@ TEST_CASE("BaseMetricsBleService", "[ble-service]")
                 Fake(Method(mockFtmsCharacteristic, notify));
                 baseMetricsBleService.setup(&mockNimBLEServer.get(), BleServiceFlag::FtmsService);
 
-                baseMetricsBleService.broadcastBaseMetrics({1, 1, 1, 1, 1});
+                baseMetricsBleService.broadcastBaseMetrics(BleMetricsModel::BleMetricsData{
+                    .revTime = 1ULL,
+                    .previousRevTime = 1ULL,
+                    .distance = 1.0,
+                    .previousDistance = 1.0,
+                    .strokeTime = 1ULL,
+                    .previousStrokeTime = 0ULL,
+                    .strokeCount = 0,
+                    .previousStrokeCount = 0,
+                    .avgStrokePower = 0.0,
+                    .dragCoefficient = 0.0,
+                });
 
                 Verify(OverloadedMethod(mockFtmsCharacteristic, setValue, void(const std::array<unsigned char, 14U>))).Once();
             }
@@ -332,14 +366,14 @@ TEST_CASE("BaseMetricsBleService", "[ble-service]")
     {
         When(Method(mockBaseMetricsCharacteristic, setCallbacks)).Do([&mockBaseMetricsCharacteristic](NimBLECharacteristicCallbacks *callbacks)
                                                                      { mockBaseMetricsCharacteristic.get().callbacks = callbacks; })
-            .Do([](NimBLECharacteristicCallbacks *callbacks) {});
+            .Do([](NimBLECharacteristicCallbacks *) {});
 
         BaseMetricsBleService baseMetricsBleService(mockMockSettingsBleService.get(), mockEEPROMService.get());
         baseMetricsBleService.setup(&mockNimBLEServer.get(), BleServiceFlag::CscService);
 
         const std::vector<unsigned char> expectedClientIds{0, 1};
-        std::for_each(cbegin(expectedClientIds), cend(expectedClientIds), [&mockBaseMetricsCharacteristic](unsigned char clientId)
-                      { mockBaseMetricsCharacteristic.get().subscribe(clientId, 1); });
+        std::ranges::for_each(cbegin(expectedClientIds), cend(expectedClientIds), [&mockBaseMetricsCharacteristic](unsigned char clientId)
+                              { mockBaseMetricsCharacteristic.get().subscribe(clientId, 1); });
 
         const auto clientIds = baseMetricsBleService.getClientIds();
 
@@ -384,10 +418,10 @@ TEST_CASE("BaseMetricsBleService", "[ble-service]")
 
         SECTION("notify PSC with the correct binary data")
         {
-            const auto expectedRevTime = static_cast<unsigned short>(lroundl((metrics.revTime / secInMicroSec) * 2'048) % USHRT_MAX);
-            const auto expectedDistance = static_cast<unsigned int>(lround(metrics.distance));
-            const auto expectedStrokeTime = static_cast<unsigned short>(lroundl((metrics.strokeTime / secInMicroSec) * 1'024) % USHRT_MAX);
-            const auto expectedAvgStrokePower = static_cast<short>(lround(metrics.avgStrokePower));
+            const auto expectedRevTime = static_cast<unsigned short>(std::lroundl((metrics.revTime / secInMicroSec) * 2'048) % USHRT_MAX);
+            const auto expectedDistance = static_cast<unsigned int>(std::lround(metrics.distance));
+            const auto expectedStrokeTime = static_cast<unsigned short>(std::lroundl((metrics.strokeTime / secInMicroSec) * 1'024) % USHRT_MAX);
+            const auto expectedAvgStrokePower = static_cast<short>(std::lround(metrics.avgStrokePower));
 
             const auto length = 14U;
             std::array<unsigned char, length> expectedData = {
@@ -420,9 +454,9 @@ TEST_CASE("BaseMetricsBleService", "[ble-service]")
 
         SECTION("notify CSC with the correct binary data")
         {
-            const auto expectedRevTime = static_cast<unsigned short>(lroundl((metrics.revTime / secInMicroSec) * 1'024) % USHRT_MAX);
-            const auto expectedDistance = static_cast<unsigned int>(lround(metrics.distance));
-            const auto expectedStrokeTime = static_cast<unsigned short>(lroundl((metrics.strokeTime / secInMicroSec) * 1'024) % USHRT_MAX);
+            const auto expectedRevTime = static_cast<unsigned short>(std::lroundl((metrics.revTime / secInMicroSec) * 1'024) % USHRT_MAX);
+            const auto expectedDistance = static_cast<unsigned int>(std::lround(metrics.distance));
+            const auto expectedStrokeTime = static_cast<unsigned short>(std::lroundl((metrics.strokeTime / secInMicroSec) * 1'024) % USHRT_MAX);
 
             const auto length = 11U;
             std::array<unsigned char, length> expectedData = {
@@ -454,11 +488,11 @@ TEST_CASE("BaseMetricsBleService", "[ble-service]")
         {
             SECTION("when stroke rate is below UCHAR_MAX")
             {
-                const auto distance = static_cast<unsigned int>(lround(metrics.distance / 100U));
-                const auto avgStrokePower = static_cast<short>(lround(metrics.avgStrokePower));
-                const auto dragFactor = static_cast<unsigned char>(lround(metrics.dragCoefficient * 1e6));
-                const unsigned char strokeRate = static_cast<unsigned char>(lroundl((metrics.strokeCount - metrics.previousStrokeCount) / ((metrics.strokeTime - metrics.previousStrokeTime) / secInMicroSec / 60U)));
-                const auto pace500m = static_cast<unsigned short>(lroundl(500U / (((metrics.distance - metrics.previousDistance) / 100U) / ((metrics.revTime - metrics.previousRevTime) / secInMicroSec))));
+                const auto distance = static_cast<unsigned int>(std::lround(metrics.distance / 100U));
+                const auto avgStrokePower = static_cast<short>(std::lround(metrics.avgStrokePower));
+                const auto dragFactor = static_cast<unsigned char>(std::lround(metrics.dragCoefficient * 1e6));
+                const auto strokeRate = static_cast<unsigned char>(std::lroundl((metrics.strokeCount - metrics.previousStrokeCount) / ((metrics.strokeTime - metrics.previousStrokeTime) / secInMicroSec / 60U)));
+                const auto pace500m = static_cast<unsigned short>(std::lroundl(500U / (((metrics.distance - metrics.previousDistance) / 100U) / ((metrics.revTime - metrics.previousRevTime) / secInMicroSec))));
 
                 const auto length = 14U;
                 std::array<unsigned char, length> expectedData = {
@@ -506,10 +540,10 @@ TEST_CASE("BaseMetricsBleService", "[ble-service]")
                     .dragCoefficient = 110 / 1e6,
                 };
 
-                const auto distance = static_cast<unsigned int>(lround(metricsMaxStroke.distance / 100U));
-                const auto avgStrokePower = static_cast<short>(lround(metricsMaxStroke.avgStrokePower));
-                const auto dragFactor = static_cast<unsigned char>(lround(metricsMaxStroke.dragCoefficient * 1e6));
-                const auto pace500m = static_cast<unsigned short>(lroundl(500U / (((metricsMaxStroke.distance - metricsMaxStroke.previousDistance) / 100U) / ((metricsMaxStroke.revTime - metricsMaxStroke.previousRevTime) / secInMicroSec))));
+                const auto distance = static_cast<unsigned int>(std::lround(metricsMaxStroke.distance / 100U));
+                const auto avgStrokePower = static_cast<short>(std::lround(metricsMaxStroke.avgStrokePower));
+                const auto dragFactor = static_cast<unsigned short>(std::lround(metricsMaxStroke.dragCoefficient * 1e6));
+                const auto pace500m = static_cast<unsigned short>(std::lroundl(500U / (((metricsMaxStroke.distance - metricsMaxStroke.previousDistance) / 100U) / ((metricsMaxStroke.revTime - metricsMaxStroke.previousRevTime) / secInMicroSec))));
 
                 const auto length = 14U;
                 std::array<unsigned char, length> expectedData = {
@@ -604,4 +638,4 @@ TEST_CASE("BaseMetricsBleService", "[ble-service]")
         }
     }
 }
-// NOLINTEND(readability-magic-numbers)
+// NOLINTEND(readability-magic-numbers, readability-function-cognitive-complexity, cppcoreguidelines-avoid-do-while, modernize-type-traits)

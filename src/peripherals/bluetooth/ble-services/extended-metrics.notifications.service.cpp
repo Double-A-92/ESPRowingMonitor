@@ -1,5 +1,8 @@
 #include <array>
+#include <cstring>
 #include <numeric>
+#include <ranges>
+#include <span>
 #include <vector>
 
 #include "ArduinoLog.h"
@@ -28,7 +31,7 @@ void ExtendedMetricBleService::broadcastHandleForces(const vector<float> &handle
         coreStackSize + variableStackSize / 3,
         &handleForcesParams,
         1,
-        NULL,
+        nullptr,
         0);
 }
 
@@ -46,7 +49,7 @@ void ExtendedMetricBleService::broadcastDeltaTimes(const vector<unsigned long> &
         coreStackSize + deltaTimesParams.deltaTimes.size() * sizeof(unsigned long) / 3,
         &deltaTimesParams,
         1,
-        NULL,
+        nullptr,
         0);
 }
 
@@ -67,7 +70,7 @@ void ExtendedMetricBleService::broadcastExtendedMetrics(const Configurations::pr
         coreStackSize,
         &extendedMetricsParams,
         1,
-        NULL,
+        nullptr,
         0);
 }
 
@@ -77,12 +80,12 @@ void ExtendedMetricBleService::ExtendedMetricsParams::task(void *parameters)
         const auto *const params = static_cast<const ExtendedMetricBleService::ExtendedMetricsParams *>(parameters);
 
         const auto secInMicroSec = 1e6;
-        const auto avgStrokePower = static_cast<short>(lround(params->avgStrokePower));
-        const auto recoveryDuration = static_cast<unsigned short>(lround(params->recoveryDuration / secInMicroSec * 4'096));
-        const auto driveDuration = static_cast<unsigned short>(lround(params->driveDuration / secInMicroSec * 4'096));
-        const auto dragFactor = static_cast<unsigned char>(lround(params->dragCoefficient * 1e6));
+        const auto avgStrokePower = static_cast<short>(std::lround(params->avgStrokePower));
+        const auto recoveryDuration = static_cast<unsigned short>(std::lround(params->recoveryDuration / secInMicroSec * 4'096));
+        const auto driveDuration = static_cast<unsigned short>(std::lround(params->driveDuration / secInMicroSec * 4'096));
+        const auto dragFactor = static_cast<unsigned short>(std::lround(params->dragCoefficient * 1e6));
 
-        const auto length = 7U;
+        const auto length = 8U;
         std::array<unsigned char, length> temp = {
             static_cast<unsigned char>(avgStrokePower),
             static_cast<unsigned char>(avgStrokePower >> 8),
@@ -92,7 +95,8 @@ void ExtendedMetricBleService::ExtendedMetricsParams::task(void *parameters)
             static_cast<unsigned char>(recoveryDuration),
             static_cast<unsigned char>(recoveryDuration >> 8),
 
-            dragFactor,
+            static_cast<unsigned char>(dragFactor),
+            static_cast<unsigned char>(dragFactor >> 8),
         };
 
         params->characteristic->setValue(temp);
@@ -106,24 +110,30 @@ void ExtendedMetricBleService::HandleForcesParams::task(void *parameters)
     {
         const auto *const params = static_cast<const ExtendedMetricBleService::HandleForcesParams *>(parameters);
 
-        const unsigned char split = params->handleForces.size() / params->chunkSize + (params->handleForces.size() % params->chunkSize == 0 ? 0 : 1);
+        const std::span<const float> handleForces(params->handleForces);
+        const std::span<const std::byte> byteView = std::as_bytes(handleForces);
 
-        auto i = 0UL;
-        Log.verboseln("Chunk size(bytes): %d, number of chunks: %d", params->chunkSize, split);
+        const size_t chunkSizeInBytes = params->chunkSize * sizeof(float);
+        const size_t totalBytes = byteView.size_bytes();
+        const size_t split = (totalBytes + chunkSizeInBytes - 1) / chunkSizeInBytes;
 
-        while (i < split)
+        Log.verboseln("Chunk size(bytes): %u, number of chunks: %u", chunkSizeInBytes, split);
+
+        std::vector<std::byte> buffer;
+        buffer.reserve(chunkSizeInBytes + 2);
+
+        size_t chunkIndex = 1;
+        for (const auto &chunk : byteView | std::views::chunk(chunkSizeInBytes))
         {
-            const auto end = (i + 1U) * params->chunkSize < params->handleForces.size() ? params->chunkSize * sizeof(float) : (params->handleForces.size() - i * params->chunkSize) * sizeof(float);
-            vector<unsigned char> temp(end + 2);
+            buffer.clear();
 
-            temp[0] = split;
-            temp[1] = i + 1;
-            // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
-            memcpy(temp.data() + 2, params->handleForces.data() + i * params->chunkSize, end);
+            buffer.push_back(static_cast<std::byte>(split));
+            buffer.push_back(static_cast<std::byte>(chunkIndex++));
 
-            params->characteristic->setValue(temp.data(), temp.size());
+            buffer.insert(cend(buffer), cbegin(chunk), cend(chunk));
+
+            params->characteristic->setValue(buffer);
             params->characteristic->notify();
-            ++i;
         }
     }
     vTaskDelete(nullptr);
@@ -134,8 +144,9 @@ void ExtendedMetricBleService::DeltaTimesParams::task(void *parameters)
     {
         const auto *const params = static_cast<const ExtendedMetricBleService::DeltaTimesParams *>(parameters);
 
-        // NOLINTNEXTLINE(cppcoreguidelines-pro-type-cstyle-cast)
-        params->characteristic->setValue((const unsigned char *)params->deltaTimes.data(), params->deltaTimes.size() * sizeof(unsigned long));
+        const std::span<const unsigned long> deltaTimes{params->deltaTimes};
+        const auto bytes = std::as_bytes(deltaTimes);
+        params->characteristic->setValue(bytes);
         params->characteristic->notify();
     }
     vTaskDelete(nullptr);

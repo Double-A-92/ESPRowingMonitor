@@ -11,5 +11,5 @@ protected:
 
 public:
     virtual NimBLEService *setup(NimBLEServer *server) = 0;
-    virtual NimBLECharacteristic *getOtaTx() const = 0;
+    [[nodiscard]] virtual NimBLECharacteristic *getOtaTx() const = 0;
 };

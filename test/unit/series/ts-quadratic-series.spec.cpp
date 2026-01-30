@@ -1,4 +1,4 @@
-// NOLINTBEGIN(readability-magic-numbers)
+// NOLINTBEGIN(readability-magic-numbers, readability-function-cognitive-complexity, cppcoreguidelines-avoid-do-while)
 #include "catch2/catch_test_macros.hpp"
 
 #include "../../../src/utils/series/ts-quadratic-series.h"
@@ -51,4 +51,4 @@ TEST_CASE("Theil Sen Quadratic Regression", "[regression]")
         }
     }
 }
-// NOLINTEND(readability-magic-numbers)
+// NOLINTEND(readability-magic-numbers, readability-function-cognitive-complexity, cppcoreguidelines-avoid-do-while)

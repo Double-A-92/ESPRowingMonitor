@@ -1,4 +1,4 @@
-// NOLINTBEGIN(readability-magic-numbers)
+// NOLINTBEGIN(readability-magic-numbers,cppcoreguidelines-avoid-do-while)
 #include <array>
 #include <span>
 #include <string>
@@ -54,7 +54,7 @@ TEST_CASE("OtaRxCallbacks onWrite method should", "[ota]")
         When(Method(mockOtaRxCharacteristic, getValue)).AlwaysReturn(expectedValue);
 
         std::vector<unsigned char> resultValue{};
-        When(Method(mockOtaService, onData)).Do([&resultValue](const NimBLEAttValue &data, unsigned short mtu)
+        When(Method(mockOtaService, onData)).Do([&resultValue](const NimBLEAttValue &data, unsigned short)
                                                 { 
                                                     const auto temp = std::span<const unsigned char>(data.data(), data.size());
                                                     resultValue.insert(cend(resultValue), cbegin(temp), cend(temp)); });
@@ -66,4 +66,4 @@ TEST_CASE("OtaRxCallbacks onWrite method should", "[ota]")
         REQUIRE_THAT(resultValue, Catch::Matchers::Equals(expectedVector));
     }
 }
-// NOLINTEND(readability-magic-numbers)
+// NOLINTEND(readability-magic-numbers,cppcoreguidelines-avoid-do-while)

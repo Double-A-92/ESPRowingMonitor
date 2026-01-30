@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <numeric>
+#include <ranges>
 #include <vector>
 
 #include "./ts-linear-series.h"
@@ -25,6 +26,16 @@ Configurations::precision TSLinearSeries::yAtSeriesBegin() const
     return seriesY[0];
 }
 
+Configurations::precision TSLinearSeries::xAtSeriesEnd() const
+{
+    return seriesX.back();
+}
+
+Configurations::precision TSLinearSeries::xAtSeriesBegin() const
+{
+    return seriesX.front();
+}
+
 Configurations::precision TSLinearSeries::coefficientA()
 {
     if (shouldRecalculateA)
@@ -38,6 +49,11 @@ Configurations::precision TSLinearSeries::coefficientA()
 
 Configurations::precision TSLinearSeries::coefficientB()
 {
+    if (seriesX.size() < 2)
+    {
+        return 0.0;
+    }
+
     if (shouldRecalculateB)
     {
         a = median();
@@ -71,22 +87,18 @@ Configurations::precision TSLinearSeries::median() const
         flattened.reserve(maxSlopeSeriesLength);
     }
 
-    for (const auto &slope : slopes)
-    {
-        flattened.insert(cend(flattened), cbegin(slope), cend(slope));
-    }
+    std::ranges::copy(slopes | std::views::join, std::back_inserter(flattened));
 
     const auto flattenedSize = flattened.size();
     const unsigned int mid = flattenedSize / 2;
 
-    std::nth_element(begin(flattened), begin(flattened) + mid, end(flattened));
+    std::ranges::nth_element(flattened, begin(flattened) + mid);
 
-    if (flattenedSize % 2 != 0)
+    if ((flattenedSize & 1) != 0)
     {
         return flattened[mid];
     }
-
-    return (flattened[mid] + *std::max_element(cbegin(flattened), cbegin(flattened) + mid)) / 2;
+    return (flattened[mid] + *std::ranges::max_element(cbegin(flattened), cbegin(flattened) + mid)) / 2;
 }
 
 void TSLinearSeries::push(const Configurations::precision pointX, const Configurations::precision pointY)
@@ -120,7 +132,7 @@ void TSLinearSeries::push(const Configurations::precision pointX, const Configur
     }
 
     // Add an empty array at the end to store future results for the most recent points
-    slopes.push_back({});
+    slopes.emplace_back();
     if (maxSeriesLength > 0)
     {
         slopes[slopes.size() - 1].reserve(maxSeriesLength - 2);

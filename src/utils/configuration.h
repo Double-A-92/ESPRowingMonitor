@@ -15,9 +15,10 @@ using std::string;
 class Configurations
 {
 public:
-    typedef PRECISION precision;
+    using precision = PRECISION;
 
     static constexpr unsigned char maxConnectionCount = 2;
+    static constexpr unsigned short minBleUpdateInterval = MIN_BLE_UPDATE_INTERVAL;
 
     static constexpr bool logCalibration = LOG_CALIBRATION;
     static constexpr ArduinoLogLevel defaultLogLevel = DEFAULT_CPS_LOGGING_LEVEL;

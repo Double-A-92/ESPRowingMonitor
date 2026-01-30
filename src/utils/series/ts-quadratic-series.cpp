@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <numeric>
+#include <ranges>
 
 #include "./ts-linear-series.h"
 #include "./ts-quadratic-series.h"
@@ -53,7 +54,7 @@ void TSQuadraticSeries::push(const Configurations::precision pointX, const Confi
 
     // Calculate the coefficients of this new point if we have three or more points in the series
 
-    seriesA.push_back({});
+    seriesA.emplace_back();
     if (maxSeriesAInnerLength > 0)
     {
         seriesA[seriesA.size() - 1].reserve(maxSeriesAInnerLength);
@@ -76,7 +77,7 @@ void TSQuadraticSeries::push(const Configurations::precision pointX, const Confi
     }
     a = seriesAMedian();
 
-    TSLinearSeries linearResidue(maxSeriesLength, initialCapacity, maxAllocationCapacity);
+    TSLinearSeries linearResidue(maxSeriesLength, seriesXSize, maxAllocationCapacity);
     i = 0;
     while (i < seriesXSize)
     {
@@ -119,22 +120,19 @@ Configurations::precision TSQuadraticSeries::seriesAMedian() const
         flattened.reserve(maxSeriesALength);
     }
 
-    for (const auto &input : seriesA)
-    {
-        flattened.insert(cend(flattened), cbegin(input), end(input));
-    }
+    std::ranges::copy(seriesA | std::views::join, std::back_inserter(flattened));
 
     const auto flattenedSize = flattened.size();
     const unsigned int mid = flattenedSize / 2;
 
-    std::nth_element(begin(flattened), begin(flattened) + mid, end(flattened));
+    std::ranges::nth_element(flattened, begin(flattened) + mid);
 
-    if (flattenedSize % 2 != 0)
+    if ((flattenedSize & 1) != 0)
     {
         return flattened[mid];
     }
 
-    return (flattened[mid] + *std::max_element(cbegin(flattened), cbegin(flattened) + mid)) / 2;
+    return (flattened[mid] + *std::ranges::max_element(cbegin(flattened), cbegin(flattened) + mid)) / 2;
 }
 
 // This function returns the R^2 as a goodness of fit indicator
@@ -149,12 +147,13 @@ Configurations::precision TSQuadraticSeries::goodnessOfFit() const
     Configurations::precision sse = 0.0;
     Configurations::precision sst = 0.0;
 
+    const auto averageY = seriesY.average();
+
     auto i = 0U;
     while (i < seriesXSize)
     {
         const auto seriesYI = seriesY[i];
         const auto projectedX = projectX(seriesX[i]);
-        const auto averageY = seriesY.average();
 
         const auto seriesYProjectedXDiff = seriesYI - projectedX;
         const auto seriesYIAverageYDiff = seriesYI - averageY;

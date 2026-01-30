@@ -9,10 +9,6 @@
 
 using std::vector;
 
-ExtendedMetricBleService::ExtendedMetricBleService()
-{
-}
-
 NimBLEService *ExtendedMetricBleService::setup(NimBLEServer *const server)
 {
     Log.infoln("Setting up Extended Metrics Services");

@@ -8,5 +8,5 @@ protected:
     ~IConnectionManagerCallbacks() = default;
 
 public:
-    virtual unsigned char getConnectionCount() const = 0;
+    [[nodiscard]] virtual unsigned char getConnectionCount() const = 0;
 };

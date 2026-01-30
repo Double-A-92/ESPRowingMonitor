@@ -49,10 +49,10 @@ consteval std::string_view extractClassName(const std::string_view className)
     auto end = className.find("::");
     if (end == std::string_view::npos)
     {
-        return std::string_view("UnknownClass");
+        return {"UnknownClass"};
     }
 
-    const auto start = className.rfind(" ", end) + 1;
+    const auto start = className.rfind(' ', end) + 1;
 
     return className.substr(start, end - start);
 }
@@ -60,7 +60,7 @@ consteval std::string_view extractClassName(const std::string_view className)
 consteval std::string_view getHardwareRevision()
 {
 #if defined(HARDWARE_REVISION)
-    return std::string_view(HARDWARE_REVISION);
+    return {HARDWARE_REVISION};
 #elif defined(BOARD_PROFILE)
     constexpr auto profile = std::string_view(BOARD_PROFILE);
 
@@ -68,7 +68,7 @@ consteval std::string_view getHardwareRevision()
     auto filenameStart = profile.find(profileSearchTerm);
     if (filenameStart == std::string_view::npos)
     {
-        return std::string_view("Custom");
+        return {"Custom"};
     }
 
     filenameStart += profileSearchTerm.size();
@@ -79,12 +79,12 @@ consteval std::string_view getHardwareRevision()
     auto end = filename.find(boardSearchTerm);
     if (end == std::string_view::npos)
     {
-        return std::string_view("Custom");
+        return {"Custom"};
     }
 
     return filename.substr(0, end);
 #else
-    return std::string_view("Custom");
+    return {"Custom"};
 #endif
 }
 
@@ -119,6 +119,14 @@ consteval std::string_view getHardwareRevision()
 
 #if !defined(DEFAULT_BLE_SERVICE)
     #define DEFAULT_BLE_SERVICE BleServiceFlag::CpsService
+#endif
+
+#if !defined(MIN_BLE_UPDATE_INTERVAL)
+    #define MIN_BLE_UPDATE_INTERVAL 4'000
+#endif
+
+#if MIN_BLE_UPDATE_INTERVAL < 1'000
+    #error "MIN_BLE_UPDATE_INTERVAL is set to less than 1,000 milliseconds which is not allowed"
 #endif
 
 #if STROKE_DETECTION_TYPE == STROKE_DETECTION_BOTH
@@ -227,6 +235,11 @@ static_assert(((sizeof(SERIAL_NUMBER) - 1 == 0 ? DEFAULT_SERIAL_LENGTH : sizeof(
 #if !defined(DRIVE_HANDLE_FORCES_MAX_CAPACITY)
     #define DRIVE_HANDLE_FORCES_MAX_CAPACITY UCHAR_MAX
 #endif
+
+#if !defined(CYCLIC_ERROR_AGGRESSIVENESS)
+    #define CYCLIC_ERROR_AGGRESSIVENESS 1
+#endif
+
 // Sanity checks and validations
 static_assert(SUPPORT_SD_CARD_LOGGING == false || (SUPPORT_SD_CARD_LOGGING == true && SD_CARD_CHIP_SELECT_PIN != GPIO_NUM_NC), "SD Card chip select pin is not provided. Please define 'SD_CARD_CHIP_SELECT_PIN' with the GPIO to which chip select is connected");
 

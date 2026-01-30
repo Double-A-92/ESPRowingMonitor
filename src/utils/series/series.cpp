@@ -9,6 +9,16 @@ const Configurations::precision &Series::operator[](size_t index) const
     return seriesArray[index];
 };
 
+Configurations::precision Series::front() const
+{
+    return seriesArray[0];
+}
+
+Configurations::precision Series::back() const
+{
+    return seriesArray.back();
+}
+
 size_t Series::size() const
 {
     return seriesArray.size();
@@ -26,7 +36,7 @@ Configurations::precision Series::average() const
         return 0.0;
     }
 
-    return seriesSum / (Configurations::precision)seriesArray.size();
+    return seriesSum / static_cast<Configurations::precision>(seriesArray.size());
 }
 
 Configurations::precision Series::median() const
@@ -39,14 +49,14 @@ Configurations::precision Series::median() const
     const auto seriesArraySize = seriesArray.size();
     const unsigned int mid = seriesArraySize / 2;
     vector<Configurations::precision> sortedArray(seriesArray);
-    std::nth_element(begin(sortedArray), begin(sortedArray) + mid, end(sortedArray));
+    std::ranges::nth_element(begin(sortedArray), begin(sortedArray) + mid, end(sortedArray));
 
-    if (seriesArraySize % 2 != 0)
+    if ((seriesArraySize & 1) != 0)
     {
         return sortedArray[mid];
     }
 
-    return (sortedArray[mid] + *std::max_element(begin(sortedArray), begin(sortedArray) + mid)) / 2;
+    return (sortedArray[mid] + *std::ranges::max_element(begin(sortedArray), begin(sortedArray) + mid)) / 2;
 }
 
 void Series::push(const Configurations::precision value)

@@ -170,7 +170,6 @@ void EEPROMService::setStrokePhaseDetectionSettings(const RowerProfile::StrokePh
     preferences.putUChar(strokeDetectionTypeAddress, std::to_underlying(newStrokePhaseDetectionSettings.strokeDetectionType));
     preferences.putFloat(minimumPoweredTorqueAddress, newStrokePhaseDetectionSettings.minimumPoweredTorque);
     preferences.putFloat(minimumDragTorqueAddress, newStrokePhaseDetectionSettings.minimumDragTorque);
-    preferences.putFloat(minimumRecoverySlopeMarginAddress, newStrokePhaseDetectionSettings.minimumRecoverySlopeMargin);
     preferences.putFloat(minimumRecoverySlopeAddress, newStrokePhaseDetectionSettings.minimumRecoverySlope);
     preferences.putUInt(minimumRecoveryTimeAddress, newStrokePhaseDetectionSettings.minimumRecoveryTime);
     preferences.putUInt(minimumDriveTimeAddress, newStrokePhaseDetectionSettings.minimumDriveTime);
@@ -233,7 +232,6 @@ RowerProfile::StrokePhaseDetectionSettings EEPROMService::getStrokePhaseDetectio
         .strokeDetectionType = strokeDetectionType,
         .minimumPoweredTorque = minimumPoweredTorque,
         .minimumDragTorque = minimumDragTorque,
-        .minimumRecoverySlopeMargin = minimumRecoverySlopeMargin,
         .minimumRecoverySlope = minimumRecoverySlope,
         .minimumRecoveryTime = minimumRecoveryTime,
         .minimumDriveTime = minimumDriveTime,
@@ -346,13 +344,6 @@ bool EEPROMService::validateDragFactorSettings(const RowerProfile::DragFactorSet
 
 bool EEPROMService::validateStrokePhaseDetectionSettings(const RowerProfile::StrokePhaseDetectionSettings &newStrokePhaseDetectionSettings) const
 {
-    if (!isInBounds(newStrokePhaseDetectionSettings.minimumRecoverySlopeMargin, 0.0F, std::numeric_limits<float>::max()))
-    {
-        Log.errorln("Invalid minimum recovery slope margin, should be greater than 0");
-
-        return false;
-    }
-
     constexpr unsigned char maxImpulseLength = std::is_same_v<Configurations::precision, float> ? maxImpulseWhenFloat : maxImpulseWhenDouble;
     if (!isInBounds(newStrokePhaseDetectionSettings.impulseDataArrayLength, static_cast<unsigned char>(3U), maxImpulseLength))
     {
@@ -544,12 +535,6 @@ void EEPROMService::initializeStrokePhaseDetectionSettings()
         preferences.putFloat(minimumDragTorqueAddress, RowerProfile::Defaults::minimumDragTorque);
     }
 
-    if (!preferences.isKey(minimumRecoverySlopeMarginAddress))
-    {
-        Log.infoln("Setting Minimum Recovery Slope Margin to default");
-        preferences.putFloat(minimumRecoverySlopeMarginAddress, RowerProfile::Defaults::minimumRecoverySlopeMargin);
-    }
-
     if (!preferences.isKey(minimumRecoverySlopeAddress))
     {
         Log.infoln("Setting Minimum Recovery Slope to default");
@@ -583,7 +568,6 @@ void EEPROMService::initializeStrokePhaseDetectionSettings()
     strokeDetectionType = StrokeDetectionType{preferences.getUChar(strokeDetectionTypeAddress, std::to_underlying(RowerProfile::Defaults::strokeDetectionType))};
     minimumPoweredTorque = preferences.getFloat(minimumPoweredTorqueAddress, RowerProfile::Defaults::minimumPoweredTorque);
     minimumDragTorque = preferences.getFloat(minimumDragTorqueAddress, RowerProfile::Defaults::minimumDragTorque);
-    minimumRecoverySlopeMargin = preferences.getFloat(minimumRecoverySlopeMarginAddress, RowerProfile::Defaults::minimumRecoverySlopeMargin);
     minimumRecoverySlope = preferences.getFloat(minimumRecoverySlopeAddress, RowerProfile::Defaults::minimumRecoverySlope);
     minimumRecoveryTime = preferences.getUInt(minimumRecoveryTimeAddress, RowerProfile::Defaults::minimumRecoveryTime);
     minimumDriveTime = preferences.getUInt(minimumDriveTimeAddress, RowerProfile::Defaults::minimumDriveTime);
@@ -593,7 +577,6 @@ void EEPROMService::initializeStrokePhaseDetectionSettings()
     Log.verboseln("%s: %d", strokeDetectionTypeAddress, strokeDetectionType);
     Log.verboseln("%s: %F", minimumPoweredTorqueAddress, minimumPoweredTorque);
     Log.verboseln("%s: %F", minimumDragTorqueAddress, minimumDragTorque);
-    Log.verboseln("%s: %F", minimumRecoverySlopeMarginAddress, minimumRecoverySlopeMargin);
     Log.verboseln("%s: %F", minimumRecoverySlopeAddress, minimumRecoverySlope);
     Log.verboseln("%s: %d", minimumRecoveryTimeAddress, minimumRecoveryTime);
     Log.verboseln("%s: %d", minimumDriveTimeAddress, minimumDriveTime);

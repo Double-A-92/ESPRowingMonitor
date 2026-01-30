@@ -1,4 +1,5 @@
-// NOLINTBEGIN(readability-magic-numbers)
+// NOLINTBEGIN(readability-magic-numbers, readability-function-cognitive-complexity, cppcoreguidelines-avoid-do-while, modernize-type-traits)
+#include <ranges>
 #include <span>
 #include <utility>
 #include <vector>
@@ -303,8 +304,8 @@ TEST_CASE("OtaUpdaterService", "[ota]")
 
                         REQUIRE_THAT(resultResponse, Catch::Matchers::SizeIs(sizeof(unsigned int) * 2 + sizeof(OtaResponseOpCodes)));
 
-                        const auto perPackageSize = (resultResponse[1] | resultResponse[2] << 8 | resultResponse[3] << 16 | resultResponse[4] << 24);
-                        const auto bufferSize = (resultResponse[1 + sizeof(unsigned int)] | resultResponse[2 + sizeof(unsigned int)] << 8 | resultResponse[3 + sizeof(unsigned int)] << 16 | resultResponse[4 + sizeof(unsigned int)] << 24);
+                        const unsigned long perPackageSize = (resultResponse[1] | resultResponse[2] << 8 | resultResponse[3] << 16 | resultResponse[4] << 24);
+                        const unsigned long bufferSize = (resultResponse[1 + sizeof(unsigned int)] | resultResponse[2 + sizeof(unsigned int)] << 8 | resultResponse[3 + sizeof(unsigned int)] << 16 | resultResponse[4 + sizeof(unsigned int)] << 24);
 
                         REQUIRE(resultResponse[0] == std::to_underlying(OtaResponseOpCodes::Ok));
                         REQUIRE(perPackageSize == expectedPerPackageSize);
@@ -344,7 +345,7 @@ TEST_CASE("OtaUpdaterService", "[ota]")
                 const auto expectedBufferSize = (mtu - blePackageHeaderSize - sizeof(OtaRequestOpCodes)) * bufferCapacity;
 
                 std::vector<unsigned char> packageData(expectedBufferSize);
-                std::fill(begin(packageData), end(packageData), 1);
+                std::ranges::fill(begin(packageData), end(packageData), 1);
                 NimBLEAttValue flushPackageRequest{std::to_underlying(OtaRequestOpCodes::Package)};
                 flushPackageRequest.insert(packageData);
                 std::vector<unsigned char> resultResponse;
@@ -354,10 +355,10 @@ TEST_CASE("OtaUpdaterService", "[ota]")
 
                 SECTION("should write to the buffer until its full")
                 {
-                    std::vector<unsigned char> packageData(expectedBufferSize - 1);
-                    std::fill(begin(packageData), end(packageData), 1);
+                    std::vector<unsigned char> packageDataSmall(expectedBufferSize - 1);
+                    std::ranges::fill(begin(packageDataSmall), end(packageDataSmall), 1);
                     NimBLEAttValue noFlushPackageRequest{std::to_underlying(OtaRequestOpCodes::Package)};
-                    noFlushPackageRequest.insert(packageData);
+                    noFlushPackageRequest.insert(packageDataSmall);
 
                     otaService.onData(noFlushPackageRequest, mtu);
 
@@ -366,12 +367,6 @@ TEST_CASE("OtaUpdaterService", "[ota]")
 
                 SECTION("should flush the buffer to the update partition when its full")
                 {
-                    const auto mtu = 256U;
-                    const auto bufferCapacity = 40U;
-                    const auto expectedBufferSize = (mtu - blePackageHeaderSize - sizeof(OtaRequestOpCodes)) * bufferCapacity;
-
-                    std::vector<unsigned char> packageData(expectedBufferSize);
-                    std::fill(begin(packageData), end(packageData), 1);
                     NimBLEAttValue noFlushPackageRequest{std::to_underlying(OtaRequestOpCodes::Package)};
                     noFlushPackageRequest.insert(packageData);
 
@@ -463,7 +458,7 @@ TEST_CASE("OtaUpdaterService", "[ota]")
             const auto expectedResult = std::to_underlying(OtaResponseOpCodes::IncorrectFormat);
             std::vector<unsigned char> resultResponse;
             std::vector<unsigned char> md5Hash(ESP_ROM_MD5_DIGEST_LEN + 1);
-            std::fill(begin(md5Hash), end(md5Hash), 1);
+            std::ranges::fill(begin(md5Hash), end(md5Hash), 1);
             NimBLEAttValue tooLongEndRequest{std::to_underlying(OtaRequestOpCodes::End)};
             tooLongEndRequest.insert(md5Hash);
 
@@ -590,4 +585,4 @@ TEST_CASE("OtaUpdaterService", "[ota]")
         }
     }
 }
-// NOLINTEND(readability-magic-numbers)
+// NOLINTEND(readability-magic-numbers, readability-function-cognitive-complexity, cppcoreguidelines-avoid-do-while, modernize-type-traits)

@@ -1,4 +1,4 @@
-// NOLINTBEGIN(readability-magic-numbers)
+// NOLINTBEGIN(readability-magic-numbers,readability-function-cognitive-complexity,cppcoreguidelines-avoid-do-while)
 #include <fstream>
 #include <vector>
 
@@ -20,24 +20,26 @@ TEST_CASE("StrokeService")
 {
     const auto angularDisplacementPerImpulse = (2 * PI) / 3;
 
+    ifstream deltaTimesStream("test/unit/rower/test-data/stroke.service.spec.deltaTimes.txt");
+    REQUIRE(deltaTimesStream.good());
+
+    vector<unsigned long> deltaTimes;
+    const auto arraySize = 1'764;
+    deltaTimes.reserve(arraySize);
+
+    unsigned long deltaTimeTemp = 0;
+    while (deltaTimesStream >> deltaTimeTemp)
+    {
+        deltaTimes.push_back(deltaTimeTemp);
+    }
+
+    REQUIRE(!deltaTimes.empty());
+
 #if ENABLE_RUNTIME_SETTINGS
     SECTION("setup method should")
     {
         SECTION("change stroke phase detection related settings")
         {
-            ifstream deltaTimesStream("test/unit/rower/test-data/stroke.service.spec.deltaTimes.txt");
-            REQUIRE(deltaTimesStream.good());
-
-            vector<unsigned long> deltaTimes;
-            const auto arraySize = 1'764;
-            deltaTimes.reserve(arraySize);
-
-            unsigned long deltaTime = 0;
-            while (deltaTimesStream >> deltaTime)
-            {
-                deltaTimes.push_back(deltaTime);
-            }
-
             auto rawImpulseCount = 0UL;
             auto totalTime = 0UL;
             Configurations::precision totalAngularDisplacement = 0.0;
@@ -50,11 +52,10 @@ TEST_CASE("StrokeService")
                                     .strokeDetectionType = StrokeDetectionType::Torque,
                                     .minimumPoweredTorque = 0.5F,
                                     .minimumDragTorque = 0.2F,
-                                    .minimumRecoverySlopeMargin = 0.000001F,
                                     .minimumRecoverySlope = -0.1F,
                                     .minimumRecoveryTime = 500'000,
                                     .minimumDriveTime = 200'000,
-                                    .impulseDataArrayLength = 10,
+                                    .impulseDataArrayLength = 5,
                                     .driveHandleForcesMaxCapacity = 15,
                                 });
 
@@ -76,27 +77,14 @@ TEST_CASE("StrokeService")
 
             const auto rowingMetrics = strokeService.getData();
 
-            REQUIRE(rowingMetrics.strokeCount == 17);
-            REQUIRE(rowingMetrics.lastStrokeTime == 31'851'264);
-            REQUIRE_THAT(rowingMetrics.distance, Catch::Matchers::WithinRel(9'175.75398753580520861, 0.0000001));
-            REQUIRE(rowingMetrics.lastRevTime == 38'863'369);
+            CHECK(rowingMetrics.strokeCount == 11);
+            CHECK(rowingMetrics.lastStrokeTime == 26'217'932);
+            CHECK_THAT(rowingMetrics.distance, Catch::Matchers::WithinRel(9'230.74789692319063761, 0.0000001));
+            CHECK(rowingMetrics.lastRevTime == 33'241'257);
         }
 
         SECTION("change sensor signal related settings")
         {
-            ifstream deltaTimesStream("test/unit/rower/test-data/stroke.service.spec.deltaTimes.txt");
-            REQUIRE(deltaTimesStream.good());
-
-            vector<unsigned long> deltaTimes;
-            const auto arraySize = 1'764;
-            deltaTimes.reserve(arraySize);
-
-            unsigned long deltaTime = 0;
-            while (deltaTimesStream >> deltaTime)
-            {
-                deltaTimes.push_back(deltaTime);
-            }
-
             auto rawImpulseCount = 0UL;
             auto totalTime = 0UL;
             Configurations::precision totalAngularDisplacement = 0.0;
@@ -129,27 +117,14 @@ TEST_CASE("StrokeService")
             const auto rowingMetrics = strokeService.getData();
 
             REQUIRE(rowingMetrics.strokeCount == 10);
-            REQUIRE(rowingMetrics.lastStrokeTime == 32'573'215);
-            const auto expectedDistance = 9'741.64407532888799324;
+            REQUIRE(rowingMetrics.lastStrokeTime == 26'678'792);
+            const auto expectedDistance = 9'713.4146901604726736;
             REQUIRE_THAT(rowingMetrics.distance, Catch::Matchers::WithinRel(expectedDistance, 0.0000001));
-            REQUIRE(rowingMetrics.lastRevTime == 42'586'444);
+            REQUIRE(rowingMetrics.lastRevTime == 36'691'429);
         }
 
         SECTION("change drag factor related settings")
         {
-            ifstream deltaTimesStream("test/unit/rower/test-data/stroke.service.spec.deltaTimes.txt");
-            REQUIRE(deltaTimesStream.good());
-
-            vector<unsigned long> deltaTimes;
-            const auto arraySize = 1'764;
-            deltaTimes.reserve(arraySize);
-
-            unsigned long deltaTime = 0;
-            while (deltaTimesStream >> deltaTime)
-            {
-                deltaTimes.push_back(deltaTime);
-            }
-
             auto rawImpulseCount = 0UL;
             auto totalTime = 0UL;
             Configurations::precision totalAngularDisplacement = 0.0;
@@ -185,26 +160,13 @@ TEST_CASE("StrokeService")
             const auto rowingMetrics = strokeService.getData();
 
             REQUIRE(rowingMetrics.strokeCount == 10);
-            REQUIRE(rowingMetrics.lastStrokeTime == 32'573'215);
-            REQUIRE_THAT(rowingMetrics.distance, Catch::Matchers::WithinRel(9'318.94758182254736312, 0.0000001));
-            REQUIRE(rowingMetrics.lastRevTime == 39'577'207);
+            REQUIRE(rowingMetrics.lastStrokeTime == 26'678'792);
+            REQUIRE_THAT(rowingMetrics.distance, Catch::Matchers::WithinRel(9'298.52873643809107307, 0.0000001));
+            REQUIRE(rowingMetrics.lastRevTime == 33'706'297);
         }
 
         SECTION("change machine related settings")
         {
-            ifstream deltaTimesStream("test/unit/rower/test-data/stroke.service.spec.deltaTimes.txt");
-            REQUIRE(deltaTimesStream.good());
-
-            vector<unsigned long> deltaTimes;
-            const auto arraySize = 1'764;
-            deltaTimes.reserve(arraySize);
-
-            unsigned long deltaTime = 0;
-            while (deltaTimesStream >> deltaTime)
-            {
-                deltaTimes.push_back(deltaTime);
-            }
-
             auto rawImpulseCount = 0UL;
             auto totalTime = 0UL;
             Configurations::precision totalAngularDisplacement = 0.0;
@@ -241,9 +203,9 @@ TEST_CASE("StrokeService")
             const auto rowingMetrics = strokeService.getData();
 
             REQUIRE(rowingMetrics.strokeCount == 10);
-            REQUIRE(rowingMetrics.lastStrokeTime == 32'573'215);
-            REQUIRE_THAT(rowingMetrics.distance, Catch::Matchers::WithinRel(7'100.63887816623901017, 0.0000001));
-            REQUIRE(rowingMetrics.lastRevTime == 39'577'207);
+            REQUIRE(rowingMetrics.lastStrokeTime == 26'678'792);
+            REQUIRE_THAT(rowingMetrics.distance, Catch::Matchers::WithinRel(7'084.78850820065508742, 0.0000001));
+            REQUIRE(rowingMetrics.lastRevTime == 33'706'297);
         }
     }
 #endif
@@ -257,12 +219,9 @@ TEST_CASE("StrokeService")
         CHECK(RowerProfile::Defaults::goodnessOfFitThreshold == 0.97F);
         CHECK(RowerProfile::Defaults::rotationDebounceTimeMin == 7'000);
         CHECK(RowerProfile::Defaults::sprocketRadius == 1.5F / 100);
-        CHECK(RowerProfile::Defaults::minimumDriveTime == 300'000);
-        CHECK(RowerProfile::Defaults::minimumRecoveryTime == 300'000);
+        CHECK(RowerProfile::Defaults::minimumDriveTime == 400'000);
+        CHECK(RowerProfile::Defaults::minimumRecoveryTime == 800'000);
     }
-
-    ifstream deltaTimesStream("test/unit/rower/test-data/stroke.service.spec.deltaTimes.txt");
-    REQUIRE(deltaTimesStream.good());
 
     ifstream slopeStream("test/unit/rower/test-data/stroke.service.spec.slope.txt");
     REQUIRE(slopeStream.good());
@@ -276,9 +235,6 @@ TEST_CASE("StrokeService")
     ifstream dragFactorStream("test/unit/rower/test-data/stroke.service.spec.dragFactor.txt");
     REQUIRE(dragFactorStream.good());
 
-    vector<unsigned long> deltaTimes;
-    const auto arraySize = 1'764;
-    deltaTimes.reserve(arraySize);
     vector<double> slopes;
     slopes.reserve(arraySize - 1);
     vector<double> torques;
@@ -287,12 +243,6 @@ TEST_CASE("StrokeService")
     forceCurves.reserve(10);
     vector<double> dragFactors;
     dragFactors.reserve(10);
-
-    unsigned long deltaTime = 0;
-    while (deltaTimesStream >> deltaTime)
-    {
-        deltaTimes.push_back(deltaTime);
-    }
 
     auto slope = 0.0;
     while (slopeStream >> slope)
@@ -320,7 +270,7 @@ TEST_CASE("StrokeService")
         string token;
         vector<float> res;
 
-        while ((pos_end = forceCurve.find(",", pos_start)) != string::npos)
+        while ((pos_end = forceCurve.find(',', pos_start)) != string::npos)
         {
             token = forceCurve.substr(pos_start, pos_end - pos_start);
             pos_start = pos_end + 1;
@@ -332,7 +282,6 @@ TEST_CASE("StrokeService")
         forceCurves.push_back(res);
     }
 
-    REQUIRE(!deltaTimes.empty());
     REQUIRE(!slopes.empty());
     REQUIRE(!torques.empty());
     REQUIRE(!forceCurves.empty());
@@ -358,6 +307,11 @@ TEST_CASE("StrokeService")
                 .rawImpulseTime = totalTime,
             };
 
+            // Simulate free loop cycle and process 10 points for cyclic error filter
+            for (int i = 0; i < 10; ++i)
+            {
+                strokeService.processFilterBuffer();
+            }
             strokeService.processData(data);
             const auto prevStrokeCount = rowingMetrics.strokeCount;
             rowingMetrics = strokeService.getData();
@@ -367,9 +321,9 @@ TEST_CASE("StrokeService")
                 SECTION("force curves on new stroke (" + std::to_string(rowingMetrics.strokeCount) + ")")
                 {
                     INFO("deltaTime: " << deltaTime << ", stroke number: " << rowingMetrics.strokeCount);
-                    REQUIRE_THAT(rowingMetrics.driveHandleForces, Catch::Matchers::RangeEquals(forceCurves[rowingMetrics.strokeCount - 1], [](float first, float second)
-                                                                                               { return std::abs(first - second) < 0.00001F; }));
-                    REQUIRE_THAT(rowingMetrics.dragCoefficient * 1e6, Catch::Matchers::WithinRel(dragFactors[rowingMetrics.strokeCount - 1], 0.0000001));
+                    CHECK_THAT(rowingMetrics.driveHandleForces, Catch::Matchers::RangeEquals(forceCurves[rowingMetrics.strokeCount - 1], [](float first, float second)
+                                                                                             { return std::abs(first - second) < 0.00001F; }));
+                    CHECK_THAT(rowingMetrics.dragCoefficient * 1e6, Catch::Matchers::WithinRel(dragFactors[rowingMetrics.strokeCount - 1], 0.0000001));
                 }
             }
         }
@@ -377,11 +331,11 @@ TEST_CASE("StrokeService")
         SECTION("total rowing metrics")
         {
             REQUIRE(rowingMetrics.strokeCount == 10);
-            REQUIRE(rowingMetrics.lastStrokeTime == 32'573'215);
-            const auto expectedDistance = 9'290.9570160674;
+            REQUIRE(rowingMetrics.lastStrokeTime == 26'896'514);
+            const auto expectedDistance = 9'306.07625318930877256;
             REQUIRE_THAT(rowingMetrics.distance, Catch::Matchers::WithinRel(expectedDistance, 0.0000001));
-            REQUIRE(rowingMetrics.lastRevTime == 39'577'207);
+            REQUIRE(rowingMetrics.lastRevTime == 33'925'253);
         }
     }
 }
-// NOLINTEND(readability-magic-numbers)
+// NOLINTEND(readability-magic-numbers,readability-function-cognitive-complexity,cppcoreguidelines-avoid-do-while)

@@ -23,6 +23,16 @@ Configurations::precision OLSLinearSeries::yAtSeriesBegin() const
     return seriesY[0];
 }
 
+Configurations::precision OLSLinearSeries::xAtSeriesBegin() const
+{
+    return seriesX[0];
+}
+
+Configurations::precision OLSLinearSeries::xAtSeriesEnd() const
+{
+    return seriesX.back();
+}
+
 Configurations::precision OLSLinearSeries::slope() const
 {
     const auto seriesXSize = seriesX.size();
@@ -34,6 +44,18 @@ Configurations::precision OLSLinearSeries::slope() const
     }
 
     return ((Configurations::precision)seriesXSize * seriesXY.sum() - seriesXSum * seriesY.sum()) / ((Configurations::precision)seriesXSize * seriesXSquare.sum() - seriesXSum * seriesXSum);
+}
+
+Configurations::precision OLSLinearSeries::intercept() const
+{
+    const auto seriesXSize = seriesX.size();
+
+    if (seriesXSize < 2)
+    {
+        return 0.0;
+    }
+
+    return (seriesY.sum() - (slope() * seriesX.sum())) / (Configurations::precision)seriesXSize;
 }
 
 Configurations::precision OLSLinearSeries::goodnessOfFit() const

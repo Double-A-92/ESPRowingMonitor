@@ -38,7 +38,7 @@ If, for some reason, testing shows that a higher value for the `IMPULSE_DATA_ARR
 |18                       |1854               |
 |15                       |1469               |
 |12                       |1206               |
-|9                        |965               |
+|9                        |965                |
 |8                        |908                |
 |7                        |839                |
 |6                        |780                |

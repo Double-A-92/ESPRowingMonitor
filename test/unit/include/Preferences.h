@@ -1,19 +1,21 @@
 #pragma once
 // NOLINTBEGIN
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+
 #ifndef NAN
     #define NAN (__builtin_nanf(""))
 #endif
 
 class Preferences
 {
-protected:
     unsigned int _handle;
     bool _started;
     bool _readOnly;
 
 public:
     Preferences();
-    ~Preferences();
+    virtual ~Preferences() = default;
 
     virtual inline bool begin(const char *name, bool readOnly = false, const char *partition_label = "a") { return true; }
     virtual inline void end() {}
@@ -59,4 +61,5 @@ public:
     virtual inline unsigned char getBytes(const char *key, void *buf, unsigned char maxLen) { return 1; }
     virtual inline unsigned char freeEntries() { return 1; }
 };
+#pragma GCC diagnostic pop
 // NOLINTEND

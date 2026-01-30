@@ -43,8 +43,6 @@ class BluetoothController final : public IBluetoothController
 
     BleMetricsModel::BleMetricsData bleData = {};
 
-    unsigned char minimumMtu = 100;
-
     vector<unsigned long> bleDeltaTimes;
 
     void setupBleDevice();

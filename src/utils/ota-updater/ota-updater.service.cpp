@@ -1,5 +1,6 @@
 #include <array>
 #include <span>
+#include <string>
 #include <utility>
 
 #include "ArduinoLog.h"
@@ -10,10 +11,6 @@
 #include "./ota-updater.service.h"
 
 using std::span;
-
-OtaUpdaterService::OtaUpdaterService()
-{
-}
 
 bool OtaUpdaterService::isUpdating() const
 {
@@ -45,20 +42,17 @@ void OtaUpdaterService::onData(const NimBLEAttValue &data, const unsigned short 
     case std::to_underlying(OtaRequestOpCodes::Begin):
     {
         setMtu(newMtu);
-        span<const unsigned char>::iterator iterator(data.data());
-        handleBegin(span<const unsigned char>(iterator + 1, data.size() - 1));
+        handleBegin(span<const unsigned char>(data.data(), data.size()).subspan(1));
     }
     break;
     case std::to_underlying(OtaRequestOpCodes::Package):
     {
-        span<const unsigned char>::iterator iterator(data.data());
-        handlePackage(span<const unsigned char>(iterator + 1, data.size() - 1));
+        handlePackage(span<const unsigned char>(data.data(), data.size()).subspan(1));
     }
     break;
     case std::to_underlying(OtaRequestOpCodes::End):
     {
-        span<const unsigned char>::iterator iterator(data.data());
-        handleEnd(span<const unsigned char>(iterator + 1, data.size() - 1));
+        handleEnd(span<const unsigned char>(data.data(), data.size()).subspan(1));
     }
     break;
     case std::to_underlying(OtaRequestOpCodes::Abort):
@@ -193,13 +187,14 @@ void OtaUpdaterService::handleEnd(const span<const unsigned char> &payload)
     }
 
     const std::string hexChars = "0123456789abcdef";
-    std::string md5Hex;
 
-    for (size_t i = 0; i < ESP_ROM_MD5_DIGEST_LEN; ++i)
+    std::string md5Hex;
+    md5Hex.reserve(ESP_ROM_MD5_DIGEST_LEN * 2);
+
+    for (unsigned char byte : payload)
     {
-        auto byte = payload[i];
-        md5Hex.push_back(hexChars[byte >> 4]);
-        md5Hex.push_back(hexChars[byte & 0x0F]);
+        md5Hex += hexChars[byte >> 4];
+        md5Hex += hexChars[byte & 0x0F];
     }
 
     Log.verboseln("OTA setting MD5 hash to %s", md5Hex.c_str());
