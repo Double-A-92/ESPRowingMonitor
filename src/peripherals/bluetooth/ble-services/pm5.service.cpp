@@ -1,5 +1,7 @@
 #include "pm5.service.h"
 
+#include <algorithm>
+
 #include "../../../utils/enums.h"
 #include "../../../globals.h"
 
@@ -135,7 +137,7 @@ void Pm5Service::updateStrokeData(const RowingDataModels::RowingMetrics &data)
         return; 
     }
 
-    Pm5StrokeData payload;
+    Pm5StrokeData payload{};
     
     unsigned long elapsedTimeCs = data.lastStrokeTime / 10000;
     
@@ -145,7 +147,7 @@ void Pm5Service::updateStrokeData(const RowingDataModels::RowingMetrics &data)
     payload.elapsedTime[2] = static_cast<unsigned char>((elapsedTimeCs >> 16) & 0xFF);
 
     // Distance (UInt24, 0.1m)
-    unsigned long distDeciMeters = static_cast<unsigned long>(data.distance * 10);
+    auto distDeciMeters = static_cast<unsigned long>(data.distance * 10);
     payload.distance[0] = static_cast<unsigned char>(distDeciMeters & 0xFF);
     payload.distance[1] = static_cast<unsigned char>((distDeciMeters >> 8) & 0xFF);
     payload.distance[2] = static_cast<unsigned char>((distDeciMeters >> 16) & 0xFF);
@@ -159,7 +161,7 @@ void Pm5Service::updateStrokeData(const RowingDataModels::RowingMetrics &data)
     // Stroke Distance (0.01m resolution means x * 100)
     // Calculate delta from last saved distance
     double strokeDist = data.distance - lastDistance;
-    if (strokeDist < 0) strokeDist = 0; // Reset handling?
+    strokeDist = std::max<double>(strokeDist, 0); // Reset handling?
 
     payload.strokeDistance = static_cast<unsigned short>(strokeDist * 100);
 
@@ -202,7 +204,7 @@ void Pm5Service::updateStrokeData(const RowingDataModels::RowingMetrics &data)
 
 void Pm5Service::updateGeneralStatus(const RowingDataModels::RowingMetrics &data)
 {
-    Pm5GeneralStatus payload;
+    Pm5GeneralStatus payload{};
     
     unsigned long elapsedTimeCs = data.lastRevTime / 10000; // Using lastRevTime for continuous update?
     
@@ -210,7 +212,7 @@ void Pm5Service::updateGeneralStatus(const RowingDataModels::RowingMetrics &data
     payload.elapsedTime[1] = static_cast<unsigned char>((elapsedTimeCs >> 8) & 0xFF);
     payload.elapsedTime[2] = static_cast<unsigned char>((elapsedTimeCs >> 16) & 0xFF);
     
-    unsigned long distDeciMeters = static_cast<unsigned long>(data.distance * 10);
+    auto distDeciMeters = static_cast<unsigned long>(data.distance * 10);
     payload.distance[0] = static_cast<unsigned char>(distDeciMeters & 0xFF);
     payload.distance[1] = static_cast<unsigned char>((distDeciMeters >> 8) & 0xFF);
     payload.distance[2] = static_cast<unsigned char>((distDeciMeters >> 16) & 0xFF);
@@ -222,7 +224,7 @@ void Pm5Service::updateGeneralStatus(const RowingDataModels::RowingMetrics &data
     payload.strokeState = 1; // Drive?
     
     // Total Work Distance (UInt24, 1m)
-    unsigned long totalWorkDist = static_cast<unsigned long>(data.distance);
+    auto totalWorkDist = static_cast<unsigned long>(data.distance);
     payload.totalWorkDistance[0] = static_cast<unsigned char>(totalWorkDist & 0xFF);
     payload.totalWorkDistance[1] = static_cast<unsigned char>((totalWorkDist >> 8) & 0xFF);
     payload.totalWorkDistance[2] = static_cast<unsigned char>((totalWorkDist >> 16) & 0xFF);
